@@ -9,6 +9,16 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      safelist: [
+        'flex','flex-row','flex-col','flex-1','flex-shrink-0',
+        'flex-wrap','items-center','justify-center','justify-between','justify-around',
+        'gap-2','gap-3','gap-4','gap-5','gap-6','gap-7','gap-8',
+        'content-start','overflow-hidden'
+      ]
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   
   <!-- 모바일 드래그앤드롭 폴리필 -->
@@ -28,6 +38,13 @@
     }
     #root { width: 100%; height: 100%; overflow: hidden; }
     .word-keep { word-break: keep-all; }
+
+    /* 레이아웃 보조 클래스 - Tailwind CDN 누락 방지 */
+    .row { display: flex !important; flex-direction: row !important; }
+    .col { display: flex !important; flex-direction: column !important; }
+    .f1 { flex: 1 !important; }
+    .fshrink0 { flex-shrink: 0 !important; }
+    .screen-wrap { height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 16px; }
 
     /* 슬롯(빈칸) 스타일 */
     .slot-box {
@@ -208,20 +225,20 @@
       return canvas;
     }
 
-    /* ── 원형 레이아웃 (소형) ── */
+    /* ── 원형 레이아웃 ── */
     const CircularLayout = ({items}) => {
-      const R = 72;
+      const R = 95;
       return (
-        <div className="relative mx-auto flex items-center justify-center" style={{width:210,height:210}}>
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 210 210">
-            <circle cx="105" cy="105" r="72" fill="none" stroke="#bbf7d0" strokeWidth="5" strokeDasharray="12 12"/>
+        <div className="relative mx-auto flex items-center justify-center" style={{width:270,height:270}}>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 270 270">
+            <circle cx="135" cy="135" r="95" fill="none" stroke="#bbf7d0" strokeWidth="6" strokeDasharray="14 14"/>
           </svg>
           {items.map((it,i)=>{
             const a=(i/items.length)*2*Math.PI - Math.PI/2;
             return (
               <div key={i} className="absolute flex flex-col items-center" style={{transform:`translate(${R*Math.cos(a)}px,${R*Math.sin(a)}px)`}}>
-                <div className="text-4xl bg-white rounded-full p-2 shadow-lg border-4 border-green-300">{it.img}</div>
-                <span className="text-xs font-black mt-1 text-slate-700 bg-white/90 px-2 py-0.5 rounded-full shadow-sm word-keep">{it.text}</span>
+                <div style={{fontSize:'2.8rem',background:'white',borderRadius:'50%',padding:'0.5rem',boxShadow:'0 4px 12px rgba(0,0,0,.15)',border:'4px solid #86efac'}}>{it.img}</div>
+                <span style={{fontSize:'0.95rem',fontWeight:'900',marginTop:'4px',color:'#334155',background:'rgba(255,255,255,0.95)',padding:'2px 8px',borderRadius:'999px',whiteSpace:'nowrap'}}>{it.text}</span>
               </div>
             );
           })}
@@ -229,16 +246,16 @@
       );
     };
 
-    /* ── 직선 레이아웃 (소형) ── */
+    /* ── 직선 레이아웃 ── */
     const LinearLayout = ({items}) => (
-      <div className="flex flex-wrap items-center justify-center gap-2 py-2 w-full">
+      <div style={{display:'flex',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:'0.5rem',padding:'0.5rem 0',width:'100%'}}>
         {items.map((it,i)=>(
-          <div key={i} className="flex items-center">
-            <div className="flex flex-col items-center">
-              <div className="text-4xl bg-white rounded-2xl p-3 shadow-lg border-4 border-blue-200">{it.img}</div>
-              <span className="text-xs font-black mt-1 text-slate-700 word-keep text-center">{it.text}</span>
+          <div key={i} style={{display:'flex',alignItems:'center'}}>
+            <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+              <div style={{fontSize:'2.8rem',background:'white',borderRadius:'1rem',padding:'0.6rem',boxShadow:'0 4px 12px rgba(0,0,0,.15)',border:'4px solid #bfdbfe'}}>{it.img}</div>
+              <span style={{fontSize:'0.95rem',fontWeight:'900',marginTop:'4px',color:'#334155',textAlign:'center',wordBreak:'keep-all'}}>{it.text}</span>
             </div>
-            {i<items.length-1 && <svg className="w-7 h-7 text-blue-300 mx-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>}
+            {i<items.length-1 && <svg style={{width:'1.75rem',height:'1.75rem',color:'#93c5fd',margin:'0 4px',flexShrink:0}} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3"><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>}
           </div>
         ))}
       </div>
@@ -429,7 +446,7 @@
       if(phase==="login") return (
         <div className="flex items-center justify-center p-5 bg-gradient-to-br from-green-50 to-emerald-100" style={{height:'100vh',overflow:'hidden'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div className="flex flex-row gap-8 w-full max-w-4xl items-center">
+          <div style={{display:'flex',flexDirection:'row',gap:'2rem',width:'100%',maxWidth:'56rem',alignItems:'center'}}>
             <div className="flex-1 flex flex-col items-center text-center">
               <div className="text-8xl mb-4">📖</div>
               <h1 className="text-5xl font-black text-green-700 mb-3 drop-shadow-sm">순서대로 말해요!</h1>
@@ -450,7 +467,7 @@
       if(phase==="mic_request") return (
         <div className="flex items-center justify-center p-5 bg-indigo-50" style={{height:'100vh',overflow:'hidden'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div className="bg-white p-8 rounded-3xl shadow-2xl max-w-3xl w-full border-8 border-indigo-200 flex flex-row gap-8 items-center">
+          <div style={{background:'white',padding:'2rem',borderRadius:'1.5rem',boxShadow:'0 25px 50px -12px rgba(0,0,0,.25)',border:'8px solid #c7d2fe',display:'flex',flexDirection:'row',gap:'2rem',alignItems:'center',width:'100%',maxWidth:'48rem'}}>
             <div className="flex flex-col items-center flex-shrink-0">
               <div className="text-7xl mb-3 animate-bounce">🎤</div>
               <h2 className="text-xl text-indigo-600 font-black text-center">친구에게<br/>설명하기</h2>
@@ -497,7 +514,7 @@
       if(phase==="concept") return (
         <div className="flex items-center justify-center p-4 bg-green-50" style={{height:'100vh',overflow:'hidden'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl border-b-8 border-green-200 flex flex-row overflow-hidden" style={{maxHeight:'calc(100vh - 32px)'}}>
+          <div style={{width:'100%',maxWidth:'64rem',background:'white',borderRadius:'1.5rem',boxShadow:'0 25px 50px -12px rgba(0,0,0,.25)',borderBottom:'8px solid #bbf7d0',display:'flex',flexDirection:'row',overflow:'hidden',maxHeight:'calc(100vh - 32px)'}}>
             {/* 왼쪽: 설명 + 버튼 */}
             <div className="flex-1 p-7 flex flex-col justify-between">
               <div>
@@ -526,26 +543,27 @@
         <div className="flex flex-col p-3 bg-green-50" style={{height:'100vh',overflow:'hidden'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
           {/* 상단 헤더 */}
-          <div className="w-full max-w-5xl mx-auto bg-white px-5 py-2.5 rounded-2xl shadow-sm border-2 border-green-100 mb-3 flex items-center justify-between flex-shrink-0">
-            <span className="font-bold text-slate-400 text-sm">문제 {qIndex+1} / {activeQuestions.length}</span>
-            <h2 className="text-2xl font-black text-slate-800">{currentQ.title}</h2>
-            <span className="text-sm font-bold text-green-600">카드를 터치해서 채우세요!</span>
+          <div style={{width:'100%',maxWidth:'64rem',margin:'0 auto 0.75rem',background:'white',padding:'0.6rem 1.25rem',borderRadius:'1rem',boxShadow:'0 2px 8px rgba(0,0,0,.05)',border:'2px solid #dcfce7',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+            <span style={{fontWeight:'700',color:'#94a3b8',fontSize:'1rem'}}>문제 {qIndex+1} / {activeQuestions.length}</span>
+            <h2 style={{fontSize:'1.6rem',fontWeight:'900',color:'#1e293b',margin:0}}>{currentQ.title}</h2>
+            <span style={{fontSize:'1rem',fontWeight:'700',color:'#16a34a'}}>카드를 터치해서 채우세요!</span>
           </div>
           {/* 메인 2열 */}
-          <div className="flex-1 w-full max-w-5xl mx-auto flex flex-row gap-3 overflow-hidden">
+          <div style={{flex:1,width:'100%',maxWidth:'64rem',margin:'0 auto',display:'flex',flexDirection:'row',gap:'0.75rem',overflow:'hidden'}}>
             {/* 왼쪽: 슬롯 */}
-            <div className="flex-1 bg-white rounded-2xl p-4 border-4 border-slate-100 shadow-md flex flex-col overflow-hidden">
-              <h3 className="text-base font-bold text-slate-400 mb-2 flex-shrink-0">📌 순서대로 채우기</h3>
-              <div className="flex-1 flex flex-col justify-around overflow-hidden">
+            <div style={{flex:1,background:'white',borderRadius:'1rem',padding:'1rem',border:'4px solid #f1f5f9',boxShadow:'0 4px 16px rgba(0,0,0,.06)',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <h3 style={{fontSize:'1.1rem',fontWeight:'800',color:'#94a3b8',marginBottom:'0.5rem',flexShrink:0}}>📌 순서대로 채우기</h3>
+              <div style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'space-around',overflow:'hidden'}}>
                 {slots.map((card, idx) => (
                   <div
                     key={idx}
                     className={`slot-box ${dragOverIndex===idx ? 'drag-over' : ''}`}
+                    style={{marginBottom:'4px',minHeight:'72px'}}
                     onDragOver={(e)=>handleDragOver(e,idx)}
                     onDragLeave={handleDragLeave}
                     onDrop={(e)=>handleDrop(e,idx)}
                   >
-                    <div className="flex-shrink-0 w-9 h-9 bg-slate-200 rounded-full flex items-center justify-center font-black text-slate-500 mr-3 text-lg">{idx+1}</div>
+                    <div style={{flexShrink:0,width:'2.2rem',height:'2.2rem',background:'#e2e8f0',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:'900',color:'#64748b',marginRight:'0.75rem',fontSize:'1.1rem'}}>{idx+1}</div>
                     {card ? (
                       <div
                         className="drag-card flex-1"
@@ -553,39 +571,38 @@
                         onDragStart={(e)=>handleDragStart(e,idx)}
                         onClick={()=>tapSlotCard(card,idx)}
                       >
-                        <div className="text-4xl mr-3 pointer-events-none">{card.img}</div>
-                        <div className="text-lg font-bold text-slate-700 break-keep pointer-events-none">{card.text}</div>
+                        <div style={{fontSize:'2.2rem',marginRight:'0.75rem',pointerEvents:'none'}}>{card.img}</div>
+                        <div style={{fontSize:'1.2rem',fontWeight:'800',color:'#334155',wordBreak:'keep-all',pointerEvents:'none'}}>{card.text}</div>
                       </div>
                     ) : (
-                      <div className="flex-1 text-base font-bold text-slate-300">카드를 선택하세요</div>
+                      <div style={{flex:1,fontSize:'1.05rem',fontWeight:'700',color:'#cbd5e1'}}>카드를 선택하세요</div>
                     )}
                   </div>
                 ))}
               </div>
             </div>
             {/* 오른쪽: 카드풀 + 버튼 */}
-            <div className="flex-1 flex flex-col gap-3 overflow-hidden">
-              <div className="flex-1 bg-slate-100 rounded-2xl p-4 border-4 border-slate-200 flex flex-col overflow-hidden">
-                <h3 className="text-base font-bold text-slate-400 mb-2 flex-shrink-0">🃏 문제 카드</h3>
-                <div className="flex-1 flex flex-wrap gap-3 content-start justify-center overflow-hidden">
+            <div style={{flex:1,display:'flex',flexDirection:'column',gap:'0.75rem',overflow:'hidden'}}>
+              <div style={{flex:1,background:'#f8fafc',borderRadius:'1rem',padding:'1rem',border:'4px solid #e2e8f0',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+                <h3 style={{fontSize:'1.1rem',fontWeight:'800',color:'#94a3b8',marginBottom:'0.5rem',flexShrink:0}}>🃏 문제 카드</h3>
+                <div style={{flex:1,display:'flex',flexWrap:'wrap',gap:'0.5rem',alignContent:'flex-start',justifyContent:'center',overflow:'hidden'}}>
                   {pool.length > 0 ? pool.map(card=>(
                     <div
                       key={card.id}
                       onClick={()=>tapPoolCard(card)}
-                      className="bg-white px-4 py-3 rounded-2xl shadow border-4 border-blue-200 cursor-pointer active:scale-95 transition-transform flex flex-col items-center"
-                      style={{minWidth:'90px',maxWidth:'130px'}}
+                      style={{background:'white',padding:'0.6rem 0.8rem',borderRadius:'1rem',boxShadow:'0 2px 8px rgba(0,0,0,.08)',border:'4px solid #bfdbfe',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',flex:'1 1 calc(50% - 0.5rem)',minWidth:'90px',maxWidth:'160px',boxSizing:'border-box'}}
                     >
-                      <div className="text-4xl mb-1">{card.img}</div>
-                      <div className="text-sm font-bold text-slate-700 text-center word-keep">{card.text}</div>
+                      <div style={{fontSize:'2.5rem',marginBottom:'0.25rem'}}>{card.img}</div>
+                      <div style={{fontSize:'1rem',fontWeight:'700',color:'#334155',textAlign:'center',wordBreak:'keep-all'}}>{card.text}</div>
                     </div>
                   )) : (
-                    <div className="text-lg font-bold text-slate-400 text-center py-4 w-full">모두 이동했어요!<br/>정답을 확인해보세요.</div>
+                    <div style={{fontSize:'1.1rem',fontWeight:'700',color:'#94a3b8',textAlign:'center',padding:'1rem',width:'100%'}}>모두 이동했어요!<br/>정답을 확인해보세요.</div>
                   )}
                 </div>
               </div>
-              <div className="flex gap-3 flex-shrink-0">
-                <button onClick={retryQuestion} className="flex-1 py-4 bg-slate-400 hover:bg-slate-500 text-white rounded-2xl font-black text-lg shadow-xl active:scale-95 transition">🔄 다시</button>
-                <button onClick={checkAnswer} className="flex-[2] py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-black text-lg shadow-xl active:scale-95 transition">정답 확인 ✅</button>
+              <div style={{display:'flex',gap:'0.75rem',flexShrink:0}}>
+                <button onClick={retryQuestion} style={{flex:1,padding:'1rem',background:'#94a3b8',color:'white',borderRadius:'1rem',fontWeight:'900',fontSize:'1.1rem',border:'none',cursor:'pointer'}}>🔄 다시</button>
+                <button onClick={checkAnswer} style={{flex:2,padding:'1rem',background:'#22c55e',color:'white',borderRadius:'1rem',fontWeight:'900',fontSize:'1.1rem',border:'none',cursor:'pointer'}}>정답 확인 ✅</button>
               </div>
             </div>
           </div>
