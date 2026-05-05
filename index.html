@@ -645,14 +645,30 @@ const App = () => {
 
   /* ── 게임 시작 ── */
   const startGame = (count) => {
-    let s = [...allQuestions].sort(()=>0.5-Math.random());
-    s = s.slice(0, count);
+    // 중복 없이 섞기 (Fisher-Yates)
+    const shuffled = [...allQuestions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    // 중복 ID 제거 (안전장치)
+    const seen = new Set();
+    const uniq = [];
+    for (const q of shuffled) {
+      if (!seen.has(q.id)) {
+        seen.add(q.id);
+        uniq.push(q);
+      }
+    }
+    const s = uniq.slice(0, count);
+    
     setActiveQuestions(s);
     setQIndex(0);
     setScore(0);
     setHelpUsedTotal(0);
     setPerQuestionResults([]);
     setReflectionRound(0);
+    // 녹음 단계: 5문제마다 + 마지막에 남은 문제가 있으면 1회 더
     setTotalReflectionRounds(Math.ceil(count / 5));
     setBatchStart(0);
     setAllReflections([]);
@@ -748,14 +764,20 @@ const App = () => {
   /* ── 다음 문제 ── */
   const nextQuestion = () => {
     if (practiceMode) {
-      // 연습 끝 → 본 문제로
+      // 연습 끝 → 본 문제로 (qIndex 변화 없음)
       goToMainQuiz();
       return;
     }
     
     const nextIdx = qIndex + 1;
-    // 5문제마다 녹음 단계 진입
-    if (nextIdx > 0 && nextIdx % 5 === 0) {
+    const isLastQuestion = nextIdx >= activeQuestions.length;
+    // 녹음 단계 진입 조건:
+    //   1) 5문제 풀 때마다 (5, 10, 15...)
+    //   2) 마지막 문제까지 풀었을 때 (배치에 남은 문제가 있으면)
+    const reachFiveBoundary = nextIdx > 0 && nextIdx % 5 === 0;
+    const hasUnreflectedBatch = isLastQuestion && (nextIdx - batchStart) > 0;
+    
+    if (reachFiveBoundary || hasUnreflectedBatch) {
       // 이번 배치 종료 → 녹음 단계
       setPhase("reflection_intro");
       return;
@@ -765,6 +787,7 @@ const App = () => {
       setQIndex(nextIdx);
       setPhase("concept");
     } else {
+      // 녹음 없이 바로 종료 (이론상 거의 발생 안 함)
       finishQuiz();
     }
   };
@@ -781,25 +804,22 @@ const App = () => {
   const startReflection = () => {
     setSelectedCardSets([]);
     setPhase("reflection_select");
-    speak("방금 푼 문제 중에서 설명하고 싶은 것 2개를 골라주세요.", soundOn);
-  };
-
-  const toggleCardSet = (q) => {
-    if (selectedCardSets.find(c => c.id === q.id)) {
-      setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
-    } else if (selectedCardSets.length < 2) {
-      setSelectedCardSets([...selectedCardSets, q]);
-      playPop(soundOn);
-    }
+    speak("방금 푼 문제 중에서 설명하고 싶은 것을 골라주세요.", soundOn);
   };
 
   const goToRecording = () => {
-    if (selectedCardSets.length !== 2) {
-      alert("카드 세트를 정확히 2개 선택해주세요.");
+    const batchEnd = qIndex + 1;
+    const batchSize = batchEnd - batchStart;
+    const requiredCount = Math.min(2, batchSize);
+    if (selectedCardSets.length !== requiredCount) {
+      alert(`카드 세트를 ${requiredCount}개 선택해주세요.`);
       return;
     }
-    setRecognizedText(''); setInterimText(''); setKeyboardText('');
-    setAudioBlob(null); setAudioBase64(null);
+    setRecognizedText('');
+    setInterimText('');
+    setKeyboardText('');
+    setAudioBlob(null);
+    setAudioBase64(null);
     setUseKeyboard(false);
     setSelfRating(0);
     setPhase("recording");
@@ -875,11 +895,11 @@ const App = () => {
   };
 
   const continueAfterSticker = () => {
-    setReflectionRound(r => r+1);
-    setBatchStart(qIndex + 1);
-    
-    // 다음 문제로 or 끝
     const nextIdx = qIndex + 1;
+    setReflectionRound(r => r + 1);
+    setBatchStart(nextIdx);
+    
+    // 모든 문제를 풀었으면 종료, 아니면 다음 문제로
     if (nextIdx < activeQuestions.length) {
       setQIndex(nextIdx);
       setPhase("concept");
@@ -1173,38 +1193,56 @@ const App = () => {
     );
 
     /* ── 정답 피드백 ── */
-    if(phase==="feedback") return (
-      <div className="flex items-center justify-center p-6 w-full h-full bg-green-50">
-        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="w-full max-w-5xl bg-white p-8 rounded-3xl shadow-2xl border-8 border-green-300 flex flex-row gap-8 items-center">
-          <div className="flex-shrink-0 flex flex-col items-center">
-            <div className="text-9xl mb-3 sticker-pop">🎉</div>
-            <h2 className="text-5xl font-black text-green-500">정답!</h2>
-            {practiceMode && <span className="mt-2 px-4 py-1 bg-blue-100 text-blue-700 rounded-full font-black text-lg">연습 완료</span>}
-          </div>
-          <div className="flex-1 flex flex-col gap-5">
-            <p className="text-2xl font-black text-slate-700 word-keep leading-relaxed border-l-8 border-green-300 pl-4">
-              "{currentQ.concept}"
-            </p>
-            <div className="bg-green-50 p-5 rounded-2xl flex items-center justify-center" style={{minHeight:'300px'}}>
-              {currentQ.type === 'cyclic' ? <CircularLayout items={currentQ.cards} size={340}/> : <LinearLayout items={currentQ.cards}/>}
+    if(phase==="feedback") {
+      const nextIdx = qIndex + 1;
+      const isLastQuestion = nextIdx >= activeQuestions.length;
+      const reachFiveBoundary = nextIdx > 0 && nextIdx % 5 === 0;
+      const willEnterReflection = !practiceMode && (reachFiveBoundary || (isLastQuestion && (nextIdx - batchStart) > 0));
+      
+      let nextLabel;
+      if (practiceMode) {
+        nextLabel = '본 문제 풀기 📝';
+      } else if (willEnterReflection) {
+        nextLabel = '배움 정리하기 🎙️';
+      } else if (isLastQuestion) {
+        nextLabel = '결과 보기 🏆';
+      } else {
+        nextLabel = '다음 문제 ▶';
+      }
+      
+      return (
+        <div className="flex items-center justify-center p-6 w-full h-full bg-green-50">
+          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+          <div className="w-full max-w-5xl bg-white p-8 rounded-3xl shadow-2xl border-8 border-green-300 flex flex-row gap-8 items-center">
+            <div className="flex-shrink-0 flex flex-col items-center">
+              <div className="text-9xl mb-3 sticker-pop">🎉</div>
+              <h2 className="text-5xl font-black text-green-500">정답!</h2>
+              {practiceMode && <span className="mt-2 px-4 py-1 bg-blue-100 text-blue-700 rounded-full font-black text-lg">연습 완료</span>}
             </div>
-            <button onClick={nextQuestion} 
-              className="w-full py-6 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-black text-3xl shadow-xl active:scale-95 transition">
-              {practiceMode ? '본 문제 풀기 📝' : 
-               (qIndex+1 < activeQuestions.length ? 
-                ((qIndex+1) % 5 === 0 ? '배움 정리하기 🎙️' : '다음 문제 ▶') : 
-                '결과 보기 🏆')}
-            </button>
+            <div className="flex-1 flex flex-col gap-5">
+              <p className="text-2xl font-black text-slate-700 word-keep leading-relaxed border-l-8 border-green-300 pl-4">
+                "{currentQ.concept}"
+              </p>
+              <div className="bg-green-50 p-5 rounded-2xl flex items-center justify-center" style={{minHeight:'300px'}}>
+                {currentQ.type === 'cyclic' ? <CircularLayout items={currentQ.cards} size={340}/> : <LinearLayout items={currentQ.cards}/>}
+              </div>
+              <button onClick={nextQuestion} 
+                className="w-full py-6 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-black text-3xl shadow-xl active:scale-95 transition">
+                {nextLabel}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
 
     /* ── 녹음 단계 1: 안내 ── */
     if(phase==="reflection_intro") {
       const batchEnd = qIndex + 1;
       const batchSize = batchEnd - batchStart;
+      const isFinalRound = batchEnd >= activeQuestions.length;
+      // 카드세트 2개 미만이면 안내 메시지 변경
+      const canSelectTwo = batchSize >= 2;
       return (
         <div className="flex items-center justify-center p-8 w-full h-full bg-orange-50">
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
@@ -1213,11 +1251,16 @@ const App = () => {
             <h2 className="text-5xl font-black text-orange-600 mb-4">배움 정리 시간!</h2>
             <p className="text-3xl font-black text-slate-700 word-keep leading-relaxed mb-6">
               방금 푼 <span className="text-orange-500">{batchSize}개 문제</span> 중에서<br/>
-              <span className="text-orange-500">2개를 골라</span> 친구에게 설명해 보아요.
+              {canSelectTwo ? (
+                <><span className="text-orange-500">2개를 골라</span> 친구에게 설명해 보아요.</>
+              ) : (
+                <>그 문제를 친구에게 설명해 보아요.</>
+              )}
             </p>
             <div className="bg-orange-50 p-5 rounded-2xl border-4 border-orange-200 mb-6">
               <p className="text-2xl font-bold text-slate-600 word-keep">
                 🎯 녹음 단계 <span className="text-orange-600">{reflectionRound + 1}</span> / <span>{totalReflectionRounds}</span>
+                {isFinalRound && <span className="ml-2 text-pink-600">(마지막!)</span>}
               </p>
             </div>
             <button onClick={startReflection} 
@@ -1233,22 +1276,35 @@ const App = () => {
     if(phase==="reflection_select") {
       const batchEnd = qIndex + 1;
       const batchQuestions = activeQuestions.slice(batchStart, batchEnd);
+      // 배치에 문제가 1개뿐이면 자동 선택, 2개 이상이면 사용자가 2개 고르기
+      const requiredCount = Math.min(2, batchQuestions.length);
+      const canProceed = selectedCardSets.length === requiredCount;
+      
       return (
         <div className="flex flex-col p-6 w-full h-full bg-orange-50">
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
           <div className="w-full max-w-6xl mx-auto flex-shrink-0 mb-4">
-            <h2 className="text-4xl font-black text-orange-600 text-center mb-2">🎯 설명할 카드 2개를 골라요</h2>
+            <h2 className="text-4xl font-black text-orange-600 text-center mb-2">
+              🎯 설명할 카드 {requiredCount}개를 골라요
+            </h2>
             <p className="text-xl font-bold text-slate-600 text-center">
-              선택됨: <span className="text-orange-600 text-2xl">{selectedCardSets.length}</span> / 2
+              선택됨: <span className="text-orange-600 text-2xl">{selectedCardSets.length}</span> / {requiredCount}
             </p>
           </div>
           <div className="flex-1 w-full max-w-6xl mx-auto overflow-hidden">
             <div className="grid grid-cols-2 gap-4 h-full content-start" style={{gridAutoRows:'min-content'}}>
-              {batchQuestions.map((q, i) => {
+              {batchQuestions.map((q) => {
                 const isSelected = selectedCardSets.find(c => c.id === q.id);
                 return (
                   <div key={q.id} 
-                    onClick={() => toggleCardSet(q)}
+                    onClick={() => {
+                      if (isSelected) {
+                        setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
+                      } else if (selectedCardSets.length < requiredCount) {
+                        setSelectedCardSets([...selectedCardSets, q]);
+                        playPop(soundOn);
+                      }
+                    }}
                     className={`bg-white rounded-2xl p-4 shadow-md border-8 cursor-pointer transition active:scale-98 ${isSelected ? 'border-orange-500 bg-orange-50' : 'border-slate-200 hover:border-orange-300'}`}>
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-2xl font-black text-slate-800">{q.title}</h3>
@@ -1272,9 +1328,9 @@ const App = () => {
             </div>
           </div>
           <div className="flex-shrink-0 w-full max-w-6xl mx-auto mt-4">
-            <button onClick={goToRecording} disabled={selectedCardSets.length !== 2}
-              className={`w-full py-5 rounded-2xl font-black text-2xl shadow-xl transition ${selectedCardSets.length === 2 ? 'bg-orange-500 hover:bg-orange-600 text-white active:scale-95' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}>
-              {selectedCardSets.length === 2 ? '녹음하러 가기 🎙️' : `${2 - selectedCardSets.length}개 더 골라주세요`}
+            <button onClick={goToRecording} disabled={!canProceed}
+              className={`w-full py-5 rounded-2xl font-black text-2xl shadow-xl transition ${canProceed ? 'bg-orange-500 hover:bg-orange-600 text-white active:scale-95' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}>
+              {canProceed ? '녹음하러 가기 🎙️' : `${requiredCount - selectedCardSets.length}개 더 골라주세요`}
             </button>
           </div>
         </div>
