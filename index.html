@@ -2072,7 +2072,7 @@ const FontDiagnostic = () => {
   const [show, setShow] = useState(false);
   
   useEffect(() => {
-    const fonts = ['Gaegu', 'Jua', 'Hi Melody', 'Gowun Dodum', 'Yeon Sung'];
+    const fonts = ['BMJUA', 'Jua', 'Pretendard'];
     const result = {};
     if (document.fonts && document.fonts.check) {
       fonts.forEach(f => {
@@ -2100,20 +2100,23 @@ const FontDiagnostic = () => {
     <div style={{position:'fixed',bottom:8,right:8,zIndex:9998,
       background:'white',border:'2px solid #cbd5e1',borderRadius:8,
       padding:8,fontSize:11,fontFamily:'system-ui',
-      boxShadow:'0 4px 12px rgba(0,0,0,0.1)',minWidth:160}}>
+      boxShadow:'0 4px 12px rgba(0,0,0,0.1)',minWidth:200}}>
       <div style={{display:'flex',justifyContent:'space-between',marginBottom:6,fontFamily:'system-ui'}}>
-        <strong>폰트 진단</strong>
+        <strong>폰트 로딩 상태</strong>
         <button onClick={() => setShow(false)} style={{border:'none',background:'none',cursor:'pointer',fontFamily:'system-ui'}}>✕</button>
       </div>
       {Object.entries(loaded).map(([name, ok]) => (
         <div key={name} style={{
-          display:'flex',justifyContent:'space-between',marginBottom:3,
+          display:'flex',justifyContent:'space-between',marginBottom:4,
           fontFamily:'system-ui'
         }}>
-          <span style={{fontFamily:`"${name}", system-ui`,fontWeight:'bold'}}>가나다 {name}</span>
-          <span style={{color: ok ? '#16a34a' : '#dc2626',fontFamily:'system-ui'}}>{ok ? '✓' : '✗'}</span>
+          <span style={{fontFamily:`"${name}", system-ui`,fontSize:14}}>가나다 ({name})</span>
+          <span style={{color: ok ? '#16a34a' : '#dc2626',fontFamily:'system-ui',fontSize:14}}>{ok ? '✓ 로딩됨' : '✗ 실패'}</span>
         </div>
       ))}
+      <div style={{marginTop:8,fontSize:10,color:'#94a3b8',fontFamily:'system-ui'}}>
+        ✗가 보이면 인터넷/방화벽 문제
+      </div>
     </div>
   );
 };
