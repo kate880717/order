@@ -562,62 +562,126 @@ const HighlightedText = ({text, activeIndex, className}) => {
   );
 };
 
-/* ── 별점 평가 ── */
-const StarRating = ({rating, setRating, size='3rem'}) => {
+/* ── 둥글둥글 별점 평가 ── */
+const RoundStar = ({filled, size}) => (
+  <svg width={size} height={size} viewBox="0 0 100 100" style={{filter: filled ? 'drop-shadow(0 4px 8px rgba(245,158,11,0.4))' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'}}>
+    <defs>
+      <radialGradient id={`star-grad-${filled}`} cx="35%" cy="35%">
+        <stop offset="0%" stopColor={filled ? "#fef3c7" : "#f1f5f9"}/>
+        <stop offset="50%" stopColor={filled ? "#fbbf24" : "#e2e8f0"}/>
+        <stop offset="100%" stopColor={filled ? "#f59e0b" : "#cbd5e1"}/>
+      </radialGradient>
+    </defs>
+    {/* 둥글둥글한 별 모양 (꼭지점이 둥근 별) */}
+    <path 
+      d="M50,10 C52,10 53,11 54,13 L60,28 C61,30 63,31 65,31 L82,33 C85,33 87,36 85,38 L72,50 C70,52 70,54 70,56 L74,73 C75,76 72,78 70,77 L54,69 C52,68 48,68 46,69 L30,77 C28,78 25,76 26,73 L30,56 C30,54 30,52 28,50 L15,38 C13,36 15,33 18,33 L35,31 C37,31 39,30 40,28 L46,13 C47,11 48,10 50,10 Z"
+      fill={`url(#star-grad-${filled})`}
+      stroke={filled ? "#d97706" : "#94a3b8"}
+      strokeWidth="2"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const StarRating = ({rating, setRating, size=70}) => {
   return (
-    <div className="flex justify-center gap-2">
+    <div className="flex justify-center gap-3" style={{padding:'10px 0'}}>
       {[1,2,3,4,5].map(s => (
         <button key={s} onClick={() => setRating(s)} 
           className="transition-all active:scale-90 hover:scale-110"
-          style={{fontSize: size, lineHeight:1, background:'none', border:'none', cursor:'pointer'}}>
-          {s <= rating ? '⭐' : '☆'}
+          style={{background:'none', border:'none', cursor:'pointer', padding: '4px'}}>
+          <RoundStar filled={s <= rating} size={size}/>
         </button>
       ))}
     </div>
   );
 };
 
-/* ── 튜토리얼 팝업 ── */
+/* ── 튜토리얼: 한 페이지씩 넘기는 동화책 형식 ── */
 const TutorialPopup = ({onClose}) => {
+  const [page, setPage] = useState(0);
+  const pages = [
+    {
+      emoji: '🃏',
+      title: '카드를 끌어요',
+      desc: '문제 카드를 빈칸으로\n쏙 옮겨주세요!',
+      bg: '#dbeafe',
+      border: '#60a5fa'
+    },
+    {
+      emoji: '✅',
+      title: '정답 확인!',
+      desc: '순서가 맞으면\n폭죽이 팡!',
+      bg: '#dcfce7',
+      border: '#4ade80'
+    },
+    {
+      emoji: '🎙️',
+      title: '내 입으로 말해요',
+      desc: '배운 내용을\n친구에게 설명해요',
+      bg: '#fed7aa',
+      border: '#fb923c'
+    },
+    {
+      emoji: '🏆',
+      title: '칭찬 받기!',
+      desc: '잘하면 별과 스티커를\n받을 수 있어요',
+      bg: '#fce7f3',
+      border: '#f472b6'
+    }
+  ];
+  const cur = pages[page];
+  const isLast = page === pages.length - 1;
+  
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem'}}>
-      <div className="bg-white rounded-3xl shadow-2xl border-8 border-yellow-300 scrollable" style={{maxWidth:'900px',width:'100%',maxHeight:'92vh',padding:'2rem'}}>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-4xl font-black text-yellow-700 flex items-center gap-3"><span>📖</span> 사용 설명서</h2>
-          <button onClick={onClose} className="w-12 h-12 bg-slate-200 hover:bg-slate-300 rounded-full text-2xl font-black">✕</button>
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:'1rem'}}>
+      <div className="bg-white rounded-3xl shadow-2xl border-8 overflow-hidden flex flex-col" 
+        style={{borderColor: cur.border, maxWidth:'620px', width:'100%'}}>
+        
+        {/* 메인 컨텐츠 */}
+        <div className="p-10 flex flex-col items-center text-center" style={{background: cur.bg, minHeight: '420px'}}>
+          <div className="text-9xl mb-6 sticker-pop" key={page} style={{filter:'drop-shadow(0 8px 16px rgba(0,0,0,0.15))'}}>
+            {cur.emoji}
+          </div>
+          <h2 className="text-5xl text-slate-800 mb-4">{cur.title}</h2>
+          <p className="text-2xl text-slate-700 word-keep" style={{lineHeight:'1.5', whiteSpace:'pre-line'}}>{cur.desc}</p>
         </div>
-        <div className="space-y-4 text-slate-700">
-          <div className="bg-green-50 p-4 rounded-2xl border-4 border-green-200">
-            <h3 className="text-2xl font-black text-green-700 mb-2">1️⃣ 개념 알아보기</h3>
-            <p className="text-xl font-bold leading-relaxed word-keep">사건의 순서를 그림과 함께 살펴봐요. <span className="bg-yellow-200 px-2 rounded">🙋 도움받기</span> 버튼을 누르면 선생님이 읽어줘요.</p>
-          </div>
-          <div className="bg-blue-50 p-4 rounded-2xl border-4 border-blue-200">
-            <h3 className="text-2xl font-black text-blue-700 mb-2">2️⃣ 연습 문제 (힌트 모드)</h3>
-            <p className="text-xl font-bold leading-relaxed word-keep">
-              처음과 끝 카드는 <strong className="text-blue-600">미리 채워져 있어요</strong>! 
-              가운데 카드만 옮겨서 순서를 맞춰봐요.
-            </p>
-          </div>
-          <div className="bg-purple-50 p-4 rounded-2xl border-4 border-purple-200">
-            <h3 className="text-2xl font-black text-purple-700 mb-2">3️⃣ 본 문제 풀기</h3>
-            <p className="text-xl font-bold leading-relaxed word-keep">
-              <strong className="text-orange-600">➡️ 순서형</strong>은 처음→끝 순서대로,<br/>
-              <strong className="text-purple-600">🔄 순환형</strong>은 원형으로 어느 위치든 OK!<br/>
-              틀리면 <span className="text-red-500">빨간색</span>으로 어디가 틀렸는지 알려줘요.
-            </p>
-          </div>
-          <div className="bg-orange-50 p-4 rounded-2xl border-4 border-orange-200">
-            <h3 className="text-2xl font-black text-orange-700 mb-2">4️⃣ 배움 정리하기 (5문제마다)</h3>
-            <p className="text-xl font-bold leading-relaxed word-keep">방금 푼 문제 중에서 <strong>2개를 골라서</strong> 친구에게 설명하듯 녹음해요. 키보드로 입력해도 돼요!</p>
-          </div>
-          <div className="bg-pink-50 p-4 rounded-2xl border-4 border-pink-200">
-            <h3 className="text-2xl font-black text-pink-700 mb-2">5️⃣ 자기 평가</h3>
-            <p className="text-xl font-bold leading-relaxed word-keep">녹음을 들어보고 ⭐별점으로 평가해요. 별 3개 이하면 한 번 더 도전해 봐요!</p>
-          </div>
+        
+        {/* 진행 점 */}
+        <div className="flex justify-center gap-2 py-4">
+          {pages.map((_, i) => (
+            <div key={i} 
+              className="rounded-full transition-all"
+              style={{
+                width: i === page ? '32px' : '12px',
+                height: '12px',
+                background: i === page ? cur.border : '#e2e8f0'
+              }}/>
+          ))}
         </div>
-        <button onClick={onClose} className="w-full mt-5 py-5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl font-black text-2xl shadow-lg active:scale-95 transition">
-          이해했어요! 시작하기 ▶
-        </button>
+        
+        {/* 버튼 */}
+        <div className="flex gap-3 px-6 pb-6">
+          {page > 0 && (
+            <button onClick={() => setPage(page-1)}
+              className="flex-1 py-5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-3xl text-2xl active:scale-95">
+              ← 뒤로
+            </button>
+          )}
+          {!isLast ? (
+            <button onClick={() => setPage(page+1)}
+              className="flex-[2] py-5 text-white rounded-3xl text-2xl shadow-lg active:scale-95"
+              style={{background: cur.border}}>
+              다음 →
+            </button>
+          ) : (
+            <button onClick={onClose}
+              className="flex-[2] py-5 text-white rounded-3xl text-2xl shadow-lg active:scale-95"
+              style={{background: 'linear-gradient(135deg, #22c55e, #16a34a)'}}>
+              🚀 시작하기!
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -864,17 +928,77 @@ const App = () => {
     setWrongIndices([]);
   };
 
-  const handleDragStart = (e, idx) => {
-    setDraggedIndex(idx);
-    if(e.dataTransfer){ e.dataTransfer.effectAllowed="move"; e.dataTransfer.setData("text/plain",""); }
+  // === 드래그 시스템 ===
+  // source: { type: 'pool', cardId } | { type: 'slot', index }
+  const [dragSource, setDragSource] = useState(null);
+  
+  const handlePoolDragStart = (e, card) => {
+    setDragSource({ type: 'pool', cardId: card.id });
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', card.id);
+    }
   };
-  const handleDragOver = (e, idx) => { e.preventDefault(); if(dragOverIndex!==idx) setDragOverIndex(idx); };
+  
+  const handleSlotDragStart = (e, idx) => {
+    if (!slots[idx]) return;
+    setDragSource({ type: 'slot', index: idx });
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', String(idx));
+    }
+  };
+  
+  const handleDragOver = (e, idx) => { 
+    e.preventDefault(); 
+    if (dragOverIndex !== idx) setDragOverIndex(idx); 
+  };
   const handleDragLeave = () => setDragOverIndex(null);
-  const handleDrop = (e, dropIdx) => {
-    e.preventDefault(); setDragOverIndex(null);
-    if(draggedIndex===null||draggedIndex===dropIdx) return;
-    const ns = [...slots]; const tmp=ns[draggedIndex]; ns[draggedIndex]=ns[dropIdx]; ns[dropIdx]=tmp;
-    setSlots(ns); setDraggedIndex(null);
+  
+  const handleSlotDrop = (e, dropIdx) => {
+    e.preventDefault();
+    setDragOverIndex(null);
+    if (!dragSource) return;
+    
+    setWrongIndices([]);
+    
+    if (dragSource.type === 'pool') {
+      // 카드풀 → 슬롯
+      const card = pool.find(c => c.id === dragSource.cardId);
+      if (!card) { setDragSource(null); return; }
+      const newSlots = [...slots];
+      const newPool = pool.filter(c => c.id !== card.id);
+      // 이미 그 슬롯에 카드가 있으면 풀로 되돌림
+      if (newSlots[dropIdx]) {
+        newPool.push(newSlots[dropIdx]);
+      }
+      newSlots[dropIdx] = card;
+      setSlots(newSlots);
+      setPool(newPool);
+      playPop(soundOn);
+    } else if (dragSource.type === 'slot') {
+      // 슬롯 ↔ 슬롯 교환
+      if (dragSource.index === dropIdx) { setDragSource(null); return; }
+      const newSlots = [...slots];
+      const tmp = newSlots[dragSource.index];
+      newSlots[dragSource.index] = newSlots[dropIdx];
+      newSlots[dropIdx] = tmp;
+      setSlots(newSlots);
+    }
+    setDragSource(null);
+  };
+  
+  // 카드풀에 드롭 (슬롯에서 빼기)
+  const handlePoolDrop = (e) => {
+    e.preventDefault();
+    if (!dragSource || dragSource.type !== 'slot') { setDragSource(null); return; }
+    const card = slots[dragSource.index];
+    if (!card) { setDragSource(null); return; }
+    const newSlots = [...slots];
+    newSlots[dragSource.index] = null;
+    setSlots(newSlots);
+    setPool([...pool, card]);
+    setDragSource(null);
     setWrongIndices([]);
   };
 
@@ -1033,11 +1157,18 @@ const App = () => {
     }
   };
 
+  // 토스트 알림
+  const [toast, setToast] = useState(null);
+  const showToast = (msg, duration=2200) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), duration);
+  };
+
   /* ── 자기평가 후 처리 ── */
   const handleSelfEvaluate = (decision) => {
     console.log('[evaluate] decision=', decision, 'rating=', selfRating);
     
-    // 1) "다시 녹음" 버튼 누름
+    // "다시 녹음" 버튼
     if (decision === 'redo') {
       setRecognizedText('');
       setInterimText('');
@@ -1049,36 +1180,35 @@ const App = () => {
       return;
     }
     
-    // 2) "만족! 칭찬 받으러 가기" 버튼 누름 = 'submit'
-    
-    // 별점 미선택
+    // 별점 미선택 → 토스트로 안내
     if (selfRating === 0) {
+      showToast("⭐ 별점을 매겨볼까요?");
       speak("내 설명에 별점을 매겨볼까요?", soundOn);
-      alert("⭐ 내 설명에 별점을 매겨볼까요? (1~5개)");
       return;
     }
     
-    // 별 3개 이하면 무조건 다시 (요청사항)
+    // 별 1-3개 → 자동으로 다시 녹음 (alert 없이)
     if (selfRating <= 3) {
+      showToast("💪 한 번 더 도전해 봐요!");
       speak("좋아요! 한 번 더 도전해 볼까요?", soundOn);
-      alert("💪 한 번 더 도전해 볼까요?\n별 3개 이하일 때는 다시 녹음해 봐요!");
-      setRecognizedText('');
-      setInterimText('');
-      setKeyboardText('');
-      setAudioBlob(null);
-      setAudioBase64(null);
-      setSelfRating(0);
-      setPhase("recording");
+      setTimeout(() => {
+        setRecognizedText('');
+        setInterimText('');
+        setKeyboardText('');
+        setAudioBlob(null);
+        setAudioBase64(null);
+        setSelfRating(0);
+        setPhase("recording");
+      }, 800);
       return;
     }
     
-    // 4-5점 → 통과
+    // 별 4-5개 → 칭찬 받기
     fireSticker();
     fireConfetti();
     playChime(soundOn);
     speak("멋진 설명이었어요! 칭찬 스티커를 받으세요!", soundOn);
     
-    // 결과 누적
     const reflectionData = {
       round: reflectionRound + 1,
       selectedQuestions: selectedCardSets.map(q => q.title),
@@ -1088,7 +1218,6 @@ const App = () => {
       usedKeyboard: useKeyboard
     };
     setAllReflections(prev => [...prev, reflectionData]);
-    
     setPhase("sticker_reward");
   };
 
@@ -1146,24 +1275,36 @@ const App = () => {
     );
 
     if(phase==="login") return (
-      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #d1fae5, #a7f3d0)'}}>
+      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #d1fae5, #a7f3d0, #fef3c7)'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="flex flex-row gap-10 w-full max-w-5xl items-center">
+        <div className="flex flex-row gap-12 w-full max-w-6xl items-center">
           <div className="flex-1 flex flex-col items-center text-center">
-            <div className="text-9xl mb-6" style={{filter:'drop-shadow(0 6px 12px rgba(0,0,0,0.15))'}}>📖</div>
-            <h1 className="text-7xl font-black text-green-700 mb-4 drop-shadow-md">순서대로 말해요!</h1>
-            <p className="text-3xl text-slate-600 font-black word-keep">내 이름을 선택하고<br/>재미있는 문제를 풀어봐요</p>
+            <div className="text-9xl mb-6 float-up" style={{filter:'drop-shadow(0 8px 16px rgba(0,0,0,0.2))'}}>📚</div>
+            <h1 className="font-black text-green-700 mb-5 nowrap" style={{
+              fontSize: '5.5rem',
+              lineHeight: '1',
+              textShadow: '0 4px 12px rgba(34,197,94,0.25)',
+              letterSpacing: '-0.04em'
+            }}>순서대로 말해요!</h1>
+            <p className="text-3xl text-slate-600 word-keep" style={{lineHeight: '1.5'}}>
+              ✨ 그림 카드를 순서대로 놓으며<br/>
+              사건의 흐름을 배워봐요!
+            </p>
           </div>
-          <div className="flex-1 bg-white p-10 rounded-3xl shadow-2xl border-8 border-green-200">
-            <p className="text-2xl font-black text-slate-500 mb-4">이름을 선택해요 👇</p>
-            <select className="w-full text-3xl p-5 bg-green-50 border-4 border-green-300 rounded-2xl mb-6 font-black text-slate-700 focus:outline-none focus:border-green-500" 
+          <div className="flex-1 bg-white p-10 rounded-3xl shadow-2xl border-8 border-green-200" style={{boxShadow:'0 20px 50px rgba(34,197,94,0.2)'}}>
+            <p className="text-2xl text-slate-500 mb-4 flex items-center gap-2">
+              <span className="text-3xl">👇</span> 내 이름을 골라요
+            </p>
+            <select className="w-full text-3xl p-5 bg-green-50 border-4 border-green-300 rounded-2xl mb-6 text-slate-700 focus:outline-none focus:border-green-500 cursor-pointer"
+              style={{fontFamily: "'Jua', sans-serif"}}
               value={selectedStudent} 
               onChange={e=>setSelectedStudent(e.target.value)}>
               {students.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <button onClick={() => setPhase("mic_request")} 
-              className="w-full py-6 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-black text-3xl shadow-xl active:scale-95 transition">
-              시작하기 ▶
+              className="w-full py-6 text-white rounded-3xl text-3xl shadow-xl active:scale-95 transition-all hover:scale-105"
+              style={{background:'linear-gradient(135deg, #22c55e, #16a34a)', boxShadow:'0 10px 25px rgba(34,197,94,0.4)'}}>
+              🚀 시작하기
             </button>
           </div>
         </div>
@@ -1171,55 +1312,45 @@ const App = () => {
     );
 
     if(phase==="mic_request") return (
-      <div className="flex items-center justify-center p-10 w-full h-full bg-indigo-50">
+      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #e0e7ff, #c7d2fe)'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="bg-white p-10 rounded-3xl shadow-2xl border-8 border-indigo-200 flex flex-row gap-10 items-center max-w-4xl w-full">
-          <div className="flex-shrink-0 flex flex-col items-center">
-            <div className="text-9xl mb-4 animate-bounce">🎤</div>
-            <h2 className="text-3xl text-indigo-600 font-black text-center">친구에게<br/>설명해요</h2>
-          </div>
-          <div className="flex-1">
-            <div className="bg-indigo-100 p-6 rounded-2xl border-4 border-indigo-200 mb-6">
-              <p className="text-3xl leading-relaxed text-slate-700 font-black break-keep">
-                활동 중간중간에 배운 내용을<br/>설명하는 시간이 있어요!<br/>
-                <span className="text-indigo-600">마이크를 한 번만 허용</span>해주세요.
-                <br/><span className="text-xl text-slate-500">(다시 묻지 않아요)</span>
-              </p>
-            </div>
-            <button onClick={requestMicAccess} 
-              className="w-full bg-indigo-500 text-white text-3xl py-6 rounded-2xl shadow-xl font-black active:scale-95 transition">
-              🎙️ 마이크 허용하기
-            </button>
-          </div>
+        <div className="bg-white p-10 rounded-3xl shadow-2xl border-8 border-indigo-200 max-w-2xl w-full text-center">
+          <div className="text-9xl mb-6 float-up">🎤</div>
+          <h2 className="text-5xl text-indigo-600 mb-4">마이크를 켜요</h2>
+          <p className="text-2xl text-slate-600 word-keep mb-8" style={{lineHeight:'1.5'}}>
+            내 목소리로<br/>
+            이야기를 들려주려면<br/>
+            <span className="text-indigo-600">마이크가 필요해요</span>
+          </p>
+          <button onClick={requestMicAccess} 
+            className="w-full py-6 text-white rounded-3xl text-3xl shadow-xl active:scale-95 transition"
+            style={{background:'linear-gradient(135deg, #6366f1, #4f46e5)'}}>
+            🎙️ 마이크 켜기
+          </button>
         </div>
       </div>
     );
 
     if(phase==="count_select") return (
-      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #d1fae5, #a7f3d0)'}}>
+      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #d1fae5, #a7f3d0, #fef3c7)'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="bg-white p-10 rounded-3xl shadow-2xl max-w-4xl w-full border-8 border-green-200 text-center">
-          <h2 className="text-5xl font-black text-slate-800 mb-3 word-keep">몇 문제를 풀어볼까요?</h2>
-          <p className="text-2xl text-green-600 font-black mb-3">준비된 문제: {allQuestions.length}개</p>
-          <p className="text-xl text-slate-500 font-bold mb-8">5문제마다 배운 내용을 설명하는 시간이 있어요 🎙️</p>
+          <h2 className="text-5xl text-slate-800 mb-8 word-keep">몇 문제 풀어볼까요?</h2>
           <div className="grid grid-cols-3 gap-6">
             <button onClick={()=>startGame(3)} 
-              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl font-black text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
+              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
               <span className="text-7xl">🌱</span>
               <span>3문제</span>
-              <span className="text-base text-slate-500 font-bold">짧게 (녹음 1번)</span>
             </button>
             <button onClick={()=>startGame(5)} 
-              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl font-black text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
+              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
               <span className="text-7xl">🌿</span>
               <span>5문제</span>
-              <span className="text-base text-slate-500 font-bold">보통 (녹음 1번)</span>
             </button>
             <button onClick={()=>startGame(10)} 
-              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl font-black text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
+              className="py-10 bg-green-50 border-8 border-green-200 hover:border-green-500 rounded-3xl text-3xl text-green-700 shadow-md active:scale-95 transition flex flex-col items-center gap-3">
               <span className="text-7xl">🌳</span>
               <span>10문제</span>
-              <span className="text-base text-slate-500 font-bold">길게 (녹음 2번)</span>
             </button>
           </div>
         </div>
@@ -1293,15 +1424,15 @@ const App = () => {
           {/* 헤더 */}
           <div className="w-full max-w-6xl mx-auto bg-white px-5 py-2 rounded-2xl shadow-md border-4 border-green-200 flex items-center justify-between flex-shrink-0 mb-2">
             <div className="flex items-center gap-2">
-              <span className={`px-3 py-1 rounded-full font-black text-sm ${practiceMode ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+              <span className={`px-3 py-1 rounded-full text-sm ${practiceMode ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                 {practiceMode ? '🌟 연습 (힌트 있음)' : '📝 본 문제'}
               </span>
-              <span className={`px-2 py-1 rounded-full font-black text-xs ${isCyclic ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>
+              <span className={`px-2 py-1 rounded-full text-xs ${isCyclic ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`}>
                 {isCyclic ? '🔄 순환형' : '➡️ 순서형'}
               </span>
-              <span className="font-black text-slate-500 text-base">{qIndex+1}/{activeQuestions.length}</span>
+              <span className="text-slate-500 text-base">{qIndex+1}/{activeQuestions.length}</span>
             </div>
-            <h2 className="text-2xl font-black text-slate-800">{currentQ.title}</h2>
+            <h2 className="text-2xl text-slate-800">{currentQ.title}</h2>
             <button onClick={() => {
               setHelpUsedCurrent(true);
               setHelpUsedTotal(h => h+1);
@@ -1318,34 +1449,28 @@ const App = () => {
                 } else { speak(text, true, {rate:0.85}); }
               };
               helper(currentQ.concept);
-            }} className="px-3 py-2 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-xl font-black text-sm shadow-md border-4 border-yellow-500 active:scale-95 flex items-center gap-1">
+            }} className="px-3 py-2 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-2xl text-sm shadow-md border-4 border-yellow-500 active:scale-95 flex items-center gap-1">
               <span className="text-xl">🙋</span> 도움
             </button>
           </div>
 
           {/* 안내 메시지 */}
-          {practiceMode && (
-            <div className="w-full max-w-6xl mx-auto bg-blue-50 border-4 border-blue-200 rounded-xl px-4 py-2 mb-2 flex-shrink-0">
-              <p className="text-base font-black text-blue-700 text-center word-keep">
-                💡 처음과 끝은 이미 채워져 있어요. 가운데 카드만 옮겨봐요!
-              </p>
-            </div>
-          )}
-          {isCyclic && !practiceMode && (
-            <div className="w-full max-w-6xl mx-auto bg-purple-50 border-4 border-purple-200 rounded-xl px-4 py-2 mb-2 flex-shrink-0">
-              <p className="text-base font-black text-purple-700 text-center word-keep">
-                🔄 순환형이에요! 어느 위치에서 시작해도 순서만 맞으면 정답이에요.
-              </p>
-            </div>
-          )}
+          <div className="w-full max-w-6xl mx-auto bg-yellow-50 border-4 border-yellow-300 rounded-2xl px-4 py-2 mb-2 flex-shrink-0 flex items-center justify-center gap-3">
+            <span className="text-2xl hand-drag" style={{display:'inline-block'}}>👆</span>
+            <p className="text-base text-yellow-800 text-center word-keep">
+              <strong className="text-orange-600">카드를 끌어서</strong> 빈칸에 놓아보세요! 
+              {practiceMode && <span className="ml-2">처음과 끝은 미리 채워져 있어요 💡</span>}
+              {isCyclic && !practiceMode && <span className="ml-2">🔄 어느 위치에서 시작해도 OK!</span>}
+            </p>
+          </div>
           
           {/* 메인 영역 */}
           <div className="flex-1 w-full max-w-6xl mx-auto flex flex-row gap-3 overflow-hidden">
             {/* 왼쪽: 슬롯 (직선형 또는 원형) */}
-            <div className="flex-1 bg-white rounded-2xl p-4 border-4 border-slate-100 shadow-md flex flex-col overflow-hidden">
+            <div className="flex-1 bg-white rounded-3xl p-4 border-4 border-slate-100 shadow-md flex flex-col overflow-hidden">
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
-                <h3 className="text-lg font-black text-slate-500">📌 순서대로 채우기</h3>
-                <span className="text-sm font-black text-green-600">{filledCount}/{totalCount}</span>
+                <h3 className="text-lg text-slate-500">📌 순서대로 채우기</h3>
+                <span className="text-sm text-green-600">{filledCount}/{totalCount}</span>
               </div>
               
               {isCyclic ? (
@@ -1356,8 +1481,8 @@ const App = () => {
                     onTapSlot={tapSlotCard}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    onDragStart={handleDragStart}
+                    onDrop={handleSlotDrop}
+                    onDragStart={handleSlotDragStart}
                     dragOverIndex={dragOverIndex}
                     wrongIndices={wrongIndices}
                     size={460}
@@ -1371,21 +1496,23 @@ const App = () => {
                       className={`slot-box ${dragOverIndex===idx ? 'drag-over' : ''} ${wrongIndices.includes(idx) ? 'wrong-slot' : ''}`}
                       onDragOver={(e)=>handleDragOver(e,idx)}
                       onDragLeave={handleDragLeave}
-                      onDrop={(e)=>handleDrop(e,idx)}>
-                      <div className="flex-shrink-0 w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center font-black text-slate-600 mr-4 text-2xl">
+                      onDrop={(e)=>handleSlotDrop(e,idx)}>
+                      <div className="flex-shrink-0 w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 mr-4 text-2xl">
                         {idx+1}
                       </div>
                       {card ? (
                         <div className="drag-card flex-1"
                           draggable="true"
-                          onDragStart={(e)=>handleDragStart(e,idx)}
+                          onDragStart={(e)=>handleSlotDragStart(e,idx)}
                           onClick={()=>tapSlotCard(card,idx)}>
                           <div className="text-5xl mr-4 pointer-events-none">{card.img}</div>
-                          <div className="text-2xl font-black text-slate-700 word-keep pointer-events-none">{card.text}</div>
+                          <div className="text-2xl text-slate-700 word-keep pointer-events-none">{card.text}</div>
                           {wrongIndices.includes(idx) && <div className="ml-auto text-3xl pointer-events-none">❌</div>}
                         </div>
                       ) : (
-                        <div className="flex-1 text-xl font-black text-slate-300">카드를 선택하세요</div>
+                        <div className="flex-1 text-xl text-slate-300 flex items-center gap-2">
+                          <span className="text-3xl">👉</span> 카드를 여기로 끌어오세요
+                        </div>
                       )}
                     </div>
                   ))}
@@ -1393,8 +1520,8 @@ const App = () => {
               )}
               
               {wrongIndices.length > 0 && (
-                <div className="mt-2 p-2 bg-red-50 border-4 border-red-200 rounded-xl flex-shrink-0">
-                  <p className="text-base font-black text-red-600 word-keep">
+                <div className="mt-2 p-2 bg-red-50 border-4 border-red-200 rounded-2xl flex-shrink-0">
+                  <p className="text-base text-red-600 word-keep">
                     🤔 빨간 칸의 카드를 움직여서 순서를 다시 맞춰봐요!
                   </p>
                 </div>
@@ -1403,31 +1530,41 @@ const App = () => {
             
             {/* 오른쪽: 카드풀 + 버튼 */}
             <div className="flex flex-col gap-2 overflow-hidden" style={{width: '320px', flexShrink: 0}}>
-              <div className="flex-1 bg-slate-50 rounded-2xl p-3 border-4 border-slate-200 flex flex-col overflow-hidden">
-                <h3 className="text-lg font-black text-slate-500 mb-2 flex-shrink-0">🃏 문제 카드</h3>
+              <div 
+                className="flex-1 bg-blue-50 rounded-3xl p-3 border-4 border-blue-200 flex flex-col overflow-hidden"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handlePoolDrop}>
+                <h3 className="text-lg text-blue-700 mb-2 flex-shrink-0 flex items-center gap-2">
+                  🃏 카드 보관함
+                  <span className="text-xs text-slate-500 ml-auto">끌어서 놓기 ✋</span>
+                </h3>
                 <div className="flex-1 flex flex-wrap gap-2 content-start justify-center overflow-hidden">
                   {pool.length > 0 ? pool.map(card => (
                     <div key={card.id}
+                      draggable="true"
+                      onDragStart={(e) => handlePoolDragStart(e, card)}
                       onClick={() => tapPoolCard(card)}
-                      className="bg-white rounded-2xl border-4 border-blue-200 cursor-pointer flex flex-col items-center shadow-md active:scale-95 transition"
+                      className={`pool-card flex flex-col items-center ${dragSource && dragSource.type === 'pool' && dragSource.cardId === card.id ? 'dragging' : ''}`}
                       style={{padding:'10px 12px', width:'130px'}}>
                       <div className="text-5xl mb-1">{card.img}</div>
-                      <div className="text-base font-black text-slate-700 text-center word-keep">{card.text}</div>
+                      <div className="text-base text-slate-700 text-center word-keep">{card.text}</div>
                     </div>
                   )) : (
-                    <div className="text-lg font-black text-slate-400 text-center p-4 w-full">
-                      모두 이동했어요!<br/>정답을 확인해보세요. 👇
+                    <div className="text-lg text-slate-400 text-center p-4 w-full">
+                      모두 옮겼어요! 🎉<br/>
+                      <span className="text-sm">정답을 확인해보세요 👇</span>
                     </div>
                   )}
                 </div>
               </div>
               <div className="flex gap-2 flex-shrink-0">
                 <button onClick={retryQuestion} 
-                  className="flex-1 py-4 bg-slate-400 hover:bg-slate-500 text-white rounded-2xl font-black text-lg shadow-lg active:scale-95">
+                  className="flex-1 py-4 bg-slate-400 hover:bg-slate-500 text-white rounded-3xl text-lg shadow-lg active:scale-95">
                   🔄 다시
                 </button>
                 <button onClick={checkAnswer} 
-                  className="flex-[2] py-4 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-black text-lg shadow-lg active:scale-95">
+                  className="flex-[2] py-4 text-white rounded-3xl text-lg shadow-lg active:scale-95"
+                  style={{background: 'linear-gradient(135deg, #22c55e, #16a34a)'}}>
                   정답 확인 ✅
                 </button>
               </div>
@@ -1588,21 +1725,26 @@ const App = () => {
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="w-full max-w-6xl mx-auto flex-1 flex flex-row gap-4 overflow-hidden">
           {/* 왼쪽: 선택한 카드 + 모범 문장 */}
-          <div className="flex-1 bg-white rounded-2xl p-5 border-8 border-orange-200 shadow-md overflow-hidden flex flex-col">
-            <h3 className="text-2xl font-black text-orange-600 mb-3 flex-shrink-0">📚 내가 선택한 이야기</h3>
+          <div className="flex-1 bg-white rounded-3xl p-5 border-8 border-orange-200 shadow-md overflow-hidden flex flex-col">
+            <h3 className="text-2xl text-orange-600 mb-2 flex-shrink-0">📚 내가 선택한 이야기</h3>
+            <p className="text-sm text-slate-500 mb-3 flex-shrink-0 word-keep">
+              💡 어려우면 아래 예시 문장을 읽어도 좋아요!
+            </p>
             <div className="flex-1 flex flex-col gap-3 overflow-hidden scrollable">
               {selectedCardSets.map((q, i) => (
-                <div key={q.id} className="bg-orange-50 rounded-2xl p-4 border-4 border-orange-200">
-                  <h4 className="text-xl font-black text-slate-700 mb-2">{i+1}. {q.title}</h4>
-                  <p className="text-lg font-bold text-slate-600 word-keep mb-2 italic">"{q.concept}"</p>
-                  <div className="flex flex-wrap gap-2 items-center justify-center bg-white p-2 rounded-xl">
+                <div key={q.id} className="bg-orange-50 rounded-3xl p-4 border-4 border-orange-200">
+                  <h4 className="text-xl text-slate-700 mb-2">{i+1}. {q.title}</h4>
+                  <p className="text-lg text-slate-600 word-keep mb-2 italic" style={{lineHeight:'1.5'}}>
+                    💬 "{q.concept}"
+                  </p>
+                  <div className="flex flex-wrap gap-2 items-center justify-center bg-white p-2 rounded-2xl">
                     {q.cards.map((c, ci) => (
                       <React.Fragment key={c.id}>
                         <div className="flex flex-col items-center">
-                          <div className="text-3xl bg-slate-50 rounded-lg p-1 border-2 border-blue-200">{c.img}</div>
-                          <span className="text-xs font-black text-slate-600">{c.text}</span>
+                          <div className="text-3xl bg-slate-50 rounded-2xl p-1 border-2 border-blue-200">{c.img}</div>
+                          <span className="text-xs text-slate-600">{c.text}</span>
                         </div>
-                        {ci < q.cards.length-1 && <span className="text-blue-400 font-black text-xl">→</span>}
+                        {ci < q.cards.length-1 && <span className="text-blue-400 text-xl">→</span>}
                       </React.Fragment>
                     ))}
                   </div>
@@ -1620,8 +1762,8 @@ const App = () => {
                       } else { speak(text, true, {rate:0.85}); }
                     };
                     helper(q.concept);
-                  }} className="mt-2 w-full py-2 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-xl font-black text-base border-4 border-yellow-500 active:scale-95">
-                    🔊 완성 문장 듣기
+                  }} className="mt-2 w-full py-2 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-2xl text-base border-4 border-yellow-500 active:scale-95">
+                    🔊 예시 문장 듣기
                   </button>
                 </div>
               ))}
@@ -1629,18 +1771,19 @@ const App = () => {
           </div>
           
           {/* 오른쪽: 녹음 / 키보드 */}
-          <div className="flex-1 bg-white rounded-2xl p-5 border-8 border-orange-300 shadow-md overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between mb-3 flex-shrink-0">
-              <h3 className="text-2xl font-black text-orange-600">🎙️ 내가 설명하기</h3>
+          <div className="flex-1 bg-white rounded-3xl p-5 border-8 border-orange-300 shadow-md overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between mb-2 flex-shrink-0">
+              <h3 className="text-2xl text-orange-600">🎙️ 내가 설명하기</h3>
               <button onClick={() => setUseKeyboard(!useKeyboard)}
-                className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl font-black text-base border-4 border-purple-300">
+                className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-2xl text-base border-4 border-purple-300">
                 {useKeyboard ? '🎤 음성으로' : '⌨️ 키보드로'}
               </button>
             </div>
             
-            <div className="bg-blue-50 p-3 rounded-xl border-4 border-blue-200 mb-3 flex-shrink-0">
-              <p className="text-lg font-black text-blue-700 word-keep">
-                💡 두 이야기를 친구에게 설명하듯 말해보세요!
+            <div className="bg-blue-50 p-3 rounded-2xl border-4 border-blue-200 mb-3 flex-shrink-0">
+              <p className="text-base text-blue-700 word-keep" style={{lineHeight:'1.5'}}>
+                💡 <strong>이렇게 말해보세요:</strong><br/>
+                "{selectedCardSets[0]?.concept}" 그리고 "{selectedCardSets[1]?.concept}"
               </p>
             </div>
             
@@ -1648,9 +1791,9 @@ const App = () => {
               <textarea
                 value={keyboardText}
                 onChange={(e) => setKeyboardText(e.target.value)}
-                placeholder="여기에 입력해보세요. 예) 개구리는 알에서 깨어나서 올챙이가 되고 개구리가 됩니다..."
-                className="flex-1 w-full p-4 text-xl font-bold text-slate-700 bg-purple-50 border-4 border-purple-200 rounded-2xl resize-none focus:outline-none focus:border-purple-500"
-                style={{minHeight:'200px'}}
+                placeholder="여기에 입력해보세요. 예시 문장을 그대로 써도 좋아요! 😊"
+                className="flex-1 w-full p-4 text-xl text-slate-700 bg-purple-50 border-4 border-purple-200 rounded-2xl resize-none focus:outline-none focus:border-purple-500"
+                style={{minHeight:'200px', fontFamily: "'Jua', sans-serif"}}
               />
             ) : (
               <>
@@ -1658,24 +1801,24 @@ const App = () => {
                 <div className="flex-shrink-0 mb-3">
                   {!isRecording && !audioBlob && (
                     <button onClick={handleStartRecording} 
-                      className="w-full bg-slate-100 border-8 border-slate-300 py-6 rounded-2xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-slate-500">
+                      className="w-full bg-slate-100 border-8 border-slate-300 py-6 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-slate-500 hover:border-orange-300 hover:text-orange-500">
                       <span className="text-5xl">🎤</span>
-                      <span className="text-2xl font-black">녹음 시작하기</span>
+                      <span className="text-2xl">녹음 시작하기</span>
                     </button>
                   )}
                   {isRecording && (
                     <button onClick={handleStopRecording} 
-                      className="w-full bg-red-100 border-8 border-red-500 py-6 rounded-2xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-red-600 recording-pulse">
+                      className="w-full bg-red-100 border-8 border-red-500 py-6 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-red-600 recording-pulse">
                       <span className="text-5xl">⏹️</span>
-                      <span className="text-2xl font-black">녹음 끝내기</span>
+                      <span className="text-2xl">녹음 끝내기</span>
                     </button>
                   )}
                 </div>
                 
                 {/* 실시간 텍스트 */}
                 <div className="flex-1 bg-slate-50 p-4 rounded-2xl border-4 border-slate-200 overflow-y-auto" style={{minHeight:'150px'}}>
-                  <p className="text-base font-black text-slate-500 mb-2">📝 실시간 받아쓰기</p>
-                  <p className="text-xl font-bold text-slate-700 leading-relaxed word-keep">
+                  <p className="text-base text-slate-500 mb-2">📝 실시간 받아쓰기</p>
+                  <p className="text-xl text-slate-700 word-keep" style={{lineHeight:'1.6'}}>
                     {recognizedText || <span className="text-slate-400">{isRecording ? '말해보세요...' : '녹음 시작 버튼을 누르세요'}</span>}
                     {interimText && <span className="text-orange-400">{interimText}</span>}
                   </p>
@@ -1688,13 +1831,13 @@ const App = () => {
         {/* 하단 버튼 */}
         <div className="w-full max-w-6xl mx-auto mt-3 flex gap-3 flex-shrink-0">
           <button onClick={() => setPhase("reflection_select")}
-            className="flex-1 py-4 bg-slate-300 hover:bg-slate-400 text-slate-700 rounded-2xl font-black text-xl shadow-lg active:scale-95">
+            className="flex-1 py-4 bg-slate-300 hover:bg-slate-400 text-slate-700 rounded-3xl text-xl shadow-lg active:scale-95">
             ← 카드 다시 고르기
           </button>
-          {/* 오디오가 있거나 키보드 입력이 있으면 (한 글자라도) 진행 가능 */}
           {(audioBlob || (useKeyboard && keyboardText.trim().length > 0)) && (
             <button onClick={() => setPhase("reflection_listen")}
-              className="flex-[2] py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95">
+              className="flex-[2] py-4 text-white rounded-3xl text-xl shadow-lg active:scale-95"
+              style={{background:'linear-gradient(135deg, #f97316, #ea580c)'}}>
               들어보기 / 자기평가 →
             </button>
           )}
@@ -1707,40 +1850,39 @@ const App = () => {
       <div className="flex flex-col p-6 w-full h-full bg-orange-50 overflow-hidden">
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col overflow-hidden gap-4">
-          <h2 className="text-4xl font-black text-orange-600 text-center flex-shrink-0">🎧 내 설명을 들어보고 평가해요</h2>
+          <h2 className="text-4xl text-orange-600 text-center flex-shrink-0">🎧 내 설명을 들어보고 평가해요</h2>
           
-          <div className="bg-white rounded-2xl p-5 border-8 border-orange-200 shadow-md flex-shrink-0">
-            <h3 className="text-2xl font-black text-slate-700 mb-3">🎙️ 내 설명</h3>
+          <div className="bg-white rounded-3xl p-5 border-8 border-orange-200 shadow-md flex-shrink-0">
+            <h3 className="text-2xl text-slate-700 mb-3">🎙️ 내 설명</h3>
             {useKeyboard ? (
               <div className="bg-purple-50 p-4 rounded-2xl border-4 border-purple-200">
-                <p className="text-xl font-bold text-slate-700 word-keep leading-relaxed">{keyboardText || '(입력 내용 없음)'}</p>
+                <p className="text-xl text-slate-700 word-keep" style={{lineHeight:'1.6'}}>{keyboardText || '(입력 내용 없음)'}</p>
               </div>
             ) : (
               <>
                 {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls className="w-full mb-3 rounded-full shadow-md"></audio>}
-                <div className="bg-slate-50 p-3 rounded-xl border-4 border-slate-200">
-                  <p className="text-base font-black text-slate-500 mb-1">📝 받아쓰기 결과</p>
-                  <p className="text-lg font-bold text-slate-700 word-keep leading-relaxed">{recognizedText || '(받아쓰기 결과 없음)'}</p>
+                <div className="bg-slate-50 p-3 rounded-2xl border-4 border-slate-200">
+                  <p className="text-base text-slate-500 mb-1">📝 받아쓰기 결과</p>
+                  <p className="text-lg text-slate-700 word-keep" style={{lineHeight:'1.6'}}>{recognizedText || '(받아쓰기 결과 없음)'}</p>
                 </div>
               </>
             )}
           </div>
           
-          <div className="bg-white rounded-2xl p-5 border-8 border-yellow-300 shadow-md flex-1 flex flex-col justify-center">
-            <h3 className="text-3xl font-black text-yellow-700 text-center mb-2">⭐ 내 설명에 별점을 줘요</h3>
-            <p className="text-lg font-bold text-slate-500 text-center mb-4 word-keep">
-              나는 얼마나 잘 설명했나요? <br/>
-              <span className="text-orange-500 font-black">(별 3개 이하면 한 번 더 도전!)</span>
+          <div className="bg-white rounded-3xl p-5 border-8 border-yellow-300 shadow-md flex-1 flex flex-col justify-center">
+            <h3 className="text-3xl text-yellow-700 text-center mb-2">⭐ 별점으로 평가해요</h3>
+            <p className="text-lg text-slate-500 text-center mb-3 word-keep">
+              나는 얼마나 잘 설명했나요?
             </p>
-            <StarRating rating={selfRating} setRating={setSelfRating} size="4rem"/>
+            <StarRating rating={selfRating} setRating={setSelfRating} size={70}/>
             {selfRating > 0 && (
-              <p className="text-2xl font-black text-center mt-3" style={{
+              <p className="text-2xl text-center mt-3" style={{
                 color: selfRating <= 3 ? '#ea580c' : '#16a34a'
               }}>
                 {selfRating === 5 && '✨ 정말 멋지게 설명했어요!'}
                 {selfRating === 4 && '😊 잘 설명했어요!'}
-                {selfRating === 3 && '🌟 좋아요! 한 번 더 도전해볼까요?'}
-                {selfRating === 2 && '💪 시도한 것이 멋져요! 한 번 더!'}
+                {selfRating === 3 && '🌟 좋아요! 한 번 더 해볼까요?'}
+                {selfRating === 2 && '💪 시도한 게 멋져요! 한 번 더!'}
                 {selfRating === 1 && '🌱 용기 있게 도전했어요! 한 번 더!'}
               </p>
             )}
@@ -1748,11 +1890,13 @@ const App = () => {
           
           <div className="flex gap-3 flex-shrink-0">
             <button onClick={() => handleSelfEvaluate('redo')}
-              className="flex-1 py-5 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95">
+              className="flex-1 py-5 text-white rounded-3xl text-xl shadow-lg active:scale-95"
+              style={{background:'linear-gradient(135deg, #a855f7, #9333ea)'}}>
               🔄 다시 녹음하기
             </button>
             <button onClick={() => handleSelfEvaluate('submit')}
-              className="flex-[2] py-5 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95">
+              className="flex-[2] py-5 text-white rounded-3xl text-xl shadow-lg active:scale-95"
+              style={{background:'linear-gradient(135deg, #22c55e, #16a34a)'}}>
               ✅ 만족! 칭찬 받으러 가기
             </button>
           </div>
@@ -1762,29 +1906,30 @@ const App = () => {
 
     /* ── 녹음 단계 5: 칭찬 스티커 ── */
     if(phase==="sticker_reward") return (
-      <div className="flex items-center justify-center p-8 w-full h-full bg-pink-50">
+      <div className="flex items-center justify-center p-8 w-full h-full" style={{background:'linear-gradient(135deg, #fce7f3, #fbcfe8, #fef3c7)'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="bg-white rounded-3xl p-10 max-w-4xl w-full shadow-2xl border-8 border-pink-300 text-center">
           <div className="text-9xl mb-4 sticker-pop">🏆</div>
-          <h2 className="text-5xl font-black text-pink-600 mb-4">멋진 설명이었어요!</h2>
-          <p className="text-3xl font-black text-slate-700 word-keep leading-relaxed mb-6">
-            {selectedStudent} 친구가<br/>
-            <span className="text-pink-500">칭찬 스티커</span>를 받았어요!
+          <h2 className="text-5xl text-pink-600 mb-4">멋진 설명이었어요!</h2>
+          <p className="text-3xl text-slate-700 word-keep mb-6" style={{lineHeight:'1.5'}}>
+            <span className="text-pink-500">{selectedStudent}</span> 친구가<br/>
+            <span className="text-pink-500">칭찬 스티커</span>를 받았어요! 🎉
           </p>
           <div className="flex justify-center gap-3 mb-6">
             {[1,2,3,4,5].map(s => (
-              <span key={s} className="text-7xl sticker-pop" style={{animationDelay:`${s*0.1}s`}}>
-                {s <= selfRating ? '⭐' : '☆'}
-              </span>
+              <div key={s} className="sticker-pop" style={{animationDelay:`${s*0.1}s`}}>
+                <RoundStar filled={s <= selfRating} size={70}/>
+              </div>
             ))}
           </div>
-          <div className="bg-pink-50 p-5 rounded-2xl border-4 border-pink-200 mb-6">
-            <p className="text-2xl font-black text-slate-700">
-              자기평가: <span className="text-pink-600">{selfRating}</span>점
+          <div className="bg-pink-50 p-5 rounded-3xl border-4 border-pink-200 mb-6">
+            <p className="text-2xl text-slate-700">
+              자기평가: <span className="text-pink-600">{selfRating}점</span>
             </p>
           </div>
           <button onClick={continueAfterSticker} 
-            className="w-full py-6 bg-pink-500 hover:bg-pink-600 text-white rounded-2xl font-black text-3xl shadow-xl active:scale-95 transition">
+            className="w-full py-6 text-white rounded-3xl text-3xl shadow-xl active:scale-95 transition"
+            style={{background:'linear-gradient(135deg, #ec4899, #db2777)'}}>
             {qIndex+1 < activeQuestions.length ? '다음 문제 풀기 ▶' : '결과 보러 가기 🏆'}
           </button>
         </div>
@@ -1854,6 +1999,7 @@ const App = () => {
         {renderContent()}
       </div>
       {tutorialOpen && <TutorialPopup onClose={() => setTutorialOpen(false)}/>}
+      {toast && <div className="toast">{toast}</div>}
     </>
   );
 };
