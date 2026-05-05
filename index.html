@@ -602,9 +602,11 @@ const App = () => {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaStreamRef.current = stream;
       const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-      recorder.ondataavailable = (e) => { if(e.data.size>0) audioChunksRef.current.push(e.data); };
+      recorder.ondataavailable = (e) => { 
+        if (e.data.size > 0) audioChunksRef.current.push(e.data); 
+      };
       recorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, {type:'audio/webm'});
+        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         setAudioBlob(blob);
         const reader = new FileReader();
         reader.readAsDataURL(blob);
@@ -617,7 +619,9 @@ const App = () => {
       const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SpeechRec) {
         const r = new SpeechRec();
-        r.lang = 'ko-KR'; r.continuous = true; r.interimResults = true;
+        r.lang = 'ko-KR';
+        r.continuous = true;
+        r.interimResults = true;
         r.onresult = (e) => {
           let interim = '', final = '';
           for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -628,16 +632,29 @@ const App = () => {
           setInterimText(interim);
         };
         r.onerror = (e) => console.log('음성인식 오류:', e.error);
+        // 자동 재시작 (긴 녹음 시 끊김 방지)
+        r.onend = () => {
+          // 녹음 중인데 인식이 끝났으면 재시작
+          if (window.__isRecordingActive) {
+            try { r.start(); } catch(e){}
+          }
+        };
         recognitionRef.current = r;
       }
       
-      if(!allQuestions.length){ alert("문제가 없습니다. 구글 시트를 확인해주세요."); return; }
+      if (!allQuestions.length) { 
+        alert("문제가 없습니다. 구글 시트를 확인해주세요."); 
+        return; 
+      }
       setPhase("count_select");
     } catch(err) {
       const ok = confirm("마이크 권한이 거부되었습니다. 녹음 없이 진행할까요?");
       if (ok) {
         setMicGranted(false);
-        if(!allQuestions.length){ alert("문제가 없습니다."); return; }
+        if (!allQuestions.length) { 
+          alert("문제가 없습니다."); 
+          return; 
+        }
         setPhase("count_select");
       }
     }
@@ -828,11 +845,14 @@ const App = () => {
   /* ── 녹음 컨트롤 ── */
   const handleStartRecording = () => {
     audioChunksRef.current = []; 
-    setAudioBlob(null); setAudioBase64(null);
-    setRecognizedText(''); setInterimText('');
+    setAudioBlob(null);
+    setAudioBase64(null);
+    setRecognizedText('');
+    setInterimText('');
     if (mediaRecorder) {
       mediaRecorder.start();
       setIsRecording(true);
+      window.__isRecordingActive = true;
       if (recognitionRef.current) {
         try { recognitionRef.current.start(); } catch(e){}
       }
@@ -840,6 +860,7 @@ const App = () => {
   };
   const handleStopRecording = () => {
     if (mediaRecorder && isRecording) {
+      window.__isRecordingActive = false;
       mediaRecorder.stop();
       setIsRecording(false);
       if (recognitionRef.current) {
@@ -853,24 +874,37 @@ const App = () => {
   const handleSelfEvaluate = (decision) => {
     // decision: 'submit' (만족, 다음으로) | 'redo' (다시 녹음)
     if (decision === 'redo') {
-      setRecognizedText(''); setInterimText(''); setKeyboardText('');
-      setAudioBlob(null); setAudioBase64(null);
+      setRecognizedText('');
+      setInterimText('');
+      setKeyboardText('');
+      setAudioBlob(null);
+      setAudioBase64(null);
       setSelfRating(0);
       setPhase("recording");
       return;
     }
     // 제출
     if (selfRating === 0) {
-      alert("별점으로 자기평가를 해주세요!");
+      // alert 대신 부드러운 안내
+      speak("내 설명에 별점을 매겨볼까요?", soundOn);
+      // 화면에 흔들림 애니메이션 등으로 알릴 수도 있지만 기본 alert 유지하되 메시지 변경
+      alert("⭐ 내 설명에 별점을 매겨볼까요? (1~5개)");
       return;
     }
     if (selfRating <= 3) {
-      // 3개 이하면 무조건 다시
-      alert("별 3개 이하예요! 다시 한 번 녹음해볼까요? 😊");
-      setRecognizedText(''); setInterimText(''); setKeyboardText('');
-      setAudioBlob(null); setAudioBase64(null);
-      setSelfRating(0);
-      setPhase("recording");
+      // 3개 이하면 다시 (격려하는 톤으로)
+      speak("좋아요! 한 번 더 도전해 볼까요?", soundOn);
+      const ok = confirm("💪 한 번 더 도전해 볼까요?\n별 3개 이하일 때는 다시 녹음해 봐요!");
+      if (ok || !ok) {
+        // 학생이 OK든 취소든 결국 다시 가야 함 (룰)
+        setRecognizedText('');
+        setInterimText('');
+        setKeyboardText('');
+        setAudioBlob(null);
+        setAudioBase64(null);
+        setSelfRating(0);
+        setPhase("recording");
+      }
       return;
     }
     // 4-5점 → 칭찬 스티커
@@ -1446,7 +1480,8 @@ const App = () => {
             className="flex-1 py-4 bg-slate-300 hover:bg-slate-400 text-slate-700 rounded-2xl font-black text-xl shadow-lg active:scale-95">
             ← 카드 다시 고르기
           </button>
-          {((audioBlob && !useKeyboard) || (useKeyboard && keyboardText.trim().length > 0)) && (
+          {/* 오디오가 있거나 키보드 입력이 있으면 (한 글자라도) 진행 가능 */}
+          {(audioBlob || (useKeyboard && keyboardText.trim().length > 0)) && (
             <button onClick={() => setPhase("reflection_listen")}
               className="flex-[2] py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-xl shadow-lg active:scale-95">
               들어보기 / 자기평가 →
@@ -1484,18 +1519,18 @@ const App = () => {
             <h3 className="text-3xl font-black text-yellow-700 text-center mb-2">⭐ 내 설명에 별점을 줘요</h3>
             <p className="text-lg font-bold text-slate-500 text-center mb-4 word-keep">
               나는 얼마나 잘 설명했나요? <br/>
-              <span className="text-red-500 font-black">(별 3개 이하면 다시 녹음해요)</span>
+              <span className="text-orange-500 font-black">(별 3개 이하면 한 번 더 도전!)</span>
             </p>
             <StarRating rating={selfRating} setRating={setSelfRating} size="4rem"/>
             {selfRating > 0 && (
               <p className="text-2xl font-black text-center mt-3" style={{
-                color: selfRating <= 3 ? '#ef4444' : '#16a34a'
+                color: selfRating <= 3 ? '#ea580c' : '#16a34a'
               }}>
                 {selfRating === 5 && '✨ 정말 멋지게 설명했어요!'}
                 {selfRating === 4 && '😊 잘 설명했어요!'}
-                {selfRating === 3 && '🤔 조금 더 잘 할 수 있어요. 다시 해볼까요?'}
-                {selfRating === 2 && '💪 다시 도전해 봐요!'}
-                {selfRating === 1 && '💪 다시 한 번 천천히 해봐요!'}
+                {selfRating === 3 && '🌟 좋아요! 한 번 더 도전해볼까요?'}
+                {selfRating === 2 && '💪 시도한 것이 멋져요! 한 번 더!'}
+                {selfRating === 1 && '🌱 용기 있게 도전했어요! 한 번 더!'}
               </p>
             )}
           </div>
