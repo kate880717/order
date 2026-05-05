@@ -2059,7 +2059,62 @@ const App = () => {
       </div>
       {tutorialOpen && <TutorialPopup onClose={() => setTutorialOpen(false)}/>}
       {toast && <div className="toast">{toast}</div>}
+      
+      {/* 폰트 진단 (우측 하단 작게) */}
+      <FontDiagnostic/>
     </>
+  );
+};
+
+/* ── 폰트 로딩 진단 (개발자/관리자용) ── */
+const FontDiagnostic = () => {
+  const [loaded, setLoaded] = useState({});
+  const [show, setShow] = useState(false);
+  
+  useEffect(() => {
+    const fonts = ['Gaegu', 'Jua', 'Hi Melody', 'Gowun Dodum', 'Yeon Sung'];
+    const result = {};
+    if (document.fonts && document.fonts.check) {
+      fonts.forEach(f => {
+        try {
+          result[f] = document.fonts.check(`16px "${f}"`);
+        } catch(e) { result[f] = false; }
+      });
+      setLoaded(result);
+    }
+  }, []);
+  
+  if (!show) {
+    return (
+      <button onClick={() => setShow(true)} 
+        style={{position:'fixed',bottom:8,right:8,zIndex:9998,
+          background:'rgba(255,255,255,0.7)',border:'1px solid #cbd5e1',
+          borderRadius:8,padding:'4px 8px',fontSize:11,cursor:'pointer',
+          fontFamily:'system-ui'}}>
+        🔤
+      </button>
+    );
+  }
+  
+  return (
+    <div style={{position:'fixed',bottom:8,right:8,zIndex:9998,
+      background:'white',border:'2px solid #cbd5e1',borderRadius:8,
+      padding:8,fontSize:11,fontFamily:'system-ui',
+      boxShadow:'0 4px 12px rgba(0,0,0,0.1)',minWidth:160}}>
+      <div style={{display:'flex',justifyContent:'space-between',marginBottom:6,fontFamily:'system-ui'}}>
+        <strong>폰트 진단</strong>
+        <button onClick={() => setShow(false)} style={{border:'none',background:'none',cursor:'pointer',fontFamily:'system-ui'}}>✕</button>
+      </div>
+      {Object.entries(loaded).map(([name, ok]) => (
+        <div key={name} style={{
+          display:'flex',justifyContent:'space-between',marginBottom:3,
+          fontFamily:'system-ui'
+        }}>
+          <span style={{fontFamily:`"${name}", system-ui`,fontWeight:'bold'}}>가나다 {name}</span>
+          <span style={{color: ok ? '#16a34a' : '#dc2626',fontFamily:'system-ui'}}>{ok ? '✓' : '✗'}</span>
+        </div>
+      ))}
+    </div>
   );
 };
 
