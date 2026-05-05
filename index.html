@@ -300,19 +300,34 @@ const fireConfetti = () => {
 
 const fireSticker = () => {
   if (!window.confetti) return;
-  // 별 모양 스티커
-  const star = window.confetti.shapeFromText({ text: '⭐', scalar: 4 });
-  const heart = window.confetti.shapeFromText({ text: '💖', scalar: 4 });
-  const flower = window.confetti.shapeFromText({ text: '🌸', scalar: 4 });
-  window.confetti({
-    particleCount: 30,
-    spread: 100,
-    startVelocity: 35,
-    scalar: 3,
-    shapes: [star, heart, flower],
-    origin: {x:0.5, y:0.5},
-    zIndex: 9999
-  });
+  try {
+    // shapeFromText가 일부 브라우저/버전에서 미지원 → try/catch로 안전 처리
+    if (typeof window.confetti.shapeFromText === 'function') {
+      const star = window.confetti.shapeFromText({ text: '⭐', scalar: 4 });
+      const heart = window.confetti.shapeFromText({ text: '💖', scalar: 4 });
+      const flower = window.confetti.shapeFromText({ text: '🌸', scalar: 4 });
+      window.confetti({
+        particleCount: 30,
+        spread: 100,
+        startVelocity: 35,
+        scalar: 3,
+        shapes: [star, heart, flower],
+        origin: { x: 0.5, y: 0.5 },
+        zIndex: 9999
+      });
+    } else {
+      // 폴백: 일반 confetti
+      window.confetti({
+        particleCount: 80,
+        spread: 120,
+        origin: { x: 0.5, y: 0.5 },
+        zIndex: 9999,
+        colors: ['#fbbf24', '#f87171', '#34d399', '#a78bfa']
+      });
+    }
+  } catch (e) {
+    console.log('스티커 효과 오류 (무시):', e);
+  }
 };
 
 /* ── 수료증 캔버스 ── */
@@ -1182,15 +1197,15 @@ const App = () => {
     
     // 별점 미선택 → 토스트로 안내
     if (selfRating === 0) {
-      showToast("⭐ 별점을 매겨볼까요?");
-      speak("내 설명에 별점을 매겨볼까요?", soundOn);
+      try { showToast("⭐ 별점을 매겨볼까요?"); } catch(e){}
+      try { speak("내 설명에 별점을 매겨볼까요?", soundOn); } catch(e){}
       return;
     }
     
-    // 별 1-3개 → 자동으로 다시 녹음 (alert 없이)
+    // 별 1-3개 → 자동으로 다시 녹음
     if (selfRating <= 3) {
-      showToast("💪 한 번 더 도전해 봐요!");
-      speak("좋아요! 한 번 더 도전해 볼까요?", soundOn);
+      try { showToast("💪 한 번 더 도전해 봐요!"); } catch(e){}
+      try { speak("좋아요! 한 번 더 도전해 볼까요?", soundOn); } catch(e){}
       setTimeout(() => {
         setRecognizedText('');
         setInterimText('');
@@ -1203,12 +1218,10 @@ const App = () => {
       return;
     }
     
-    // 별 4-5개 → 칭찬 받기
-    fireSticker();
-    fireConfetti();
-    playChime(soundOn);
-    speak("멋진 설명이었어요! 칭찬 스티커를 받으세요!", soundOn);
+    // ★★★ 별 4-5개 → 칭찬 받기 (가장 중요한 부분) ★★★
+    // 모든 부수 효과를 try/catch로 감싸서 setPhase가 무조건 실행되게 함
     
+    // 1. 결과 누적 (먼저!)
     const reflectionData = {
       round: reflectionRound + 1,
       selectedQuestions: selectedCardSets.map(q => q.title),
@@ -1218,7 +1231,15 @@ const App = () => {
       usedKeyboard: useKeyboard
     };
     setAllReflections(prev => [...prev, reflectionData]);
+    
+    // 2. 화면 전환 (먼저! 무조건 실행)
     setPhase("sticker_reward");
+    
+    // 3. 효과음/애니메이션 (실패해도 상관없음)
+    try { fireSticker(); } catch(e) { console.log('sticker err:', e); }
+    try { fireConfetti(); } catch(e) { console.log('confetti err:', e); }
+    try { playChime(soundOn); } catch(e) { console.log('chime err:', e); }
+    try { speak("멋진 설명이었어요! 칭찬 스티커를 받으세요!", soundOn); } catch(e) { console.log('speak err:', e); }
   };
 
   const continueAfterSticker = () => {
@@ -1280,30 +1301,51 @@ const App = () => {
         <div className="flex flex-row gap-12 w-full max-w-6xl items-center">
           <div className="flex-1 flex flex-col items-center text-center">
             <div className="text-9xl mb-6 float-up" style={{filter:'drop-shadow(0 8px 16px rgba(0,0,0,0.2))'}}>📚</div>
-            <h1 className="font-black text-green-700 mb-5 nowrap" style={{
-              fontSize: '5.5rem',
-              lineHeight: '1',
+            <h1 className="mb-5 nowrap" style={{
+              fontFamily: "'Jua', sans-serif",
+              fontSize: '5rem',
+              lineHeight: '1.1',
+              color: '#15803d',
               textShadow: '0 4px 12px rgba(34,197,94,0.25)',
-              letterSpacing: '-0.04em'
+              letterSpacing: '-0.02em'
             }}>순서대로 말해요!</h1>
-            <p className="text-3xl text-slate-600 word-keep" style={{lineHeight: '1.5'}}>
+            <p style={{
+              fontFamily: "'Jua', sans-serif",
+              fontSize: '1.75rem',
+              color: '#475569',
+              lineHeight: '1.5',
+              wordBreak: 'keep-all'
+            }}>
               ✨ 그림 카드를 순서대로 놓으며<br/>
               사건의 흐름을 배워봐요!
             </p>
           </div>
           <div className="flex-1 bg-white p-10 rounded-3xl shadow-2xl border-8 border-green-200" style={{boxShadow:'0 20px 50px rgba(34,197,94,0.2)'}}>
-            <p className="text-2xl text-slate-500 mb-4 flex items-center gap-2">
-              <span className="text-3xl">👇</span> 내 이름을 골라요
+            <p style={{
+              fontFamily: "'Jua', sans-serif",
+              fontSize: '1.5rem',
+              color: '#64748b',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              <span style={{fontSize:'1.875rem'}}>👇</span> 내 이름을 골라요
             </p>
-            <select className="w-full text-3xl p-5 bg-green-50 border-4 border-green-300 rounded-2xl mb-6 text-slate-700 focus:outline-none focus:border-green-500 cursor-pointer"
-              style={{fontFamily: "'Jua', sans-serif"}}
+            <select className="w-full p-5 bg-green-50 border-4 border-green-300 rounded-2xl mb-6 text-slate-700 focus:outline-none focus:border-green-500 cursor-pointer"
+              style={{fontFamily: "'Jua', sans-serif", fontSize: '1.875rem'}}
               value={selectedStudent} 
               onChange={e=>setSelectedStudent(e.target.value)}>
-              {students.map(s => <option key={s} value={s}>{s}</option>)}
+              {students.map(s => <option key={s} value={s} style={{fontFamily:"'Jua', sans-serif"}}>{s}</option>)}
             </select>
             <button onClick={() => setPhase("mic_request")} 
-              className="w-full py-6 text-white rounded-3xl text-3xl shadow-xl active:scale-95 transition-all hover:scale-105"
-              style={{background:'linear-gradient(135deg, #22c55e, #16a34a)', boxShadow:'0 10px 25px rgba(34,197,94,0.4)'}}>
+              className="w-full py-6 text-white rounded-3xl shadow-xl active:scale-95 transition-all hover:scale-105"
+              style={{
+                background:'linear-gradient(135deg, #22c55e, #16a34a)', 
+                boxShadow:'0 10px 25px rgba(34,197,94,0.4)',
+                fontFamily: "'Jua', sans-serif",
+                fontSize: '1.875rem'
+              }}>
               🚀 시작하기
             </button>
           </div>
@@ -1724,47 +1766,61 @@ const App = () => {
       <div className="flex flex-col p-4 w-full h-full bg-orange-50 relative">
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="w-full max-w-6xl mx-auto flex-1 flex flex-row gap-4 overflow-hidden">
-          {/* 왼쪽: 선택한 카드 + 모범 문장 */}
+          {/* 왼쪽: 선택한 카드 (그림만! 모범답안은 숨김) */}
           <div className="flex-1 bg-white rounded-3xl p-5 border-8 border-orange-200 shadow-md overflow-hidden flex flex-col">
-            <h3 className="text-2xl text-orange-600 mb-2 flex-shrink-0">📚 내가 선택한 이야기</h3>
-            <p className="text-sm text-slate-500 mb-3 flex-shrink-0 word-keep">
-              💡 어려우면 아래 예시 문장을 읽어도 좋아요!
+            <h3 className="text-2xl text-orange-600 mb-2 flex-shrink-0">📚 내가 고른 이야기</h3>
+            <p className="text-base text-slate-500 mb-3 flex-shrink-0 word-keep">
+              그림을 보면서 <strong className="text-orange-600">내 말로</strong> 설명해 보세요!
             </p>
             <div className="flex-1 flex flex-col gap-3 overflow-hidden scrollable">
               {selectedCardSets.map((q, i) => (
                 <div key={q.id} className="bg-orange-50 rounded-3xl p-4 border-4 border-orange-200">
-                  <h4 className="text-xl text-slate-700 mb-2">{i+1}. {q.title}</h4>
-                  <p className="text-lg text-slate-600 word-keep mb-2 italic" style={{lineHeight:'1.5'}}>
-                    💬 "{q.concept}"
-                  </p>
-                  <div className="flex flex-wrap gap-2 items-center justify-center bg-white p-2 rounded-2xl">
+                  <h4 className="text-2xl text-slate-700 mb-3 flex items-center gap-2">
+                    <span className="bg-orange-300 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg">{i+1}</span>
+                    {q.title}
+                  </h4>
+                  {/* 카드 그림과 키워드만 보여주기 */}
+                  <div className="flex flex-wrap gap-2 items-center justify-center bg-white p-3 rounded-2xl">
                     {q.cards.map((c, ci) => (
                       <React.Fragment key={c.id}>
                         <div className="flex flex-col items-center">
-                          <div className="text-3xl bg-slate-50 rounded-2xl p-1 border-2 border-blue-200">{c.img}</div>
-                          <span className="text-xs text-slate-600">{c.text}</span>
+                          <div className="text-4xl bg-slate-50 rounded-2xl p-2 border-4 border-blue-200" style={{width:'72px',height:'72px',display:'flex',alignItems:'center',justifyContent:'center'}}>{c.img}</div>
+                          <span className="text-sm text-slate-700 mt-1">{c.text}</span>
                         </div>
-                        {ci < q.cards.length-1 && <span className="text-blue-400 text-xl">→</span>}
+                        {ci < q.cards.length-1 && <span className="text-blue-400 text-2xl">→</span>}
                       </React.Fragment>
                     ))}
                   </div>
-                  <button onClick={() => {
-                    const helper = (text) => {
-                      if (!soundOn) {
-                        try {
-                          const u = new SpeechSynthesisUtterance(text);
-                          u.lang='ko-KR'; u.rate=0.85; u.pitch=1.0;
-                          if (!bestVoice) bestVoice = findBestVoice();
-                          if (bestVoice) u.voice = bestVoice;
-                          window.speechSynthesis.cancel();
-                          window.speechSynthesis.speak(u);
-                        } catch(e){}
-                      } else { speak(text, true, {rate:0.85}); }
-                    };
-                    helper(q.concept);
-                  }} className="mt-2 w-full py-2 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-2xl text-base border-4 border-yellow-500 active:scale-95">
-                    🔊 예시 문장 듣기
-                  </button>
+                  {/* 도움이 필요할 때만 예시 보기 */}
+                  <details className="mt-3" style={{cursor:'pointer'}}>
+                    <summary className="text-sm text-slate-500 hover:text-orange-600" style={{listStyle:'none', cursor:'pointer'}}>
+                      <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 hover:bg-yellow-200 rounded-full border-2 border-yellow-300">
+                        🙋 어려우면 누르기
+                      </span>
+                    </summary>
+                    <div className="mt-2 p-3 bg-yellow-50 rounded-2xl border-4 border-yellow-200">
+                      <p className="text-base text-slate-700 word-keep" style={{lineHeight:'1.5'}}>
+                        💡 예시: <span className="italic">"{q.concept}"</span>
+                      </p>
+                      <button onClick={() => {
+                        const helper = (text) => {
+                          if (!soundOn) {
+                            try {
+                              const u = new SpeechSynthesisUtterance(text);
+                              u.lang='ko-KR'; u.rate=0.85; u.pitch=1.0;
+                              if (!bestVoice) bestVoice = findBestVoice();
+                              if (bestVoice) u.voice = bestVoice;
+                              window.speechSynthesis.cancel();
+                              window.speechSynthesis.speak(u);
+                            } catch(e){}
+                          } else { speak(text, true, {rate:0.85}); }
+                        };
+                        helper(q.concept);
+                      }} className="mt-2 px-3 py-1 bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-2xl text-sm border-2 border-yellow-500 active:scale-95">
+                        🔊 들어보기
+                      </button>
+                    </div>
+                  </details>
                 </div>
               ))}
             </div>
@@ -1772,7 +1828,7 @@ const App = () => {
           
           {/* 오른쪽: 녹음 / 키보드 */}
           <div className="flex-1 bg-white rounded-3xl p-5 border-8 border-orange-300 shadow-md overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between mb-2 flex-shrink-0">
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
               <h3 className="text-2xl text-orange-600">🎙️ 내가 설명하기</h3>
               <button onClick={() => setUseKeyboard(!useKeyboard)}
                 className="px-3 py-1 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-2xl text-base border-4 border-purple-300">
@@ -1780,20 +1836,13 @@ const App = () => {
               </button>
             </div>
             
-            <div className="bg-blue-50 p-3 rounded-2xl border-4 border-blue-200 mb-3 flex-shrink-0">
-              <p className="text-base text-blue-700 word-keep" style={{lineHeight:'1.5'}}>
-                💡 <strong>이렇게 말해보세요:</strong><br/>
-                "{selectedCardSets[0]?.concept}" 그리고 "{selectedCardSets[1]?.concept}"
-              </p>
-            </div>
-            
             {useKeyboard ? (
               <textarea
                 value={keyboardText}
                 onChange={(e) => setKeyboardText(e.target.value)}
-                placeholder="여기에 입력해보세요. 예시 문장을 그대로 써도 좋아요! 😊"
+                placeholder="여기에 내 생각을 써보세요! 😊"
                 className="flex-1 w-full p-4 text-xl text-slate-700 bg-purple-50 border-4 border-purple-200 rounded-2xl resize-none focus:outline-none focus:border-purple-500"
-                style={{minHeight:'200px', fontFamily: "'Jua', sans-serif"}}
+                style={{minHeight:'250px', fontFamily: "'Jua', sans-serif"}}
               />
             ) : (
               <>
@@ -1801,25 +1850,25 @@ const App = () => {
                 <div className="flex-shrink-0 mb-3">
                   {!isRecording && !audioBlob && (
                     <button onClick={handleStartRecording} 
-                      className="w-full bg-slate-100 border-8 border-slate-300 py-6 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-slate-500 hover:border-orange-300 hover:text-orange-500">
-                      <span className="text-5xl">🎤</span>
-                      <span className="text-2xl">녹음 시작하기</span>
+                      className="w-full bg-slate-100 border-8 border-slate-300 py-8 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-slate-500 hover:border-orange-300 hover:text-orange-500">
+                      <span className="text-6xl">🎤</span>
+                      <span className="text-3xl">녹음 시작</span>
                     </button>
                   )}
                   {isRecording && (
                     <button onClick={handleStopRecording} 
-                      className="w-full bg-red-100 border-8 border-red-500 py-6 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-red-600 recording-pulse">
-                      <span className="text-5xl">⏹️</span>
-                      <span className="text-2xl">녹음 끝내기</span>
+                      className="w-full bg-red-100 border-8 border-red-500 py-8 rounded-3xl flex items-center justify-center gap-3 cursor-pointer active:scale-95 transition shadow-lg text-red-600 recording-pulse">
+                      <span className="text-6xl">⏹️</span>
+                      <span className="text-3xl">녹음 끝</span>
                     </button>
                   )}
                 </div>
                 
                 {/* 실시간 텍스트 */}
-                <div className="flex-1 bg-slate-50 p-4 rounded-2xl border-4 border-slate-200 overflow-y-auto" style={{minHeight:'150px'}}>
-                  <p className="text-base text-slate-500 mb-2">📝 실시간 받아쓰기</p>
+                <div className="flex-1 bg-slate-50 p-4 rounded-2xl border-4 border-slate-200 overflow-y-auto" style={{minHeight:'180px'}}>
+                  <p className="text-base text-slate-500 mb-2">📝 받아쓰기</p>
                   <p className="text-xl text-slate-700 word-keep" style={{lineHeight:'1.6'}}>
-                    {recognizedText || <span className="text-slate-400">{isRecording ? '말해보세요...' : '녹음 시작 버튼을 누르세요'}</span>}
+                    {recognizedText || <span className="text-slate-400">{isRecording ? '말해보세요...' : '🎤 녹음 시작 버튼을 눌러요'}</span>}
                     {interimText && <span className="text-orange-400">{interimText}</span>}
                   </p>
                 </div>
