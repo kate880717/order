@@ -203,7 +203,7 @@ const defaultQuestions = [
 ];
 const defaultStudents = ["김철수", "이영희", "박지민"];
 
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useEffect, useRef } = React;
 
 /* ── 반응형 Scale 훅 ── */
 const useScale = () => {
@@ -731,7 +731,6 @@ const App = () => {
   // 퀴즈 상태
   const [slots, setSlots] = useState([]);
   const [pool, setPool] = useState([]);
-  const [draggedIndex, setDraggedIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [wrongIndices, setWrongIndices] = useState([]);
   const [practiceMode, setPracticeMode] = useState(false); // 연습 vs 본문제
@@ -748,7 +747,6 @@ const App = () => {
 
   // 마이크 / 녹음
   const [micGranted, setMicGranted] = useState(false);
-  const mediaStreamRef = useRef(null);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [audioBlob, setAudioBlob] = useState(null);
@@ -798,7 +796,6 @@ const App = () => {
   const requestMicAccess = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaStreamRef.current = stream;
       const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       recorder.ondataavailable = (e) => { 
         if (e.data.size > 0) audioChunksRef.current.push(e.data); 
@@ -1309,59 +1306,114 @@ const App = () => {
     );
 
     if(phase==="login") return (
-      <div className="flex items-center justify-center p-10 w-full h-full" style={{background:'linear-gradient(135deg, #fef3c7, #d1fae5, #dbeafe)'}}>
+      <div className="flex items-center justify-center w-full h-full" style={{
+        background:'linear-gradient(135deg, #fce7f3 0%, #ddd6fe 50%, #c7d2fe 100%)',
+        padding: '2rem'
+      }}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="flex flex-row gap-12 w-full max-w-6xl items-center">
-          {/* 왼쪽: 타이틀 */}
-          <div className="flex-1 flex flex-col items-center text-center">
-            <div className="mb-6 float-up" style={{
-              fontSize: '8rem',
-              filter:'drop-shadow(0 8px 16px rgba(0,0,0,0.2))'
-            }}>📚</div>
-            <h1 className="nowrap mb-5" style={{
-              fontSize: '5rem',
-              lineHeight: '1.2',
-              color: '#15803d',
-              textShadow: '0 4px 12px rgba(34,197,94,0.25)'
-            }}>순서대로 말해요!</h1>
-            <p style={{
-              fontSize: '1.875rem',
-              color: '#475569',
-              lineHeight: '1.5',
-              wordBreak: 'keep-all',
-              marginTop: '1rem'
-            }}>
-              ✨ 그림 카드를 순서대로 놓으며<br/>
-              사건의 흐름을 배워봐요!
-            </p>
+        
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.6)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '2.5rem',
+          padding: '4rem 5rem',
+          boxShadow: '0 20px 60px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(255,255,255,0.5) inset',
+          maxWidth: '720px',
+          width: '100%',
+          textAlign: 'center'
+        }}>
+          {/* 상단 작은 라벨 */}
+          <div style={{
+            display:'inline-flex', alignItems:'center', gap:'0.5rem',
+            marginBottom: '1.5rem',
+            padding:'0.5rem 1.25rem',
+            background:'rgba(255,255,255,0.7)',
+            borderRadius:'999px',
+            fontSize:'1.125rem',
+            color:'#7c3aed'
+          }}>
+            ✨ 사건의 순서를 배워봐요
           </div>
           
-          {/* 오른쪽: 입력 카드 */}
-          <div className="flex-1 bg-white p-10 rounded-3xl border-8 border-green-200" style={{
-            boxShadow:'0 20px 50px rgba(34,197,94,0.25), inset 0 0 0 4px white'
+          {/* 메인 타이틀 (그라데이션 텍스트) */}
+          <h1 style={{
+            fontSize: '4.5rem',
+            lineHeight: '1.1',
+            margin: '0 0 1.5rem 0',
+            background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #059669 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.75rem'
           }}>
-            <p className="mb-4 flex items-center gap-2" style={{
-              fontSize: '1.625rem',
-              color: '#64748b'
+            <span style={{fontSize:'4rem',WebkitTextFillColor:'initial'}}>📚</span>
+            순서대로 말해요!
+          </h1>
+          
+          {/* 서브 텍스트 */}
+          <p style={{
+            fontSize: '1.5rem',
+            color: '#64748b',
+            marginBottom: '0.5rem',
+            wordBreak: 'keep-all'
+          }}>
+            그림 카드를 끌어와 이야기를 만들어 보아요!
+          </p>
+          <p style={{
+            fontSize: '1.125rem',
+            color: '#94a3b8',
+            marginBottom: '2.5rem',
+            wordBreak: 'keep-all',
+            display:'inline-flex',alignItems:'center',gap:'0.5rem',justifyContent:'center'
+          }}>
+            🎯 내 목소리로 친구에게 설명할 수도 있어요
+          </p>
+          
+          {/* 이름 선택 */}
+          <select 
+            value={selectedStudent}
+            onChange={e => setSelectedStudent(e.target.value)}
+            style={{
+              width: '100%', maxWidth: '420px',
+              padding: '1rem 1.5rem',
+              fontSize: '1.5rem',
+              background: 'rgba(255,255,255,0.9)',
+              border: '3px solid #c4b5fd',
+              borderRadius: '1.25rem',
+              color: '#1e293b',
+              cursor: 'pointer',
+              outline: 'none',
+              marginBottom: '1.25rem',
+              textAlign: 'center',
+              textAlignLast: 'center'
             }}>
-              <span style={{fontSize:'2rem'}}>👇</span> 내 이름을 골라요
-            </p>
-            <select className="w-full p-5 bg-green-50 border-4 border-green-300 rounded-2xl mb-6 text-slate-700 focus:outline-none focus:border-green-500 cursor-pointer"
-              style={{fontSize: '2rem'}}
-              value={selectedStudent} 
-              onChange={e=>setSelectedStudent(e.target.value)}>
-              {students.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <button onClick={() => setPhase("mic_request")} 
-              className="w-full py-6 text-white rounded-3xl active:scale-95 transition-all hover:scale-105"
-              style={{
-                background:'linear-gradient(135deg, #22c55e, #16a34a)', 
-                boxShadow:'0 10px 25px rgba(34,197,94,0.5), inset 0 -4px 0 rgba(0,0,0,0.15)',
-                fontSize: '2rem'
-              }}>
-              🚀 시작하기
-            </button>
-          </div>
+            {students.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          
+          <br/>
+          
+          {/* 시작 버튼 (그라데이션 알약) */}
+          <button onClick={() => setPhase("mic_request")} 
+            style={{
+              padding: '1rem 3rem',
+              fontSize: '1.5rem',
+              color: 'white',
+              background: 'linear-gradient(135deg, #fb7185 0%, #f472b6 50%, #e879f9 100%)',
+              border: 'none',
+              borderRadius: '999px',
+              cursor: 'pointer',
+              boxShadow: '0 10px 25px rgba(244, 114, 182, 0.4)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+            시작하기 🚀
+          </button>
         </div>
       </div>
     );
