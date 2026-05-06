@@ -145,7 +145,7 @@
   .scrollable::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 </style>
 </head>
-<body>
+<body style="font-family: 'Jua', 'Apple SD Gothic Neo', sans-serif !important;">
 <div id="root"></div>
 
 <script type="text/babel">
@@ -154,6 +154,25 @@ window.onload = function() {
     dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
   });
   window.addEventListener('touchmove', function() {}, {passive: false});
+  
+  // 폰트 강제 적용: React 렌더링 후 모든 요소에 직접 주입
+  const forceFont = () => {
+    const all = document.querySelectorAll('*');
+    all.forEach(el => {
+      el.style.setProperty('font-family', "'Jua', 'Apple SD Gothic Neo', sans-serif", 'important');
+    });
+  };
+  
+  // 첫 렌더 후
+  setTimeout(forceFont, 100);
+  setTimeout(forceFont, 500);
+  setTimeout(forceFont, 1500);
+  
+  // DOM 변화 감지: 새 요소가 추가될 때마다 폰트 강제
+  const observer = new MutationObserver(() => {
+    forceFont();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 };
 
 // ★ 구글 앱스 스크립트 배포 후 URL을 이곳에 넣으세요.
