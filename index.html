@@ -14,181 +14,77 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@3.0.0-rc.0/default.css">
 
 <style>
-  /* 시스템 한글 폰트 - 100% 작동 보장 */
   body, html, #root, *, *::before, *::after {
     font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif !important;
     letter-spacing: -0.02em;
   }
-  
   body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    margin: 0; padding: 0; overflow: hidden;
     background: linear-gradient(135deg, #fce7f3 0%, #ddd6fe 50%, #c7d2fe 100%);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    user-select: none;
-    -webkit-user-select: none;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    user-select: none; -webkit-user-select: none;
   }
-  
   #root { width: 100vw; height: 100vh; overflow: hidden; }
-  
   * { box-sizing: border-box; scrollbar-width: none; }
   *::-webkit-scrollbar { display: none; }
-  
-  /* 반응형 scale */
-  .scale-stage {
-    width: 1280px;
-    height: 800px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-origin: center center;
-  }
-  
-  /* 카드 컨테이너 */
+  .scale-stage { width: 1280px; height: 800px; position: absolute; top: 50%; left: 50%; transform-origin: center center; }
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border-radius: 2rem;
-    box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(255,255,255,0.5) inset;
+    background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px);
+    border-radius: 2rem; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.15), 0 0 0 1px rgba(255,255,255,0.5) inset;
   }
-  
-  /* 그라데이션 텍스트 */
   .grad-text {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  
-  /* 핑크 알약 버튼 */
   .pill-btn {
     background: linear-gradient(135deg, #fb7185 0%, #f472b6 50%, #e879f9 100%);
-    color: white;
-    border: none;
-    border-radius: 999px;
-    padding: 1rem 3rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    box-shadow: 0 10px 25px rgba(244, 114, 182, 0.4);
-    transition: transform 0.2s;
+    color: white; border: none; border-radius: 999px; padding: 1rem 3rem;
+    font-size: 1.5rem; cursor: pointer; box-shadow: 0 10px 25px rgba(244, 114, 182, 0.4); transition: transform 0.2s;
   }
   .pill-btn:hover { transform: scale(1.05); }
   .pill-btn:active { transform: scale(0.97); }
-  
-  /* 슬롯 */
   .slot-box {
-    background: rgba(255,255,255,0.6);
-    border: 3px dashed #c4b5fd;
-    border-radius: 1.25rem;
-    min-height: 90px;
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    transition: all 0.2s;
+    background: rgba(255,255,255,0.6); border: 3px dashed #c4b5fd; border-radius: 1.25rem;
+    min-height: 90px; display: flex; align-items: center; padding: 12px 16px; transition: all 0.2s;
   }
   .slot-box.drag-over {
-    background: rgba(196, 181, 253, 0.3);
-    border-color: #8b5cf6;
-    border-style: solid;
-    transform: scale(1.03);
-    box-shadow: 0 0 0 6px rgba(139,92,246,0.2);
+    background: rgba(196, 181, 253, 0.3); border-color: #8b5cf6; border-style: solid;
+    transform: scale(1.03); box-shadow: 0 0 0 6px rgba(139,92,246,0.2);
   }
-  .slot-box.wrong-slot {
-    background: #fee2e2;
-    border-color: #ef4444;
-    animation: shake 0.4s;
-  }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-  
-  /* 카드 */
+  .slot-box.wrong-slot { background: #fee2e2; border-color: #ef4444; animation: shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
   .pool-card {
-    background: white;
-    border-radius: 1.25rem;
-    border: 3px solid #c4b5fd;
-    cursor: grab;
-    touch-action: none;
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.18);
-    transition: all 0.2s;
+    background: white; border-radius: 1.25rem; border: 3px solid #c4b5fd; cursor: grab; touch-action: none;
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.18); transition: all 0.2s;
   }
-  .pool-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(139, 92, 246, 0.3);
-    border-color: #8b5cf6;
-  }
-  .pool-card:active {
-    cursor: grabbing;
-    transform: scale(1.05);
-  }
+  .pool-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(139, 92, 246, 0.3); border-color: #8b5cf6; }
+  .pool-card:active { cursor: grabbing; transform: scale(1.05); }
   .pool-card.dragging { opacity: 0.4; }
-  
   .drag-card {
-    background: white;
-    border-radius: 1rem;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 3px solid #c4b5fd;
-    cursor: grab;
-    touch-action: none;
-    width: 100%;
+    background: white; border-radius: 1rem; padding: 10px 14px; display: flex; align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 3px solid #c4b5fd; cursor: grab; touch-action: none; width: 100%;
   }
   .drag-card:active { cursor: grabbing; }
-  
-  /* 애니메이션 */
-  @keyframes float-up {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
+  @keyframes float-up { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }
   .float-up { animation: float-up 2.5s ease-in-out infinite; }
-  
-  @keyframes pop {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.3); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
-  }
+  @keyframes pop { 0%{transform:scale(0);opacity:0;} 60%{transform:scale(1.3);opacity:1;} 100%{transform:scale(1);opacity:1;} }
   .pop-anim { animation: pop 0.5s cubic-bezier(.34,1.56,.64,1); }
-  
   @keyframes pulse-red {
-    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-    70% { box-shadow: 0 0 0 18px rgba(239, 68, 68, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    0%{box-shadow:0 0 0 0 rgba(239,68,68,0.7);} 70%{box-shadow:0 0 0 18px rgba(239,68,68,0);} 100%{box-shadow:0 0 0 0 rgba(239,68,68,0);}
   }
   .pulse-rec { animation: pulse-red 1.5s infinite; }
-  
-  /* 토스트 */
   .toast {
-    position: fixed;
-    top: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: white;
-    padding: 14px 24px;
-    border-radius: 999px;
-    font-size: 1.25rem;
-    box-shadow: 0 8px 24px rgba(245,158,11,0.4);
-    z-index: 9999;
-    animation: toast-in 0.4s cubic-bezier(.34,1.56,.64,1);
+    position: fixed; top: 60px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; padding: 14px 24px;
+    border-radius: 999px; font-size: 1.25rem; box-shadow: 0 8px 24px rgba(245,158,11,0.4);
+    z-index: 9999; animation: toast-in 0.4s cubic-bezier(.34,1.56,.64,1);
   }
-  @keyframes toast-in {
-    0% { transform: translateX(-50%) translateY(-30px); opacity: 0; }
-    100% { transform: translateX(-50%) translateY(0); opacity: 1; }
-  }
-  
-  /* 스크롤 영역 */
-  .scrollable {
-    overflow-y: auto !important;
-  }
+  @keyframes toast-in { 0%{transform:translateX(-50%) translateY(-30px);opacity:0;} 100%{transform:translateX(-50%) translateY(0);opacity:1;} }
+  @keyframes fade-in { 0%{opacity:0;} 100%{opacity:1;} }
+  .fade-in { animation: fade-in 0.25s ease-out; }
+  .scrollable { overflow-y: auto !important; }
   .scrollable::-webkit-scrollbar { display: block; width: 6px; }
   .scrollable::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 3px; }
-  
   .word-keep { word-break: keep-all; }
 </style>
 </head>
@@ -198,9 +94,7 @@
 <script type="text/babel">
 window.onload = function() {
   if (window.MobileDragDrop) {
-    MobileDragDrop.polyfill({
-      dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride
-    });
+    MobileDragDrop.polyfill({ dragImageTranslateOverride: MobileDragDrop.scrollBehaviourDragImageTranslateOverride });
   }
   window.addEventListener('touchmove', function() {}, {passive: false});
 };
@@ -209,49 +103,575 @@ window.GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxjTrd4Rv7Fi3NLbl0
 
 const defaultQuestions = [
   {id:1,type:"cyclic",title:"개구리의 한살이",concept:"개구리는 알에서 깨어나 올챙이가 되고 개구리가 돼요.",
-    cards:[{id:"1-1",text:"알",img:"🥚"},{id:"1-2",text:"올챙이",img:"🐟"},{id:"1-3",text:"개구리",img:"🐸"}]},
+    cards:[{id:"1-1",text:"알",icon:"egg"},{id:"1-2",text:"올챙이",icon:"tadpole"},{id:"1-3",text:"개구리",icon:"frog"}]},
   {id:2,type:"cyclic",title:"나비의 한살이",concept:"나비는 알에서 깨어나 애벌레가 되고 번데기를 거쳐 나비가 돼요.",
-    cards:[{id:"2-1",text:"알",img:"🥚"},{id:"2-2",text:"애벌레",img:"🐛"},{id:"2-3",text:"번데기",img:"🫙"},{id:"2-4",text:"나비",img:"🦋"}]},
+    cards:[{id:"2-1",text:"알",icon:"egg"},{id:"2-2",text:"애벌레",icon:"caterpillar"},{id:"2-3",text:"번데기",icon:"chrysalis"},{id:"2-4",text:"나비",icon:"butterfly"}]},
   {id:3,type:"cyclic",title:"사과나무의 성장",concept:"씨앗에서 싹이 나고 자라서 맛있는 사과가 열려요.",
-    cards:[{id:"3-1",text:"씨앗",img:"🌰"},{id:"3-2",text:"새싹",img:"🌱"},{id:"3-3",text:"사과나무",img:"🌳"},{id:"3-4",text:"사과",img:"🍎"}]},
-  {id:4,type:"cyclic",title:"사계절의 변화",concept:"봄, 여름, 가을, 겨울이 지나면 다시 봄이 찾아와요.",
-    cards:[{id:"4-1",text:"봄",img:"🌼"},{id:"4-2",text:"여름",img:"☀️"},{id:"4-3",text:"가을",img:"🍁"},{id:"4-4",text:"겨울",img:"⛄"}]},
-  {id:5,type:"cyclic",title:"하루의 변화",concept:"아침, 점심, 저녁, 밤이 지나면 또 아침이 밝아와요.",
-    cards:[{id:"5-1",text:"아침",img:"🌅"},{id:"5-2",text:"점심",img:"🌞"},{id:"5-3",text:"저녁",img:"🌆"},{id:"5-4",text:"밤",img:"🌃"}]},
-  {id:6,type:"cyclic",title:"닭의 성장",concept:"닭은 알에서 깨어나 병아리가 되고 닭이 돼요.",
-    cards:[{id:"6-1",text:"알",img:"🥚"},{id:"6-2",text:"병아리",img:"🐥"},{id:"6-3",text:"닭",img:"🐔"}]},
-  {id:7,type:"cyclic",title:"달의 변화",concept:"달은 초승달에서 반달, 보름달로 커졌다가 다시 작아져요.",
-    cards:[{id:"7-1",text:"초승달",img:"🌙"},{id:"7-2",text:"반달",img:"🌓"},{id:"7-3",text:"보름달",img:"🌕"}]},
-  {id:8,type:"linear",title:"양치질 하기",concept:"치약을 짜서 이를 닦은 뒤 물로 헹궈요.",
-    cards:[{id:"8-1",text:"치약 짜기",img:"🪥"},{id:"8-2",text:"이 닦기",img:"🦷"},{id:"8-3",text:"물로 헹구기",img:"🚰"}]},
-  {id:9,type:"linear",title:"횡단보도 건너기",concept:"횡단보도에서는 먼저 멈추고 살펴본 뒤에 건너요.",
-    cards:[{id:"9-1",text:"멈추기",img:"🛑"},{id:"9-2",text:"살피기",img:"👀"},{id:"9-3",text:"건너기",img:"🚶"}]},
-  {id:10,type:"linear",title:"손 씻기",concept:"비누칠을 하고 손을 비빈 뒤에 물로 헹궈야 해요.",
-    cards:[{id:"10-1",text:"비누칠하기",img:"🧼"},{id:"10-2",text:"손 비비기",img:"🙌"},{id:"10-3",text:"물로 헹구기",img:"🚿"}]},
-  {id:11,type:"linear",title:"방 청소하기",concept:"쓰레기를 버리고 바닥을 쓴 뒤 깨끗하게 닦아요.",
-    cards:[{id:"11-1",text:"쓰레기 버리기",img:"🗑️"},{id:"11-2",text:"바닥 쓸기",img:"🧹"},{id:"11-3",text:"바닥 닦기",img:"🧽"}]},
-  {id:12,type:"linear",title:"외출 준비",concept:"먼저 세수를 하고 옷을 입은 뒤 신발을 신어요.",
-    cards:[{id:"12-1",text:"세수하기",img:"🫧"},{id:"12-2",text:"옷 입기",img:"👕"},{id:"12-3",text:"신발 신기",img:"👟"}]},
-  {id:13,type:"linear",title:"샌드위치 만들기",concept:"식빵 위에 잼을 바르고 햄을 올린 뒤 빵으로 덮어요.",
-    cards:[{id:"13-1",text:"식빵 놓기",img:"🍞"},{id:"13-2",text:"잼 바르기",img:"🍯"},{id:"13-3",text:"햄 올리기",img:"🥓"},{id:"13-4",text:"식빵 덮기",img:"🥪"}]},
-  {id:14,type:"linear",title:"씨앗 심기",concept:"화분에 흙을 넣고 씨앗을 놓은 뒤 흙을 덮고 물을 줘요.",
-    cards:[{id:"14-1",text:"흙 넣기",img:"🪴"},{id:"14-2",text:"씨앗 넣기",img:"🫘"},{id:"14-3",text:"흙 덮기",img:"🫳"},{id:"14-4",text:"물 주기",img:"🪣"}]},
-  {id:15,type:"linear",title:"생일 파티",concept:"케이크에 촛불을 켜고 노래를 부른 뒤 촛불을 꺼요.",
-    cards:[{id:"15-1",text:"촛불 켜기",img:"🕯️"},{id:"15-2",text:"노래 부르기",img:"🎵"},{id:"15-3",text:"촛불 끄기",img:"🎂"}]}
+    cards:[{id:"3-1",text:"씨앗",icon:"seed"},{id:"3-2",text:"새싹",icon:"sprout"},{id:"3-3",text:"사과나무",icon:"tree"},{id:"3-4",text:"사과",icon:"apple"}]},
+  {id:4,type:"cyclic",title:"강낭콩의 한살이",concept:"강낭콩은 씨앗에서 싹이 트고 꽃을 피운 뒤 꼬투리 열매를 맺어요.",
+    cards:[{id:"4-1",text:"씨앗",icon:"seed"},{id:"4-2",text:"싹",icon:"sprout"},{id:"4-3",text:"꽃",icon:"flower"},{id:"4-4",text:"꼬투리",icon:"pod"}]},
+  {id:5,type:"cyclic",title:"사계절의 변화",concept:"봄, 여름, 가을, 겨울이 지나면 다시 봄이 찾아와요.",
+    cards:[{id:"5-1",text:"봄",icon:"spring"},{id:"5-2",text:"여름",icon:"summer"},{id:"5-3",text:"가을",icon:"autumn"},{id:"5-4",text:"겨울",icon:"winter"}]},
+  {id:6,type:"cyclic",title:"하루의 변화",concept:"아침, 점심, 저녁, 밤이 지나면 또 아침이 밝아와요.",
+    cards:[{id:"6-1",text:"아침",icon:"morning"},{id:"6-2",text:"점심",icon:"noon"},{id:"6-3",text:"저녁",icon:"evening"},{id:"6-4",text:"밤",icon:"night"}]},
+  {id:7,type:"cyclic",title:"닭의 성장",concept:"닭은 알에서 깨어나 병아리가 되고 닭이 돼요.",
+    cards:[{id:"7-1",text:"알",icon:"egg"},{id:"7-2",text:"병아리",icon:"chick"},{id:"7-3",text:"닭",icon:"hen"}]},
+  {id:8,type:"cyclic",title:"달의 변화",concept:"달은 초승달에서 반달, 보름달로 커졌다가 다시 작아져요.",
+    cards:[{id:"8-1",text:"초승달",icon:"crescent"},{id:"8-2",text:"반달",icon:"halfmoon"},{id:"8-3",text:"보름달",icon:"fullmoon"}]},
+  {id:9,type:"linear",title:"양치질 하기",concept:"치약을 짜서 이를 닦은 뒤 물로 헹궈요.",
+    cards:[{id:"9-1",text:"치약 짜기",icon:"toothpaste"},{id:"9-2",text:"이 닦기",icon:"tooth"},{id:"9-3",text:"물로 헹구기",icon:"rinse"}]},
+  {id:10,type:"linear",title:"횡단보도 건너기",concept:"횡단보도에서는 먼저 멈추고 살펴본 뒤에 건너요.",
+    cards:[{id:"10-1",text:"멈추기",icon:"stop"},{id:"10-2",text:"살피기",icon:"look"},{id:"10-3",text:"건너기",icon:"cross"}]},
+  {id:11,type:"linear",title:"손 씻기",concept:"비누칠을 하고 손을 비빈 뒤에 물로 헹궈야 해요.",
+    cards:[{id:"11-1",text:"비누칠하기",icon:"soap"},{id:"11-2",text:"손 비비기",icon:"rubhands"},{id:"11-3",text:"물로 헹구기",icon:"rinse"}]},
+  {id:12,type:"linear",title:"방 청소하기",concept:"쓰레기를 버리고 바닥을 쓴 뒤 깨끗하게 닦아요.",
+    cards:[{id:"12-1",text:"쓰레기 버리기",icon:"trash"},{id:"12-2",text:"바닥 쓸기",icon:"broom"},{id:"12-3",text:"바닥 닦기",icon:"wipe"}]},
+  {id:13,type:"linear",title:"외출 준비",concept:"먼저 세수를 하고 옷을 입은 뒤 신발을 신어요.",
+    cards:[{id:"13-1",text:"세수하기",icon:"wash"},{id:"13-2",text:"옷 입기",icon:"shirt"},{id:"13-3",text:"신발 신기",icon:"shoes"}]},
+  {id:14,type:"linear",title:"샌드위치 만들기",concept:"식빵 위에 잼을 바르고 햄을 올린 뒤 빵으로 덮어요.",
+    cards:[{id:"14-1",text:"식빵 놓기",icon:"bread"},{id:"14-2",text:"잼 바르기",icon:"jam"},{id:"14-3",text:"햄 올리기",icon:"ham"},{id:"14-4",text:"식빵 덮기",icon:"sandwich"}]},
+  {id:15,type:"linear",title:"씨앗 심기",concept:"화분에 흙을 넣고 씨앗을 놓은 뒤 흙을 덮고 물을 줘요.",
+    cards:[{id:"15-1",text:"흙 넣기",icon:"pot"},{id:"15-2",text:"씨앗 넣기",icon:"seed"},{id:"15-3",text:"흙 덮기",icon:"cover"},{id:"15-4",text:"물 주기",icon:"water"}]},
+  {id:16,type:"linear",title:"책 빌리기",concept:"읽고 싶은 책을 고르고 선생님께 가서 빌려요.",
+    cards:[{id:"16-1",text:"책 고르기",icon:"book"},{id:"16-2",text:"선생님께 가기",icon:"teacher"},{id:"16-3",text:"책 빌리기",icon:"book"}]},
+  {id:17,type:"linear",title:"생일 파티",concept:"케이크에 촛불을 켜고 노래를 부른 뒤 촛불을 꺼요.",
+    cards:[{id:"17-1",text:"촛불 켜기",icon:"candle"},{id:"17-2",text:"노래 부르기",icon:"music"},{id:"17-3",text:"촛불 끄기",icon:"cake"}]},
+  {id:18,type:"linear",title:"우유 마시기",concept:"우유를 꺼내 컵에 따른 뒤 맛있게 마셔요.",
+    cards:[{id:"18-1",text:"우유 꺼내기",icon:"milk"},{id:"18-2",text:"컵에 따르기",icon:"pour"},{id:"18-3",text:"마시기",icon:"yum"}]},
+  {id:19,type:"linear",title:"도시락 싸기",concept:"밥을 담고 반찬을 넣은 뒤 뚜껑을 닫아 가방에 넣어요.",
+    cards:[{id:"19-1",text:"밥 담기",icon:"rice"},{id:"19-2",text:"반찬 넣기",icon:"sidedish"},{id:"19-3",text:"뚜껑 닫기",icon:"lunchbox"},{id:"19-4",text:"가방에 넣기",icon:"bag"}]},
+  {id:20,type:"linear",title:"놀이터 가기",concept:"놀이터에서 미끄럼틀을 타고 그네도 타고 집에 돌아와요.",
+    cards:[{id:"20-1",text:"미끄럼틀 타기",icon:"slide"},{id:"20-2",text:"그네 타기",icon:"swing"},{id:"20-3",text:"집에 오기",icon:"house"}]}
 ];
 const defaultStudents = ["김철수", "이영희", "박지민"];
 
 const { useState, useEffect, useRef } = React;
 
-/* ─── 반응형 Scale ─── */
+/* ═══ 이모지 → 아이콘 이름 변환표 (기존 시트 호환용) ═══ */
+const EMOJI_TO_ICON = {
+  '🥚':'egg','🐟':'tadpole','🐸':'frog','🐛':'caterpillar','🫙':'chrysalis','🦋':'butterfly',
+  '🌰':'seed','🌱':'sprout','🌿':'sprout','🌳':'tree','🍎':'apple','🌸':'flower',
+  '🌼':'spring','☀️':'summer','🍁':'autumn','⛄':'winter','☃️':'winter',
+  '🌅':'morning','🌞':'noon','🌆':'evening','🌃':'night',
+  '🐥':'chick','🐔':'hen','🌙':'crescent','🌓':'halfmoon','🌕':'fullmoon',
+  '🪥':'toothpaste','🦷':'tooth','🚰':'rinse','🚿':'rinse','🛑':'stop','👀':'look',
+  '🚶':'cross','🚶‍♂️':'cross','🍞':'bread','🍯':'jam','🥓':'ham','🥪':'sandwich',
+  '🧼':'soap','🙌':'rubhands','📚':'book','📖':'book','👩‍🏫':'teacher',
+  '🥛':'milk','🫗':'pour','😋':'yum','🗑️':'trash','🧹':'broom','🧽':'wipe','🫧':'wash',
+  '👕':'shirt','👟':'shoes','🪴':'pot','🫘':'seed','🫳':'cover','🪣':'water',
+  '🕯️':'candle','🎵':'music','🎂':'cake','🥗':'sidedish','🥡':'lunchbox','🎒':'bag',
+  '🛝':'slide','🎠':'swing','🏠':'house'
+};
+
+/* ═══════════════════════════════════════════════════════════
+   SVG 아이콘 시스템 (카드 그림 + 인터페이스 그림 모두 직접 그림)
+   ═══════════════════════════════════════════════════════════ */
+const ICONS = {
+  /* ─── 기본 / 한살이 ─── */
+  seed: (<g>
+    <ellipse cx="50" cy="98" rx="22" ry="4" fill="#000" opacity="0.07"/>
+    <g transform="rotate(-20 50 52)">
+      <ellipse cx="50" cy="52" rx="30" ry="21" fill="#9c3a2d"/>
+      <ellipse cx="50" cy="52" rx="30" ry="21" fill="none" stroke="#6b2419" strokeWidth="3"/>
+      <ellipse cx="40" cy="43" rx="11" ry="6" fill="#bf5446" opacity="0.85"/>
+      <path d="M36 70 Q50 76 64 70" stroke="#e8d4a8" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    </g>
+  </g>),
+  sprout: (<g>
+    <ellipse cx="50" cy="84" rx="32" ry="9" fill="#9c6b3a"/>
+    <ellipse cx="50" cy="80" rx="32" ry="9" fill="#b07d44"/>
+    <path d="M50 81 Q47 60 50 44" stroke="#16a34a" strokeWidth="6" fill="none" strokeLinecap="round"/>
+    <ellipse cx="34" cy="42" rx="17" ry="10" transform="rotate(-32 34 42)" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
+    <ellipse cx="66" cy="42" rx="17" ry="10" transform="rotate(32 66 42)" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
+  </g>),
+  flower: (<g>
+    <path d="M50 86 L50 52" stroke="#16a34a" strokeWidth="5" strokeLinecap="round"/>
+    <ellipse cx="36" cy="68" rx="13" ry="7" transform="rotate(-28 36 68)" fill="#22c55e"/>
+    <ellipse cx="64" cy="74" rx="13" ry="7" transform="rotate(28 64 74)" fill="#22c55e"/>
+    <ellipse cx="50" cy="34" rx="22" ry="17" fill="#f0d9f6" stroke="#c9a8e0" strokeWidth="2.5"/>
+    <ellipse cx="37" cy="44" rx="12" ry="9" transform="rotate(-22 37 44)" fill="#dcc0ec"/>
+    <ellipse cx="63" cy="44" rx="12" ry="9" transform="rotate(22 63 44)" fill="#dcc0ec"/>
+    <ellipse cx="50" cy="46" rx="11" ry="7" fill="#c9a4dd"/>
+    <circle cx="50" cy="36" r="6" fill="#f2dd84"/>
+  </g>),
+  pod: (<g>
+    <ellipse cx="52" cy="88" rx="30" ry="5" fill="#000" opacity="0.07"/>
+    <g transform="rotate(-20 50 52)">
+      <rect x="12" y="38" width="78" height="28" rx="14" fill="#5fa83a"/>
+      <rect x="12" y="38" width="78" height="28" rx="14" fill="none" stroke="#3f7a24" strokeWidth="3"/>
+      <path d="M90 52 Q99 48 103 42" stroke="#3f7a24" strokeWidth="4" fill="none" strokeLinecap="round"/>
+      <line x1="20" y1="52" x2="82" y2="52" stroke="#3f7a24" strokeWidth="2" opacity="0.45"/>
+      <circle cx="37" cy="52" r="11" fill="#74c24e"/>
+      <circle cx="65" cy="52" r="11" fill="#74c24e"/>
+      <ellipse cx="37" cy="52" rx="6" ry="8" fill="#9c3a2d"/>
+      <ellipse cx="65" cy="52" rx="6" ry="8" fill="#9c3a2d"/>
+    </g>
+  </g>),
+  tree: (<g>
+    <rect x="44" y="58" width="12" height="28" rx="4" fill="#92400e"/>
+    <circle cx="50" cy="38" r="26" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="34" cy="48" r="16" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="66" cy="48" r="16" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+  </g>),
+  apple: (<g>
+    <path d="M50 30 Q35 22 28 38 Q22 56 34 74 Q44 86 50 86 Q56 86 66 74 Q78 56 72 38 Q65 22 50 30Z"
+      fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/>
+    <path d="M50 30 L50 18" stroke="#713f12" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M50 22 Q60 14 68 20 Q60 26 50 24Z" fill="#22c55e" stroke="#15803d" strokeWidth="2"/>
+    <ellipse cx="40" cy="46" rx="6" ry="9" fill="#fca5a5" opacity="0.7"/>
+  </g>),
+  egg: (<g>
+    <ellipse cx="50" cy="54" rx="26" ry="33" fill="#fef9c3" stroke="#d97706" strokeWidth="3"/>
+    <ellipse cx="42" cy="42" rx="8" ry="12" fill="#fffbeb" opacity="0.8"/>
+  </g>),
+  tadpole: (<g>
+    <circle cx="40" cy="50" r="22" fill="#374151" stroke="#1f2937" strokeWidth="3"/>
+    <path d="M58 48 Q78 38 86 50 Q78 56 62 56Z" fill="#374151" stroke="#1f2937" strokeWidth="2.5"/>
+    <circle cx="34" cy="44" r="6" fill="white"/><circle cx="34" cy="44" r="3" fill="#1f2937"/>
+  </g>),
+  frog: (<g>
+    <ellipse cx="50" cy="58" rx="30" ry="24" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="35" cy="32" r="13" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="65" cy="32" r="13" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="35" cy="30" r="6" fill="white"/><circle cx="35" cy="30" r="3" fill="#1f2937"/>
+    <circle cx="65" cy="30" r="6" fill="white"/><circle cx="65" cy="30" r="3" fill="#1f2937"/>
+    <path d="M38 64 Q50 74 62 64" stroke="#15803d" strokeWidth="3" fill="none" strokeLinecap="round"/>
+  </g>),
+  caterpillar: (<g>
+    {[28,42,56,70].map((x,i)=>(<circle key={x} cx={x} cy={i%2===0?54:48} r="13" fill="#84cc16" stroke="#4d7c0f" strokeWidth="2.5"/>))}
+    <circle cx="74" cy="40" r="6" fill="white"/><circle cx="74" cy="40" r="3" fill="#1f2937"/>
+    <path d="M78 30 L82 24 M84 32 L90 30" stroke="#4d7c0f" strokeWidth="2.5" strokeLinecap="round"/>
+  </g>),
+  chrysalis: (<g>
+    <path d="M50 18 L52 22" stroke="#713f12" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M38 28 Q34 52 42 76 Q50 88 58 76 Q66 52 62 28 Q56 20 50 20 Q44 20 38 28Z" fill="#d97706" stroke="#92400e" strokeWidth="3"/>
+    <path d="M44 36 L56 44 M44 50 L56 58 M44 64 L56 72" stroke="#92400e" strokeWidth="2.5" strokeLinecap="round"/>
+  </g>),
+  butterfly: (<g>
+    <ellipse cx="50" cy="50" rx="4" ry="22" fill="#374151"/>
+    <path d="M48 34 Q22 18 22 40 Q22 56 48 50Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M52 34 Q78 18 78 40 Q78 56 52 50Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M48 52 Q26 56 30 74 Q44 76 48 58Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M52 52 Q74 56 70 74 Q56 76 52 58Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M50 30 L46 22 M50 30 L54 22" stroke="#374151" strokeWidth="2.5" strokeLinecap="round"/>
+  </g>),
+  chick: (<g>
+    <circle cx="50" cy="56" r="26" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
+    <circle cx="50" cy="32" r="16" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
+    <circle cx="45" cy="30" r="3.5" fill="#1f2937"/><circle cx="55" cy="30" r="3.5" fill="#1f2937"/>
+    <path d="M50 34 L44 38 L50 40Z" fill="#f97316"/>
+  </g>),
+  hen: (<g>
+    <ellipse cx="50" cy="60" rx="26" ry="22" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="62" cy="36" r="15" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <path d="M58 22 Q60 14 64 20 Q68 14 70 22Z" fill="#ef4444"/>
+    <circle cx="65" cy="34" r="3" fill="#1f2937"/>
+    <path d="M74 38 L84 36 L74 42Z" fill="#f97316"/>
+    <path d="M26 56 Q14 50 18 66 Q26 64 30 60Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2.5"/>
+  </g>),
+  morning: (<g>
+    <rect x="14" y="62" width="72" height="24" fill="#fcd34d" opacity="0.4"/>
+    <path d="M14 62 L86 62" stroke="#d97706" strokeWidth="3"/>
+    <path d="M30 62 A20 20 0 0 1 70 62Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
+    {[20,35,50,65,80].map(x=>(<path key={x} d={`M${x} 50 L${x} 40`} stroke="#f59e0b" strokeWidth="3" strokeLinecap="round"/>))}
+  </g>),
+  noon: (<g>
+    <circle cx="50" cy="50" r="20" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
+    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+26*Math.cos(r)} ${50+26*Math.sin(r)} L${50+36*Math.cos(r)} ${50+36*Math.sin(r)}`} stroke="#f59e0b" strokeWidth="4" strokeLinecap="round"/>;})}
+  </g>),
+  evening: (<g>
+    <rect x="14" y="14" width="72" height="48" fill="#fb923c" opacity="0.35"/>
+    <path d="M30 62 A20 20 0 0 1 70 62Z" fill="#f97316" stroke="#ea580c" strokeWidth="3"/>
+    <path d="M14 62 L86 62" stroke="#c2410c" strokeWidth="3"/>
+    <rect x="14" y="62" width="72" height="24" fill="#7c2d12" opacity="0.3"/>
+  </g>),
+  night: (<g>
+    <rect x="12" y="14" width="76" height="72" rx="14" fill="#1e3a8a"/>
+    <circle cx="62" cy="40" r="18" fill="#fef9c3"/>
+    <circle cx="54" cy="34" r="14" fill="#1e3a8a"/>
+    <path d="M28 30 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2Z" fill="#fde047"/>
+    <path d="M34 62 l1.5 4 l4 1.5 l-4 1.5 l-1.5 4 l-1.5 -4 l-4 -1.5 l4 -1.5Z" fill="#fde047"/>
+  </g>),
+  spring: (<g>
+    {[0,72,144,216,288].map(a=>(<ellipse key={a} cx="50" cy="32" rx="13" ry="17" fill="#fbcfe8" stroke="#f472b6" strokeWidth="2" transform={`rotate(${a} 50 48)`}/>))}
+    <circle cx="50" cy="48" r="10" fill="#fbbf24"/>
+  </g>),
+  summer: (<g>
+    <circle cx="50" cy="50" r="22" fill="#f97316" stroke="#ea580c" strokeWidth="3"/>
+    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+28*Math.cos(r)} ${50+28*Math.sin(r)} L${50+38*Math.cos(r)} ${50+38*Math.sin(r)}`} stroke="#f97316" strokeWidth="4" strokeLinecap="round"/>;})}
+  </g>),
+  autumn: (<g>
+    <path d="M50 84 L50 54" stroke="#92400e" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M50 54 Q30 50 20 32 Q24 28 30 30 Q26 20 32 18 Q40 26 44 36 Q44 22 50 16 Q56 22 56 36 Q60 26 68 18 Q74 20 70 30 Q76 28 80 32 Q70 50 50 54Z" fill="#ea580c" stroke="#9a3412" strokeWidth="2.5"/>
+  </g>),
+  winter: (<g>
+    <circle cx="50" cy="62" r="22" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="50" cy="32" r="15" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="45" cy="30" r="2.5" fill="#1f2937"/><circle cx="55" cy="30" r="2.5" fill="#1f2937"/>
+    <path d="M50 33 L57 35 L50 37Z" fill="#f97316"/>
+    <circle cx="50" cy="56" r="3" fill="#1f2937"/><circle cx="50" cy="66" r="3" fill="#1f2937"/>
+  </g>),
+  crescent: (<g>
+    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
+    <path d="M58 22 A28 28 0 1 0 58 78 A20 20 0 1 1 58 22Z" fill="#fde047"/>
+  </g>),
+  halfmoon: (<g>
+    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
+    <path d="M50 22 A28 28 0 0 1 50 78Z" fill="#fde047"/>
+  </g>),
+  fullmoon: (<g>
+    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
+    <circle cx="50" cy="50" r="28" fill="#fde047"/>
+    <circle cx="40" cy="42" r="6" fill="#facc15" opacity="0.7"/>
+    <circle cx="58" cy="56" r="8" fill="#facc15" opacity="0.7"/>
+    <circle cx="56" cy="38" r="4" fill="#facc15" opacity="0.7"/>
+  </g>),
+  /* ─── 생활 순서 ─── */
+  toothpaste: (<g>
+    <rect x="24" y="44" width="44" height="18" rx="9" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
+    <rect x="66" y="48" width="10" height="10" rx="2" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2"/>
+    <path d="M76 53 Q84 50 88 54" stroke="#34d399" strokeWidth="6" fill="none" strokeLinecap="round"/>
+  </g>),
+  tooth: (<g>
+    <path d="M32 32 Q50 22 68 32 Q74 48 66 70 Q60 78 56 64 Q52 56 50 56 Q48 56 44 64 Q40 78 34 70 Q26 48 32 32Z" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <rect x="40" y="20" width="34" height="9" rx="4" fill="#60a5fa" stroke="#2563eb" strokeWidth="2" transform="rotate(25 57 24)"/>
+  </g>),
+  rinse: (<g>
+    <path d="M30 30 L70 30 L64 80 L36 80Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M33 50 L67 50 L64 80 L36 80Z" fill="#60a5fa"/>
+    <ellipse cx="50" cy="30" rx="20" ry="5" fill="#93c5fd" stroke="#2563eb" strokeWidth="2.5"/>
+  </g>),
+  stop: (<g>
+    <path d="M36 18 L64 18 L82 36 L82 64 L64 82 L36 82 L18 64 L18 36Z" fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/>
+    <path d="M34 50 L66 50" stroke="white" strokeWidth="8" strokeLinecap="round"/>
+  </g>),
+  look: (<g>
+    <path d="M16 50 Q50 22 84 50 Q50 78 16 50Z" fill="white" stroke="#1f2937" strokeWidth="3"/>
+    <circle cx="50" cy="50" r="15" fill="#60a5fa" stroke="#1e40af" strokeWidth="2.5"/>
+    <circle cx="50" cy="50" r="7" fill="#1f2937"/><circle cx="54" cy="46" r="3" fill="white"/>
+  </g>),
+  cross: (<g>
+    <circle cx="50" cy="24" r="10" fill="#1f2937"/>
+    <path d="M50 34 L50 60" stroke="#1f2937" strokeWidth="7" strokeLinecap="round"/>
+    <path d="M50 42 L36 52 M50 42 L64 50" stroke="#1f2937" strokeWidth="6" strokeLinecap="round"/>
+    <path d="M50 60 L38 80 M50 60 L62 80" stroke="#1f2937" strokeWidth="6" strokeLinecap="round"/>
+  </g>),
+  soap: (<g>
+    <rect x="30" y="46" width="40" height="26" rx="10" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
+    <circle cx="34" cy="34" r="9" fill="white" stroke="#94a3b8" strokeWidth="2"/>
+    <circle cx="52" cy="26" r="7" fill="white" stroke="#94a3b8" strokeWidth="2"/>
+    <circle cx="66" cy="34" r="8" fill="white" stroke="#94a3b8" strokeWidth="2"/>
+  </g>),
+  rubhands: (<g>
+    <path d="M30 40 Q26 56 34 70 Q42 76 48 68 L48 44 Q44 36 38 36 Q32 36 30 40Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <path d="M70 40 Q74 56 66 70 Q58 76 52 68 L52 44 Q56 36 62 36 Q68 36 70 40Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+  </g>),
+  trash: (<g>
+    <path d="M30 36 L70 36 L66 82 L34 82Z" fill="#94a3b8" stroke="#475569" strokeWidth="3"/>
+    <rect x="24" y="26" width="52" height="10" rx="5" fill="#64748b" stroke="#475569" strokeWidth="2.5"/>
+    <path d="M42 46 L44 72 M50 46 L50 72 M58 46 L56 72" stroke="#475569" strokeWidth="3" strokeLinecap="round"/>
+  </g>),
+  broom: (<g>
+    <path d="M64 18 L40 58" stroke="#92400e" strokeWidth="6" strokeLinecap="round"/>
+    <path d="M40 58 Q24 62 22 82 L52 82 Q54 64 40 58Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+    <path d="M30 66 L28 82 M38 64 L38 82 M46 66 L48 82" stroke="#d97706" strokeWidth="2.5"/>
+  </g>),
+  wipe: (<g>
+    <ellipse cx="50" cy="64" rx="34" ry="14" fill="#67e8f9" stroke="#0891b2" strokeWidth="3"/>
+    <path d="M22 58 Q50 48 78 58" stroke="#0891b2" strokeWidth="2.5" fill="none"/>
+    <circle cx="32" cy="36" r="7" fill="#bae6fd"/><circle cx="50" cy="28" r="6" fill="#bae6fd"/><circle cx="66" cy="36" r="7" fill="#bae6fd"/>
+  </g>),
+  wash: (<g>
+    <circle cx="50" cy="52" r="26" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="42" cy="48" r="3.5" fill="#1f2937"/><circle cx="58" cy="48" r="3.5" fill="#1f2937"/>
+    <path d="M42 62 Q50 68 58 62" stroke="#1f2937" strokeWidth="3" fill="none" strokeLinecap="round"/>
+    <path d="M30 24 Q34 32 30 36 Q24 32 30 24Z" fill="#60a5fa"/>
+    <path d="M70 24 Q74 32 70 36 Q64 32 70 24Z" fill="#60a5fa"/>
+  </g>),
+  shirt: (<g>
+    <path d="M34 26 L42 22 Q50 30 58 22 L66 26 L80 38 L70 50 L66 46 L66 82 L34 82 L34 46 L30 50 L20 38Z" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+  </g>),
+  shoes: (<g>
+    <path d="M20 56 Q22 42 38 42 L52 42 Q58 50 70 54 Q82 58 82 68 L82 74 L20 74Z" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
+    <path d="M38 48 L44 56 M48 46 L54 54" stroke="#be185d" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M20 68 L82 68" stroke="#be185d" strokeWidth="2.5"/>
+  </g>),
+  bread: (<g>
+    <path d="M24 50 Q24 30 50 30 Q76 30 76 50 L76 76 L24 76Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <path d="M30 48 Q30 38 50 38 Q70 38 70 48" stroke="#d97706" strokeWidth="2.5" fill="none"/>
+  </g>),
+  jam: (<g>
+    <rect x="32" y="38" width="36" height="40" rx="6" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
+    <rect x="36" y="28" width="28" height="12" rx="4" fill="#be185d"/>
+    <path d="M40 52 Q50 48 60 52 Q58 64 50 66 Q42 64 40 52Z" fill="#fce7f3" opacity="0.6"/>
+  </g>),
+  ham: (<g>
+    <ellipse cx="50" cy="52" rx="30" ry="22" fill="#fca5a5" stroke="#dc2626" strokeWidth="3"/>
+    <ellipse cx="50" cy="52" rx="18" ry="12" fill="#fecaca" stroke="#dc2626" strokeWidth="2"/>
+    <circle cx="44" cy="48" r="3" fill="#fef2f2"/><circle cx="56" cy="56" r="3" fill="#fef2f2"/>
+  </g>),
+  sandwich: (<g>
+    <path d="M22 40 Q22 28 50 28 Q78 28 78 40 L78 44 L22 44Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <rect x="22" y="44" width="56" height="8" fill="#4ade80"/>
+    <rect x="22" y="52" width="56" height="8" fill="#fca5a5"/>
+    <path d="M22 60 L78 60 L78 64 Q78 76 50 76 Q22 76 22 64Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+  </g>),
+  book: (<g>
+    <path d="M26 26 L50 32 L50 80 L26 74Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M74 26 L50 32 L50 80 L74 74Z" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
+    <path d="M50 32 L50 80" stroke="#1e293b" strokeWidth="2.5"/>
+  </g>),
+  teacher: (<g>
+    <circle cx="50" cy="32" r="14" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="45" cy="30" r="3" fill="#1f2937"/><circle cx="55" cy="30" r="3" fill="#1f2937"/>
+    <path d="M28 80 Q28 52 50 52 Q72 52 72 80Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
+  </g>),
+  pot: (<g>
+    <path d="M30 44 L70 44 L64 80 L36 80Z" fill="#ea580c" stroke="#9a3412" strokeWidth="3"/>
+    <rect x="26" y="36" width="48" height="10" rx="3" fill="#c2410c" stroke="#9a3412" strokeWidth="2.5"/>
+    <ellipse cx="50" cy="46" rx="20" ry="5" fill="#78350f"/>
+  </g>),
+  water: (<g>
+    <path d="M30 44 L58 44 L54 74 L34 74Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M58 50 L74 38" stroke="#2563eb" strokeWidth="5" strokeLinecap="round"/>
+    <path d="M30 44 Q24 38 28 32" stroke="#2563eb" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    <path d="M74 42 L72 54 M78 42 L78 54 M70 44 L66 54" stroke="#60a5fa" strokeWidth="3" strokeLinecap="round"/>
+  </g>),
+  cover: (<g>
+    <ellipse cx="50" cy="68" rx="30" ry="12" fill="#78350f"/>
+    <path d="M30 56 Q34 40 42 44 Q44 32 50 36 Q56 32 58 44 Q66 40 70 56 Q60 64 50 64 Q40 64 30 56Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+  </g>),
+  candle: (<g>
+    <rect x="40" y="40" width="20" height="40" rx="4" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
+    <path d="M50 40 Q44 30 50 20 Q56 30 50 40Z" fill="#f97316" stroke="#ea580c" strokeWidth="2"/>
+    <path d="M50 34 Q47 28 50 24 Q53 28 50 34Z" fill="#fef08a"/>
+  </g>),
+  music: (<g>
+    <circle cx="36" cy="68" r="11" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
+    <circle cx="68" cy="60" r="11" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
+    <path d="M47 68 L47 28 L79 22 L79 60" stroke="#7c3aed" strokeWidth="5" fill="none" strokeLinecap="round"/>
+  </g>),
+  cake: (<g>
+    <path d="M26 56 L74 56 L74 80 L26 80Z" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
+    <path d="M26 56 Q38 48 50 56 Q62 64 74 56" stroke="#db2777" strokeWidth="3" fill="none"/>
+    <rect x="47" y="32" width="6" height="20" fill="#60a5fa"/>
+    <path d="M50 32 Q47 26 50 22 Q53 26 50 32Z" fill="#94a3b8"/>
+  </g>),
+  milk: (<g>
+    <path d="M36 36 L64 36 L64 42 L68 50 L68 80 L32 80 L32 50 L36 42Z" fill="white" stroke="#94a3b8" strokeWidth="3"/>
+    <rect x="36" y="56" width="28" height="24" fill="#bfdbfe"/>
+    <path d="M40 64 L60 64" stroke="#60a5fa" strokeWidth="3" strokeLinecap="round"/>
+  </g>),
+  pour: (<g>
+    <path d="M28 40 L58 40 Q62 40 61 45 L56 72 Q55 76 50 76 L34 76 Q29 76 28 72Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M58 46 Q72 46 72 60" fill="none" stroke="#2563eb" strokeWidth="4"/>
+    <path d="M60 24 L64 38 M70 26 L72 40" stroke="#60a5fa" strokeWidth="4" strokeLinecap="round"/>
+  </g>),
+  yum: (<g>
+    <circle cx="50" cy="50" r="30" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <path d="M34 42 Q40 36 46 42" fill="none" stroke="#1f2937" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M54 42 Q60 36 66 42" fill="none" stroke="#1f2937" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M38 58 Q50 72 62 58Z" fill="#dc2626"/>
+    <path d="M38 58 Q50 64 62 58" fill="none" stroke="#1f2937" strokeWidth="2.5"/>
+  </g>),
+  rice: (<g>
+    <path d="M22 50 Q50 36 78 50 Q74 76 50 78 Q26 76 22 50Z" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="3"/>
+    <path d="M28 50 Q50 42 72 50" fill="none" stroke="#cbd5e1" strokeWidth="2.5"/>
+    <ellipse cx="40" cy="44" rx="5" ry="3" fill="#fff"/><ellipse cx="54" cy="42" rx="5" ry="3" fill="#fff"/><ellipse cx="62" cy="46" rx="5" ry="3" fill="#fff"/>
+  </g>),
+  sidedish: (<g>
+    <ellipse cx="50" cy="58" rx="32" ry="18" fill="#a7f3d0" stroke="#059669" strokeWidth="3"/>
+    <circle cx="40" cy="52" r="6" fill="#ef4444"/><circle cx="56" cy="50" r="6" fill="#f97316"/>
+    <circle cx="50" cy="60" r="6" fill="#22c55e"/><circle cx="62" cy="58" r="5" fill="#facc15"/>
+  </g>),
+  lunchbox: (<g>
+    <path d="M28 44 L72 44 L66 78 L34 78Z" fill="#fca5a5" stroke="#dc2626" strokeWidth="3"/>
+    <rect x="24" y="34" width="52" height="12" rx="3" fill="#ef4444" stroke="#b91c1c" strokeWidth="2.5"/>
+    <path d="M44 34 L44 24 L56 24 L56 34" fill="none" stroke="#b91c1c" strokeWidth="3"/>
+  </g>),
+  bag: (<g>
+    <path d="M28 38 Q28 24 50 24 Q72 24 72 38 L72 80 L28 80Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
+    <rect x="38" y="48" width="24" height="22" rx="4" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2.5"/>
+    <path d="M40 38 Q40 30 50 30 Q60 30 60 38" fill="none" stroke="#2563eb" strokeWidth="3"/>
+  </g>),
+  slide: (<g>
+    <path d="M24 82 L24 30 Q24 26 28 26 Q32 26 32 30 L32 58 L74 82Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M68 82 L80 82 L58 64" fill="none" stroke="#d97706" strokeWidth="3" strokeLinecap="round"/>
+  </g>),
+  swing: (<g>
+    <path d="M18 22 L82 22" stroke="#92400e" strokeWidth="5" strokeLinecap="round"/>
+    <path d="M38 24 L42 62 M62 24 L58 62" stroke="#64748b" strokeWidth="3.5"/>
+    <rect x="36" y="62" width="28" height="10" rx="3" fill="#f87171" stroke="#dc2626" strokeWidth="2.5"/>
+  </g>),
+  house: (<g>
+    <path d="M50 18 L84 46 L76 46 L76 80 L24 80 L24 46 L16 46Z" fill="#f87171" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round"/>
+    <rect x="42" y="56" width="16" height="24" fill="white" stroke="#dc2626" strokeWidth="2.5"/>
+  </g>),
+  default: (<g>
+    <circle cx="50" cy="50" r="30" fill="#e9d5ff" stroke="#a78bfa" strokeWidth="3"/>
+    <path d="M50 28 Q54 48 70 50 Q54 52 50 72 Q46 52 30 50 Q46 48 50 28Z" fill="#a78bfa"/>
+  </g>),
+  /* ─── 인터페이스 아이콘 ─── */
+  ui_soundOn: (<g>
+    <path d="M20 40 H35 L55 22 V78 L35 60 H20Z" fill="#34d399" stroke="#059669" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M64 38 Q72 50 64 62" stroke="#059669" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    <path d="M72 30 Q86 50 72 70" stroke="#059669" strokeWidth="5" fill="none" strokeLinecap="round"/>
+  </g>),
+  ui_soundOff: (<g>
+    <path d="M20 40 H35 L55 22 V78 L35 60 H20Z" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M66 40 L82 60 M82 40 L66 60" stroke="#94a3b8" strokeWidth="5" strokeLinecap="round"/>
+  </g>),
+  ui_rocket: (<g>
+    <path d="M50 12 C64 24 68 44 62 64 L38 64 C32 44 36 24 50 12Z" fill="#f87171" stroke="#dc2626" strokeWidth="3"/>
+    <circle cx="50" cy="38" r="9" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M38 58 L26 72 L40 66Z" fill="#fb923c" stroke="#ea580c" strokeWidth="2.5"/>
+    <path d="M62 58 L74 72 L60 66Z" fill="#fb923c" stroke="#ea580c" strokeWidth="2.5"/>
+    <path d="M44 66 Q50 86 56 66" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2.5"/>
+  </g>),
+  ui_mic: (<g>
+    <rect x="38" y="14" width="24" height="44" rx="12" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+    <path d="M28 50 Q28 72 50 72 Q72 72 72 50" stroke="#7c3aed" strokeWidth="4" fill="none" strokeLinecap="round"/>
+    <path d="M50 72 L50 86 M38 86 L62 86" stroke="#7c3aed" strokeWidth="4" strokeLinecap="round"/>
+  </g>),
+  ui_target: (<g>
+    <circle cx="50" cy="50" r="34" fill="none" stroke="#ef4444" strokeWidth="6"/>
+    <circle cx="50" cy="50" r="20" fill="none" stroke="#f87171" strokeWidth="6"/>
+    <circle cx="50" cy="50" r="7" fill="#dc2626"/>
+  </g>),
+  ui_help: (<g>
+    <circle cx="50" cy="26" r="11" fill="#fbbf24" stroke="#d97706" strokeWidth="2.5"/>
+    <path d="M50 38 L50 64" stroke="#fbbf24" strokeWidth="9" strokeLinecap="round"/>
+    <path d="M50 46 L34 60 M50 44 L66 28" stroke="#fbbf24" strokeWidth="8" strokeLinecap="round"/>
+    <path d="M50 64 L40 84 M50 64 L60 84" stroke="#fbbf24" strokeWidth="8" strokeLinecap="round"/>
+    <circle cx="68" cy="24" r="6" fill="#f59e0b"/>
+  </g>),
+  ui_refresh: (<g>
+    <path d="M76 50 A26 26 0 1 1 60 26" fill="none" stroke="#8b5cf6" strokeWidth="8" strokeLinecap="round"/>
+    <path d="M56 14 L72 26 L54 33Z" fill="#8b5cf6"/>
+  </g>),
+  ui_cycle: (<g>
+    <path d="M74 38 A28 28 0 1 1 64 24" fill="none" stroke="#8b5cf6" strokeWidth="8" strokeLinecap="round"/>
+    <path d="M58 12 L76 22 L60 32Z" fill="#8b5cf6"/>
+  </g>),
+  ui_star: (<g>
+    <path d="M50 14 L61 38 L86 41 L68 59 L73 84 L50 72 L27 84 L32 59 L14 41 L39 38Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3" strokeLinejoin="round"/>
+  </g>),
+  ui_pin: (<g>
+    <circle cx="50" cy="38" r="22" fill="#f87171" stroke="#dc2626" strokeWidth="3"/>
+    <circle cx="50" cy="38" r="9" fill="#fecaca"/>
+    <path d="M50 60 L50 88" stroke="#dc2626" strokeWidth="6" strokeLinecap="round"/>
+  </g>),
+  ui_cards: (<g>
+    <rect x="20" y="32" width="34" height="48" rx="6" fill="#fff" stroke="#94a3b8" strokeWidth="3" transform="rotate(-12 37 56)"/>
+    <rect x="44" y="26" width="34" height="48" rx="6" fill="#fff" stroke="#7c3aed" strokeWidth="3" transform="rotate(10 61 50)"/>
+    <circle cx="61" cy="50" r="9" fill="#c4b5fd"/>
+  </g>),
+  ui_hand: (<g>
+    <path d="M38 86 L38 50 Q38 44 44 44 L44 30 Q44 24 50 24 Q56 24 56 30 L56 44 Q56 39 62 39 Q68 39 68 45 L68 49 Q74 47 74 55 L74 74 Q74 86 58 86Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+  </g>),
+  ui_arrowRight: (<g>
+    <path d="M18 50 L66 50 M48 32 L70 50 L48 68" fill="none" stroke="#f97316" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round"/>
+  </g>),
+  ui_x: (<g>
+    <circle cx="50" cy="50" r="32" fill="#fee2e2" stroke="#ef4444" strokeWidth="3"/>
+    <path d="M39 39 L61 61 M61 39 L39 61" stroke="#dc2626" strokeWidth="7" strokeLinecap="round"/>
+  </g>),
+  ui_check: (<g>
+    <circle cx="50" cy="50" r="32" fill="#dcfce7" stroke="#22c55e" strokeWidth="3"/>
+    <path d="M35 52 L46 63 L66 38" fill="none" stroke="#16a34a" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round"/>
+  </g>),
+  ui_think: (<g>
+    <path d="M26 32 Q26 14 50 14 Q76 14 76 36 Q76 54 52 54 L42 64 L42 53 Q26 50 26 32Z" fill="#fef9c3" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+    <circle cx="40" cy="34" r="3.5" fill="#92400e"/><circle cx="51" cy="34" r="3.5" fill="#92400e"/><circle cx="62" cy="34" r="3.5" fill="#92400e"/>
+  </g>),
+  ui_party: (<g>
+    <path d="M20 84 L42 38 L66 62Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M30 70 L48 56 M36 80 L52 70" stroke="#f59e0b" strokeWidth="2.5"/>
+    <circle cx="70" cy="24" r="5" fill="#f87171"/><circle cx="84" cy="44" r="5" fill="#34d399"/><circle cx="56" cy="18" r="5" fill="#60a5fa"/>
+    <path d="M76 60 l5 0 M82 70 l0 5" stroke="#a855f7" strokeWidth="3" strokeLinecap="round"/>
+  </g>),
+  ui_stopSquare: (<g><rect x="28" y="28" width="44" height="44" rx="8" fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/></g>),
+  ui_pencil: (<g>
+    <rect x="24" y="64" width="50" height="13" rx="3" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2.5"/>
+    <path d="M58 20 L76 38 L44 70 L26 74 L30 56Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M58 20 L76 38" stroke="#d97706" strokeWidth="2.5"/>
+    <path d="M26 74 L36 64" stroke="#92400e" strokeWidth="3"/>
+  </g>),
+  ui_keyboard: (<g>
+    <rect x="14" y="34" width="72" height="40" rx="6" fill="#e2e8f0" stroke="#64748b" strokeWidth="3"/>
+    <rect x="22" y="42" width="10" height="9" rx="2" fill="#94a3b8"/><rect x="36" y="42" width="10" height="9" rx="2" fill="#94a3b8"/>
+    <rect x="50" y="42" width="10" height="9" rx="2" fill="#94a3b8"/><rect x="64" y="42" width="10" height="9" rx="2" fill="#94a3b8"/>
+    <rect x="30" y="56" width="40" height="9" rx="2" fill="#94a3b8"/>
+  </g>),
+  ui_bulb: (<g>
+    <path d="M50 16 Q72 16 72 38 Q72 52 58 60 L58 68 L42 68 L42 60 Q28 52 28 38 Q28 16 50 16Z" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
+    <rect x="42" y="70" width="16" height="8" rx="2" fill="#94a3b8"/>
+    <rect x="44" y="80" width="12" height="6" rx="2" fill="#94a3b8"/>
+  </g>),
+  ui_trophy: (<g>
+    <path d="M32 20 L68 20 L66 44 Q66 58 50 58 Q34 58 34 44Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+    <path d="M32 24 Q18 24 20 36 Q22 44 34 42" fill="none" stroke="#d97706" strokeWidth="3.5"/>
+    <path d="M68 24 Q82 24 80 36 Q78 44 66 42" fill="none" stroke="#d97706" strokeWidth="3.5"/>
+    <rect x="44" y="58" width="12" height="14" fill="#d97706"/>
+    <rect x="32" y="72" width="36" height="10" rx="3" fill="#b45309"/>
+    <path d="M44 32 L48 40 L56 30" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+  </g>),
+  ui_headphone: (<g>
+    <path d="M22 56 Q22 22 50 22 Q78 22 78 56" fill="none" stroke="#7c3aed" strokeWidth="6" strokeLinecap="round"/>
+    <rect x="16" y="52" width="16" height="26" rx="7" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+    <rect x="68" y="52" width="16" height="26" rx="7" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+  </g>),
+  ui_muscle: (<g>
+    <path d="M22 46 Q22 32 38 34 L58 38 Q76 40 76 58 Q76 78 52 78 L34 78 Q22 78 24 62Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
+    <path d="M44 46 Q56 52 54 66" fill="none" stroke="#d97706" strokeWidth="3"/>
+  </g>),
+  ui_hourglass: (<g>
+    <path d="M28 18 L72 18 L72 28 Q72 44 50 50 Q28 44 28 28Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M28 82 L72 82 L72 72 Q72 56 50 50 Q28 56 28 72Z" fill="#fcd34d" stroke="#2563eb" strokeWidth="3"/>
+    <rect x="22" y="14" width="56" height="6" rx="3" fill="#1e40af"/>
+    <rect x="22" y="80" width="56" height="6" rx="3" fill="#1e40af"/>
+  </g>),
+  ui_home: (<g>
+    <path d="M50 18 L84 46 L76 46 L76 80 L24 80 L24 46 L16 46Z" fill="#f87171" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round"/>
+    <rect x="42" y="56" width="16" height="24" fill="white" stroke="#dc2626" strokeWidth="2.5"/>
+  </g>),
+  ui_sparkle: (<g>
+    <path d="M50 16 Q54 40 78 44 Q54 48 50 72 Q46 48 22 44 Q46 40 50 16Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2.5"/>
+    <path d="M78 16 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2Z" fill="#fde047"/>
+  </g>),
+  ui_plant: (<g>
+    <path d="M50 86 L50 40" stroke="#16a34a" strokeWidth="6" strokeLinecap="round"/>
+    <path d="M50 56 Q30 52 24 34 Q44 36 50 56Z" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 56 Q70 52 76 34 Q56 36 50 56Z" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 44 Q34 40 30 24 Q46 28 50 44Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 44 Q66 40 70 24 Q54 28 50 44Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+  </g>),
+};
+
+/* 카드 → 아이콘 이름 변환 (이모지/이름 모두 인식) */
+const resolveIconName = (card) => {
+  let key = String(card.icon || card.img || '').trim();
+  if (ICONS[key]) return key;
+  if (EMOJI_TO_ICON[key]) return EMOJI_TO_ICON[key];
+  return 'default';
+};
+const normalizeQuestions = (qs) => (qs || []).map(q => ({
+  ...q,
+  cards: (q.cards || []).map(c => ({ id: c.id, text: c.text, icon: resolveIconName(c) }))
+}));
+
+/* SVG 아이콘 렌더 */
+const Icon = ({name, size=60}) => (
+  <svg width={size} height={size} viewBox="0 0 100 100">
+    {ICONS[name] || ICONS.default}
+  </svg>
+);
+
+/* 반응형 Scale */
 const useScale = () => {
   const [scale, setScale] = useState(1);
   useEffect(() => {
-    const calc = () => {
-      const sx = window.innerWidth / 1280;
-      const sy = window.innerHeight / 800;
-      setScale(Math.min(sx, sy));
-    };
+    const calc = () => setScale(Math.min(window.innerWidth/1280, window.innerHeight/800));
     calc();
     window.addEventListener('resize', calc);
     return () => window.removeEventListener('resize', calc);
@@ -259,7 +679,7 @@ const useScale = () => {
   return scale;
 };
 
-/* ─── 음성 ─── */
+/* 음성 */
 let bestVoice = null;
 const findBestVoice = () => {
   if (!window.speechSynthesis) return null;
@@ -276,20 +696,16 @@ if (window.speechSynthesis) {
   window.speechSynthesis.onvoiceschanged = () => { bestVoice = findBestVoice(); };
   setTimeout(() => { bestVoice = findBestVoice(); }, 500);
 }
-
 const speak = (text, soundOn) => {
   if (!soundOn || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ko-KR';
-  u.rate = 0.95;
-  u.pitch = 1.0;
+  u.lang = 'ko-KR'; u.rate = 0.95; u.pitch = 1.0;
   if (!bestVoice) bestVoice = findBestVoice();
   if (bestVoice) u.voice = bestVoice;
   window.speechSynthesis.speak(u);
 };
 const speakForce = (text) => {
-  // 도움받기는 소리 OFF여도 읽어줌
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
@@ -298,7 +714,6 @@ const speakForce = (text) => {
   if (bestVoice) u.voice = bestVoice;
   window.speechSynthesis.speak(u);
 };
-
 const playSound = (type, soundOn) => {
   if (!soundOn) return;
   try {
@@ -306,58 +721,42 @@ const playSound = (type, soundOn) => {
     const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
     o.connect(g); g.connect(a.destination);
     if (type === 'chime') {
-      o.frequency.setValueAtTime(523, t);
-      o.frequency.setValueAtTime(659, t+.1);
-      o.frequency.setValueAtTime(784, t+.2);
-      g.gain.setValueAtTime(.2, t);
-      g.gain.exponentialRampToValueAtTime(.01, t+1);
+      o.frequency.setValueAtTime(523, t); o.frequency.setValueAtTime(659, t+.1); o.frequency.setValueAtTime(784, t+.2);
+      g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.01, t+1);
       o.start(t); o.stop(t+1);
     } else if (type === 'wrong') {
       o.type = 'triangle';
-      o.frequency.setValueAtTime(150, t);
-      o.frequency.linearRampToValueAtTime(100, t+.3);
-      g.gain.setValueAtTime(.2, t);
-      g.gain.exponentialRampToValueAtTime(.01, t+.5);
+      o.frequency.setValueAtTime(150, t); o.frequency.linearRampToValueAtTime(100, t+.3);
+      g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.01, t+.5);
       o.start(t); o.stop(t+.5);
     } else if (type === 'pop') {
-      o.frequency.setValueAtTime(800, t);
-      o.frequency.exponentialRampToValueAtTime(1200, t+.15);
-      g.gain.setValueAtTime(.15, t);
-      g.gain.exponentialRampToValueAtTime(.01, t+.2);
+      o.frequency.setValueAtTime(800, t); o.frequency.exponentialRampToValueAtTime(1200, t+.15);
+      g.gain.setValueAtTime(.15, t); g.gain.exponentialRampToValueAtTime(.01, t+.2);
       o.start(t); o.stop(t+.2);
     }
   } catch(e){}
 };
-
 const fireConfetti = () => {
   if (!window.confetti) return;
   try {
     const end = Date.now() + 2000;
     const iv = setInterval(() => {
       if (Date.now() > end) return clearInterval(iv);
-      window.confetti({
-        particleCount: 40, spread: 360, startVelocity: 28,
-        origin: { x: Math.random(), y: Math.random() - .2 },
-        zIndex: 9999,
-        colors: ['#fbbf24','#f87171','#34d399','#60a5fa','#a78bfa','#fb7185']
-      });
+      window.confetti({ particleCount:40, spread:360, startVelocity:28,
+        origin:{x:Math.random(),y:Math.random()-.2}, zIndex:9999,
+        colors:['#fbbf24','#f87171','#34d399','#60a5fa','#a78bfa','#fb7185'] });
     }, 200);
   } catch(e){}
 };
-
 const fireSticker = () => {
   if (!window.confetti) return;
   try {
-    window.confetti({
-      particleCount: 80, spread: 120, startVelocity: 35,
-      origin: { x: 0.5, y: 0.5 },
-      zIndex: 9999,
-      colors: ['#fbbf24', '#f87171', '#a78bfa', '#34d399']
-    });
+    window.confetti({ particleCount:80, spread:120, startVelocity:35,
+      origin:{x:0.5,y:0.5}, zIndex:9999, colors:['#fbbf24','#f87171','#a78bfa','#34d399'] });
   } catch(e){}
 };
 
-/* ─── 둥근 별 ─── */
+/* 둥근 별 */
 const RoundStar = ({filled, size=60}) => (
   <svg width={size} height={size} viewBox="0 0 100 100" style={{
     filter: filled ? 'drop-shadow(0 4px 8px rgba(245,158,11,0.4))' : 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
@@ -369,60 +768,108 @@ const RoundStar = ({filled, size=60}) => (
         <stop offset="100%" stopColor={filled ? "#f59e0b" : "#cbd5e1"}/>
       </radialGradient>
     </defs>
-    <path 
-      d="M50,10 C52,10 53,11 54,13 L60,28 C61,30 63,31 65,31 L82,33 C85,33 87,36 85,38 L72,50 C70,52 70,54 70,56 L74,73 C75,76 72,78 70,77 L54,69 C52,68 48,68 46,69 L30,77 C28,78 25,76 26,73 L30,56 C30,54 30,52 28,50 L15,38 C13,36 15,33 18,33 L35,31 C37,31 39,30 40,28 L46,13 C47,11 48,10 50,10 Z"
-      fill={`url(#sg-${filled})`}
-      stroke={filled ? "#d97706" : "#94a3b8"}
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
+    <path d="M50,10 C52,10 53,11 54,13 L60,28 C61,30 63,31 65,31 L82,33 C85,33 87,36 85,38 L72,50 C70,52 70,54 70,56 L74,73 C75,76 72,78 70,77 L54,69 C52,68 48,68 46,69 L30,77 C28,78 25,76 26,73 L30,56 C30,54 30,52 28,50 L15,38 C13,36 15,33 18,33 L35,31 C37,31 39,30 40,28 L46,13 C47,11 48,10 50,10 Z"
+      fill={`url(#sg-${filled})`} stroke={filled ? "#d97706" : "#94a3b8"} strokeWidth="2" strokeLinejoin="round"/>
   </svg>
 );
 
 const StarRating = ({rating, setRating, size=60}) => (
   <div className="flex justify-center gap-3 py-2">
     {[1,2,3,4,5].map(s => (
-      <button key={s} onClick={() => setRating(s)} 
-        style={{background:'none', border:'none', cursor:'pointer', padding:'4px', transition:'transform 0.15s'}}
-        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
-        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
+      <button key={s} onClick={() => setRating(s)}
+        style={{background:'none',border:'none',cursor:'pointer',padding:'4px',transition:'transform 0.15s'}}
+        onMouseEnter={e => e.currentTarget.style.transform='scale(1.1)'}
+        onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>
         <RoundStar filled={s <= rating} size={size}/>
       </button>
     ))}
   </div>
 );
 
-/* ─── 사운드 토글 ─── */
+/* 사운드 토글 */
 const SoundToggle = ({soundOn, setSoundOn}) => (
   <button onClick={() => setSoundOn(!soundOn)}
     style={{
-      position: 'absolute', top: '1rem', right: '1rem', zIndex: 50,
-      width: '56px', height: '56px',
-      borderRadius: '50%',
-      border: 'none',
-      background: soundOn ? 'linear-gradient(135deg, #34d399, #10b981)' : 'rgba(255,255,255,0.7)',
-      color: soundOn ? 'white' : '#94a3b8',
-      fontSize: '1.75rem',
-      cursor: 'pointer',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-      backdropFilter: 'blur(8px)'
+      position:'absolute', top:'1rem', right:'1rem', zIndex:50,
+      width:'56px', height:'56px', borderRadius:'50%', border:'none',
+      background: soundOn ? 'linear-gradient(135deg, #34d399, #10b981)' : 'rgba(255,255,255,0.85)',
+      cursor:'pointer', boxShadow:'0 4px 12px rgba(0,0,0,0.12)', backdropFilter:'blur(8px)',
+      display:'flex', alignItems:'center', justifyContent:'center', padding:0
     }}>
-    {soundOn ? '🔊' : '🔇'}
+    <Icon name={soundOn ? 'ui_soundOn' : 'ui_soundOff'} size={34}/>
   </button>
 );
 
-/* ─── 직선 카드 표시 ─── */
+/* 팝업 (순환 안내) */
+const Popup = ({type, onClose}) => {
+  if (!type) return null;
+  let body;
+  if (type === 'cyclic-intro') {
+    body = (
+      <>
+        <div style={{margin:'0 auto 1rem'}}><Icon name="ui_cycle" size={88}/></div>
+        <h2 style={{fontSize:'2.25rem',color:'#7c3aed',fontWeight:'900',marginBottom:'1rem'}}>빙글빙글 도는 문제예요!</h2>
+        <p style={{fontSize:'1.375rem',color:'#475569',lineHeight:'1.6',wordBreak:'keep-all',fontWeight:'700',marginBottom:'1.5rem'}}>
+          이 문제는 <span style={{color:'#7c3aed',fontWeight:'900'}}>순환</span> 문제예요.<br/>
+          마지막 다음에 끝나지 않고<br/><span style={{color:'#7c3aed',fontWeight:'900'}}>다시 처음으로</span> 돌아온답니다!
+        </p>
+      </>
+    );
+  } else {
+    body = (
+      <>
+        <div style={{margin:'0 auto 1rem'}}><Icon name="ui_cycle" size={80}/></div>
+        <h2 style={{fontSize:'2rem',color:'#7c3aed',fontWeight:'900',marginBottom:'1rem'}}>순환은 선형과 달라요!</h2>
+        <div style={{display:'flex',flexDirection:'column',gap:'0.75rem',marginBottom:'1.25rem'}}>
+          <div style={{background:'#fff7ed',border:'3px solid #fdba74',borderRadius:'1rem',padding:'0.9rem'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem'}}>
+              <span style={{fontSize:'1.125rem',color:'#c2410c',fontWeight:'900'}}>선형(순서)</span>
+              <Icon name="ui_arrowRight" size={26}/>
+            </div>
+            <p style={{fontSize:'1.0625rem',color:'#9a3412',margin:'0.25rem 0 0',fontWeight:'700'}}>끝까지 가면 그대로 끝!</p>
+          </div>
+          <div style={{background:'#f5f3ff',border:'3px solid #c4b5fd',borderRadius:'1rem',padding:'0.9rem'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem'}}>
+              <span style={{fontSize:'1.125rem',color:'#6d28d9',fontWeight:'900'}}>순환(한살이)</span>
+              <Icon name="ui_cycle" size={26}/>
+            </div>
+            <p style={{fontSize:'1.0625rem',color:'#5b21b6',margin:'0.25rem 0 0',fontWeight:'700'}}>마지막이 다시 처음으로 이어져요!</p>
+          </div>
+        </div>
+        <p style={{fontSize:'1.125rem',color:'#475569',lineHeight:'1.6',wordBreak:'keep-all',fontWeight:'700',marginBottom:'1.25rem'}}>
+          그래서 한살이는 끝이 없이 <span style={{color:'#7c3aed',fontWeight:'900'}}>계속 빙글빙글</span> 돌아요.
+        </p>
+      </>
+    );
+  }
+  return (
+    <div className="fade-in" style={{
+      position:'fixed', inset:0, background:'rgba(30,27,75,0.55)', zIndex:10000,
+      display:'flex', alignItems:'center', justifyContent:'center', padding:'1.5rem'
+    }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background:'white', borderRadius:'2rem', maxWidth:'540px', width:'100%',
+        padding:'2.5rem 2rem', textAlign:'center', boxShadow:'0 24px 70px rgba(0,0,0,0.35)'
+      }}>
+        {body}
+        <button onClick={onClose} className="pill-btn">
+          {type === 'cyclic-intro' ? '알았어요!' : '좋아요!'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* 직선 카드 표시 */
 const LinearLayout = ({items}) => (
   <div style={{display:'flex',flexWrap:'wrap',alignItems:'center',justifyContent:'center',gap:'0.75rem',padding:'1rem 0'}}>
     {items.map((it,i)=>(
       <div key={i} style={{display:'flex',alignItems:'center'}}>
         <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-          <div style={{
-            fontSize:'3.5rem', background:'white', borderRadius:'1.25rem',
-            padding:'0.6rem', boxShadow:'0 6px 16px rgba(139,92,246,0.18)',
-            border:'4px solid #c4b5fd', width:'100px', height:'100px',
-            display:'flex',alignItems:'center',justifyContent:'center'
-          }}>{it.img}</div>
+          <div style={{background:'white',borderRadius:'1.25rem',padding:'0.4rem',boxShadow:'0 6px 16px rgba(139,92,246,0.18)',
+            border:'4px solid #c4b5fd',width:'100px',height:'100px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <Icon name={it.icon} size={78}/>
+          </div>
           <span style={{fontSize:'1.125rem',marginTop:'8px',color:'#475569',textAlign:'center',wordBreak:'keep-all',maxWidth:'120px',fontWeight:'700'}}>{it.text}</span>
         </div>
         {i<items.length-1 && (
@@ -435,7 +882,7 @@ const LinearLayout = ({items}) => (
   </div>
 );
 
-/* ─── 원형 카드 표시 ─── */
+/* 원형 카드 표시 */
 const CircularLayout = ({items, size=350}) => {
   const R = size * 0.32;
   return (
@@ -446,23 +893,16 @@ const CircularLayout = ({items, size=350}) => {
       {items.map((it,i) => {
         const a = (i/items.length)*2*Math.PI - Math.PI/2;
         return (
-          <div key={i} style={{
-            position:'absolute', left:'50%', top:'50%',
-            transform: `translate(${R*Math.cos(a) - 45}px, ${R*Math.sin(a) - 45}px)`,
-            display:'flex', flexDirection:'column', alignItems:'center'
-          }}>
-            <div style={{
-              fontSize:'2.5rem', background:'white', borderRadius:'50%',
-              width:'90px', height:'90px',
+          <div key={i} style={{position:'absolute',left:'50%',top:'50%',
+            transform:`translate(${R*Math.cos(a) - 45}px, ${R*Math.sin(a) - 45}px)`,
+            display:'flex',flexDirection:'column',alignItems:'center'}}>
+            <div style={{background:'white',borderRadius:'50%',width:'90px',height:'90px',
               display:'flex',alignItems:'center',justifyContent:'center',
-              boxShadow:'0 6px 16px rgba(139,92,246,0.18)',
-              border:'4px solid #c4b5fd'
-            }}>{it.img}</div>
-            <span style={{
-              fontSize:'1rem', marginTop:'4px',color:'#475569',
-              background:'white',padding:'2px 10px',borderRadius:'999px',
-              boxShadow:'0 2px 4px rgba(0,0,0,0.08)',whiteSpace:'nowrap',fontWeight:'700'
-            }}>{it.text}</span>
+              boxShadow:'0 6px 16px rgba(139,92,246,0.18)',border:'4px solid #c4b5fd'}}>
+              <Icon name={it.icon} size={64}/>
+            </div>
+            <span style={{fontSize:'1rem',marginTop:'4px',color:'#475569',background:'white',padding:'2px 10px',
+              borderRadius:'999px',boxShadow:'0 2px 4px rgba(0,0,0,0.08)',whiteSpace:'nowrap',fontWeight:'700'}}>{it.text}</span>
           </div>
         );
       })}
@@ -470,18 +910,20 @@ const CircularLayout = ({items, size=350}) => {
   );
 };
 
-/* ─── 순환형 슬롯 (퀴즈용) ─── */
-const CyclicSlots = ({slots, onTapSlot, onDragOver, onDragLeave, onDrop, onDragStart, dragOverIndex, wrongIndices, size=420}) => {
+/* 순환형 슬롯 (퀴즈용) */
+const CyclicSlots = ({slots, onTapSlot, onDragOver, onDragLeave, onDrop, onDragStart, dragOverIndex, wrongIndices, lockedIndices, ghostByIndex, size=420}) => {
   const n = slots.length;
   const R = size * 0.32;
   const slotSize = 130;
-  
   return (
     <div style={{position:'relative',width:size,height:size,margin:'0 auto'}}>
       <svg style={{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none'}} viewBox={`0 0 ${size} ${size}`}>
         <circle cx={size/2} cy={size/2} r={R} fill="none" stroke="#a78bfa" strokeWidth="4" strokeDasharray="10 10"/>
-        <text x={size/2} y={size/2 - 5} fontSize="32" textAnchor="middle" fill="#8b5cf6">🔄</text>
-        <text x={size/2} y={size/2 + 25} fontSize="16" textAnchor="middle" fill="#8b5cf6" fontWeight="700">순환</text>
+        <g transform={`translate(${size/2}, ${size/2})`}>
+          <path d="M16 -3 A16 16 0 1 1 10 -13" fill="none" stroke="#8b5cf6" strokeWidth="4" strokeLinecap="round"/>
+          <path d="M4 -18 L14 -10 L2 -6Z" fill="#8b5cf6"/>
+          <text y="26" fontSize="15" textAnchor="middle" fill="#8b5cf6" fontWeight="700">순환</text>
+        </g>
       </svg>
       {slots.map((card, i) => {
         const a = (i/n)*2*Math.PI - Math.PI/2;
@@ -489,44 +931,44 @@ const CyclicSlots = ({slots, onTapSlot, onDragOver, onDragLeave, onDrop, onDragS
         const y = size/2 + R*Math.sin(a) - slotSize/2;
         const isWrong = wrongIndices.includes(i);
         const isOver = dragOverIndex === i;
+        const isLocked = lockedIndices.includes(i);
+        const ghost = ghostByIndex[i];
         return (
           <div key={i}
-            className={`slot-box ${isOver ? 'drag-over' : ''} ${isWrong ? 'wrong-slot' : ''}`}
-            style={{
-              position:'absolute', left:x, top:y,
-              width:slotSize, height:slotSize, minHeight:slotSize,
-              padding:'4px', borderRadius:'50%', flexDirection:'column'
-            }}
-            onDragOver={(e)=>onDragOver(e,i)}
-            onDragLeave={onDragLeave}
-            onDrop={(e)=>onDrop(e,i)}>
-            <div style={{
-              position:'absolute', top:'-6px', left:'50%', transform:'translateX(-50%)',
-              width:'28px', height:'28px',
-              background: isWrong ? '#ef4444' : '#8b5cf6',
-              color:'white', borderRadius:'50%',
-              display:'flex',alignItems:'center',justifyContent:'center',
-              fontWeight:'900', fontSize:'14px', zIndex:2,
-              boxShadow:'0 2px 6px rgba(0,0,0,0.2)'
-            }}>{i+1}</div>
+            className={`slot-box ${isOver && !isLocked ? 'drag-over' : ''} ${isWrong ? 'wrong-slot' : ''}`}
+            style={{position:'absolute',left:x,top:y,width:slotSize,height:slotSize,minHeight:slotSize,
+              padding:'4px',borderRadius:'50%',flexDirection:'column'}}
+            onDragOver={(e)=>onDragOver(e,i)} onDragLeave={onDragLeave} onDrop={(e)=>onDrop(e,i)}>
+            <div style={{position:'absolute',top:'-6px',left:'50%',transform:'translateX(-50%)',
+              width:'28px',height:'28px',background:isWrong?'#ef4444':'#8b5cf6',color:'white',borderRadius:'50%',
+              display:'flex',alignItems:'center',justifyContent:'center',fontWeight:'900',fontSize:'14px',zIndex:2,
+              boxShadow:'0 2px 6px rgba(0,0,0,0.2)'}}>{i+1}</div>
             {card ? (
-              <div draggable="true"
-                onDragStart={(e)=>onDragStart(e,i)}
-                onClick={()=>onTapSlot(card,i)}
-                style={{
-                  width:'100%',height:'100%',
-                  display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-                  cursor:'grab',borderRadius:'50%'
-                }}>
-                <div style={{fontSize:'2.25rem',pointerEvents:'none'}}>{card.img}</div>
-                <div style={{fontSize:'0.85rem',color:'#475569',textAlign:'center',marginTop:'2px',wordBreak:'keep-all',pointerEvents:'none',fontWeight:'700'}}>{card.text}</div>
+              isLocked ? (
+                <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',
+                  justifyContent:'center',borderRadius:'50%',opacity:0.5,position:'relative'}}>
+                  <Icon name={card.icon} size={50}/>
+                  <div style={{fontSize:'0.8rem',color:'#475569',textAlign:'center',marginTop:'2px',wordBreak:'keep-all',fontWeight:'700'}}>{card.text}</div>
+                  <div style={{position:'absolute',bottom:'2px',background:'#8b5cf6',color:'white',
+                    fontSize:'0.6rem',padding:'1px 7px',borderRadius:'999px',fontWeight:'700'}}>예시</div>
+                </div>
+              ) : (
+                <div draggable="true" onDragStart={(e)=>onDragStart(e,i)} onClick={()=>onTapSlot(card,i)}
+                  style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',
+                    justifyContent:'center',cursor:'grab',borderRadius:'50%'}}>
+                  <div style={{pointerEvents:'none'}}><Icon name={card.icon} size={52}/></div>
+                  <div style={{fontSize:'0.85rem',color:'#475569',textAlign:'center',marginTop:'2px',wordBreak:'keep-all',pointerEvents:'none',fontWeight:'700'}}>{card.text}</div>
+                </div>
+              )
+            ) : ghost ? (
+              <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',
+                justifyContent:'center',opacity:0.32}}>
+                <Icon name={ghost.icon} size={48}/>
+                <div style={{fontSize:'0.75rem',color:'#7c3aed',textAlign:'center',marginTop:'2px',fontWeight:'700'}}>여기부터!</div>
               </div>
             ) : (
-              <div style={{
-                width:'100%',height:'100%',
-                display:'flex',alignItems:'center',justifyContent:'center',
-                fontSize:'0.85rem',color:'#cbd5e1',textAlign:'center',fontWeight:'700'
-              }}>여기로</div>
+              <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',
+                fontSize:'0.85rem',color:'#cbd5e1',textAlign:'center',fontWeight:'700'}}>여기로</div>
             )}
           </div>
         );
@@ -535,9 +977,7 @@ const CyclicSlots = ({slots, onTapSlot, onDragOver, onDragLeave, onDrop, onDragS
   );
 };
 
-/* ═════════════════════════════════════════════════════
-   메인 앱
-   ═════════════════════════════════════════════════════ */
+/* ═════════════ 메인 앱 ═════════════ */
 const App = () => {
   const scale = useScale();
   const [phase, setPhase] = useState("loading");
@@ -547,25 +987,23 @@ const App = () => {
   const [activeQuestions, setActiveQuestions] = useState([]);
   const [qIndex, setQIndex] = useState(0);
 
-  // 퀴즈
   const [slots, setSlots] = useState([]);
   const [pool, setPool] = useState([]);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [wrongIndices, setWrongIndices] = useState([]);
   const [practiceMode, setPracticeMode] = useState(false);
   const [dragSource, setDragSource] = useState(null);
+  const [lockedIndices, setLockedIndices] = useState([]);
 
-  // 점수
   const [score, setScore] = useState(0);
   const [helpUsedTotal, setHelpUsedTotal] = useState(0);
   const [helpUsedCurrent, setHelpUsedCurrent] = useState(false);
   const [perQuestionResults, setPerQuestionResults] = useState([]);
   const [attempts, setAttempts] = useState(0);
 
-  // 소리
   const [soundOn, setSoundOn] = useState(false);
+  const [popup, setPopup] = useState(null);
 
-  // 마이크
   const [micGranted, setMicGranted] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -573,14 +1011,12 @@ const App = () => {
   const [audioBase64, setAudioBase64] = useState(null);
   const audioChunksRef = useRef([]);
 
-  // 음성 인식
   const recognitionRef = useRef(null);
   const [recognizedText, setRecognizedText] = useState('');
   const [interimText, setInterimText] = useState('');
   const [keyboardText, setKeyboardText] = useState('');
   const [useKeyboard, setUseKeyboard] = useState(false);
 
-  // 녹음 단계
   const [reflectionRound, setReflectionRound] = useState(0);
   const [totalReflectionRounds, setTotalReflectionRounds] = useState(0);
   const [batchStart, setBatchStart] = useState(0);
@@ -588,51 +1024,48 @@ const App = () => {
   const [selfRating, setSelfRating] = useState(0);
   const [allReflections, setAllReflections] = useState([]);
 
-  // 토스트
   const [toast, setToast] = useState(null);
-  const showToast = (msg, dur=2000) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), dur);
-  };
+  const showToast = (msg, dur=2000) => { setToast(msg); setTimeout(() => setToast(null), dur); };
 
   const currentQ = activeQuestions[qIndex];
 
-  /* ─── 데이터 로드 ─── */
+  /* 데이터 로드 */
   useEffect(() => {
     const load = async () => {
       if (!window.GAS_API_URL || !window.GAS_API_URL.trim()) {
-        setStudents(defaultStudents);
-        setSelectedStudent(defaultStudents[0]);
-        setAllQuestions(defaultQuestions);
-        setPhase("login");
+        setStudents(defaultStudents); setSelectedStudent(defaultStudents[0]);
+        setAllQuestions(normalizeQuestions(defaultQuestions)); setPhase("login");
         return;
       }
       try {
         const res = await fetch(window.GAS_API_URL);
         const data = await res.json();
         const sts = data.students?.length ? data.students : defaultStudents;
-        setStudents(sts);
-        setSelectedStudent(sts[0]);
-        setAllQuestions(data.questions?.length ? data.questions : defaultQuestions);
+        setStudents(sts); setSelectedStudent(sts[0]);
+        setAllQuestions(normalizeQuestions(data.questions?.length ? data.questions : defaultQuestions));
         setPhase("login");
       } catch(e) {
-        setStudents(defaultStudents);
-        setSelectedStudent(defaultStudents[0]);
-        setAllQuestions(defaultQuestions);
+        setStudents(defaultStudents); setSelectedStudent(defaultStudents[0]);
+        setAllQuestions(normalizeQuestions(defaultQuestions));
         setPhase("login");
       }
     };
     load();
   }, []);
 
-  /* ─── 마이크 ─── */
+  /* 순환형 문제 시작 시 안내 팝업 */
+  useEffect(() => {
+    if (phase === 'concept' && currentQ && currentQ.type === 'cyclic') {
+      setPopup('cyclic-intro');
+    }
+  }, [phase, qIndex]);
+
+  /* 마이크 */
   const requestMicAccess = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) audioChunksRef.current.push(e.data);
-      };
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
       recorder.onstop = () => {
         const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         setAudioBlob(blob);
@@ -642,13 +1075,10 @@ const App = () => {
       };
       setMediaRecorder(recorder);
       setMicGranted(true);
-      
       const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (SR) {
         const r = new SR();
-        r.lang = 'ko-KR';
-        r.continuous = true;
-        r.interimResults = true;
+        r.lang = 'ko-KR'; r.continuous = true; r.interimResults = true;
         r.onresult = (e) => {
           let interim = '', final = '';
           for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -660,7 +1090,6 @@ const App = () => {
         };
         recognitionRef.current = r;
       }
-      
       setPhase("count_select");
     } catch(err) {
       if (confirm("마이크 권한이 거부되었어요. 녹음 없이 진행할까요?")) {
@@ -670,7 +1099,7 @@ const App = () => {
     }
   };
 
-  /* ─── 게임 시작 ─── */
+  /* 게임 시작 */
   const startGame = (count) => {
     const shuffled = [...allQuestions];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -680,41 +1109,31 @@ const App = () => {
     const seen = new Set();
     const uniq = shuffled.filter(q => seen.has(q.id) ? false : (seen.add(q.id), true));
     setActiveQuestions(uniq.slice(0, count));
-    setQIndex(0);
-    setScore(0);
-    setHelpUsedTotal(0);
-    setPerQuestionResults([]);
-    setReflectionRound(0);
-    setTotalReflectionRounds(Math.ceil(count / 5));
-    setBatchStart(0);
-    setAllReflections([]);
+    setQIndex(0); setScore(0); setHelpUsedTotal(0); setPerQuestionResults([]);
+    setReflectionRound(0); setTotalReflectionRounds(Math.ceil(count / 5));
+    setBatchStart(0); setAllReflections([]);
     setPhase("concept");
   };
 
-  /* ─── 연습 (힌트 모드) ─── */
+  /* 연습 (시작·끝을 예시로 흐리게 고정) */
   const goToPractice = () => {
     const cards = currentQ.cards;
     const n = cards.length;
     const newSlots = new Array(n).fill(null);
     let newPool = [...cards];
+    let locked = [];
     if (n >= 3) {
-      newSlots[0] = cards[0];
-      newSlots[n-1] = cards[n-1];
-      newPool = cards.slice(1, n-1);
+      newSlots[0] = cards[0]; newSlots[n-1] = cards[n-1];
+      newPool = cards.slice(1, n-1); locked = [0, n-1];
     } else if (n === 2) {
-      newSlots[0] = cards[0];
-      newPool = [cards[1]];
+      newSlots[0] = cards[0]; newPool = [cards[1]]; locked = [0];
     }
     for (let i = newPool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [newPool[i], newPool[j]] = [newPool[j], newPool[i]];
     }
-    setSlots(newSlots);
-    setPool(newPool);
-    setWrongIndices([]);
-    setPracticeMode(true);
-    setHelpUsedCurrent(false);
-    setAttempts(0);
+    setSlots(newSlots); setPool(newPool); setLockedIndices(locked);
+    setWrongIndices([]); setPracticeMode(true); setHelpUsedCurrent(false); setAttempts(0);
     setPhase("quiz");
   };
 
@@ -726,13 +1145,11 @@ const App = () => {
     }
     setPool(shuffled);
     setSlots(new Array(currentQ.cards.length).fill(null));
-    setWrongIndices([]);
-    setPracticeMode(false);
-    setAttempts(0);
+    setLockedIndices([]); setWrongIndices([]); setPracticeMode(false); setAttempts(0);
     setPhase("quiz");
   };
 
-  /* ─── 카드 인터랙션 ─── */
+  /* 카드 인터랙션 */
   const tapPoolCard = (card) => {
     const i = slots.findIndex(s => s === null);
     if (i === -1) return;
@@ -742,29 +1159,21 @@ const App = () => {
     setWrongIndices([]);
     playSound('pop', soundOn);
   };
-
   const tapSlotCard = (card, idx) => {
-    if (!card) return;
+    if (!card || lockedIndices.includes(idx)) return;
     const ns = [...slots]; ns[idx] = null;
     setSlots(ns);
     setPool([...pool, card]);
     setWrongIndices([]);
   };
-
   const handlePoolDragStart = (e, card) => {
     setDragSource({ type: 'pool', cardId: card.id });
-    if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', card.id);
-    }
+    if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', card.id); }
   };
   const handleSlotDragStart = (e, idx) => {
-    if (!slots[idx]) return;
+    if (!slots[idx] || lockedIndices.includes(idx)) return;
     setDragSource({ type: 'slot', index: idx });
-    if (e.dataTransfer) {
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', String(idx));
-    }
+    if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(idx)); }
   };
   const handleDragOver = (e, idx) => {
     e.preventDefault();
@@ -775,6 +1184,7 @@ const App = () => {
     e.preventDefault();
     setDragOverIndex(null);
     if (!dragSource) return;
+    if (lockedIndices.includes(dropIdx)) { setDragSource(null); return; }
     setWrongIndices([]);
     if (dragSource.type === 'pool') {
       const card = pool.find(c => c.id === dragSource.cardId);
@@ -783,8 +1193,7 @@ const App = () => {
       const np = pool.filter(c => c.id !== card.id);
       if (ns[dropIdx]) np.push(ns[dropIdx]);
       ns[dropIdx] = card;
-      setSlots(ns);
-      setPool(np);
+      setSlots(ns); setPool(np);
       playSound('pop', soundOn);
     } else if (dragSource.type === 'slot') {
       if (dragSource.index === dropIdx) { setDragSource(null); return; }
@@ -799,6 +1208,7 @@ const App = () => {
   const handlePoolDrop = (e) => {
     e.preventDefault();
     if (!dragSource || dragSource.type !== 'slot') { setDragSource(null); return; }
+    if (lockedIndices.includes(dragSource.index)) { setDragSource(null); return; }
     const card = slots[dragSource.index];
     if (!card) { setDragSource(null); return; }
     const ns = [...slots];
@@ -809,7 +1219,7 @@ const App = () => {
     setWrongIndices([]);
   };
 
-  /* ─── 정답 확인 ─── */
+  /* 정답 확인 */
   const checkAnswer = () => {
     if (slots.includes(null)) {
       showToast("빈칸을 모두 채워주세요!");
@@ -848,6 +1258,9 @@ const App = () => {
       fireConfetti();
       speak("정답입니다!", soundOn);
       setPhase("feedback");
+      if (currentQ.type === 'cyclic' && !practiceMode) {
+        setTimeout(() => setPopup('cyclic-complete'), 600);
+      }
     } else {
       setWrongIndices(wrongs);
       playSound('wrong', soundOn);
@@ -856,57 +1269,47 @@ const App = () => {
   };
 
   const retryQuestion = () => {
-    const cards = [...slots.filter(it => it), ...pool];
-    for (let i = cards.length - 1; i > 0; i--) {
+    const n = currentQ.cards.length;
+    const newSlots = new Array(n).fill(null);
+    let movable = [];
+    slots.forEach((c,i) => {
+      if (!c) return;
+      if (lockedIndices.includes(i)) newSlots[i] = c;
+      else movable.push(c);
+    });
+    movable = [...movable, ...pool];
+    for (let i = movable.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [cards[i], cards[j]] = [cards[j], cards[i]];
+      [movable[i], movable[j]] = [movable[j], movable[i]];
     }
-    setPool(cards);
-    setSlots(new Array(currentQ.cards.length).fill(null));
-    setWrongIndices([]);
+    setSlots(newSlots); setPool(movable); setWrongIndices([]);
   };
 
   const nextQuestion = () => {
-    if (practiceMode) {
-      goToMainQuiz();
-      return;
-    }
+    if (practiceMode) { goToMainQuiz(); return; }
     const nextIdx = qIndex + 1;
     const isLast = nextIdx >= activeQuestions.length;
     const fivePoint = nextIdx > 0 && nextIdx % 5 === 0;
     const hasUnreflected = isLast && (nextIdx - batchStart) > 0;
-    if (fivePoint || hasUnreflected) {
-      setPhase("reflection_intro");
-      return;
-    }
-    if (nextIdx < activeQuestions.length) {
-      setQIndex(nextIdx);
-      setPhase("concept");
-    } else {
-      finishQuiz();
-    }
+    if (fivePoint || hasUnreflected) { setPhase("reflection_intro"); return; }
+    if (nextIdx < activeQuestions.length) { setQIndex(nextIdx); setPhase("concept"); }
+    else { finishQuiz(); }
   };
 
-  /* ─── 도움받기 ─── */
   const useHelp = () => {
     setHelpUsedCurrent(true);
     setHelpUsedTotal(h => h+1);
     speakForce(currentQ.concept);
   };
 
-  /* ─── 녹음 단계 ─── */
-  const startReflection = () => {
-    setSelectedCardSets([]);
-    setPhase("reflection_select");
-  };
-
+  /* 녹음 단계 */
+  const startReflection = () => { setSelectedCardSets([]); setPhase("reflection_select"); };
   const goToRecording = () => {
     setRecognizedText(''); setInterimText(''); setKeyboardText('');
     setAudioBlob(null); setAudioBase64(null);
     setUseKeyboard(false); setSelfRating(0);
     setPhase("recording");
   };
-
   const handleStartRecording = () => {
     audioChunksRef.current = [];
     setAudioBlob(null); setAudioBase64(null);
@@ -914,45 +1317,34 @@ const App = () => {
     if (mediaRecorder) {
       mediaRecorder.start();
       setIsRecording(true);
-      if (recognitionRef.current) {
-        try { recognitionRef.current.start(); } catch(e){}
-      }
+      if (recognitionRef.current) { try { recognitionRef.current.start(); } catch(e){} }
     }
   };
   const handleStopRecording = () => {
     if (mediaRecorder && isRecording) {
       mediaRecorder.stop();
       setIsRecording(false);
-      if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch(e){}
-      }
+      if (recognitionRef.current) { try { recognitionRef.current.stop(); } catch(e){} }
       setPhase("reflection_listen");
     }
   };
-
   const handleSelfEvaluate = (decision) => {
     if (decision === 'redo') {
       setRecognizedText(''); setInterimText(''); setKeyboardText('');
-      setAudioBlob(null); setAudioBase64(null);
-      setSelfRating(0);
+      setAudioBlob(null); setAudioBase64(null); setSelfRating(0);
       setPhase("recording");
       return;
     }
-    if (selfRating === 0) {
-      showToast("⭐ 별점을 매겨볼까요?");
-      return;
-    }
+    if (selfRating === 0) { showToast("별점을 매겨볼까요?"); return; }
     if (selfRating <= 3) {
-      showToast("💪 한 번 더 도전해 봐요!");
+      showToast("한 번 더 도전해 봐요!");
       setTimeout(() => {
         setRecognizedText(''); setInterimText(''); setKeyboardText('');
-        setAudioBlob(null); setAudioBase64(null);
-        setSelfRating(0);
+        setAudioBlob(null); setAudioBase64(null); setSelfRating(0);
         setPhase("recording");
       }, 800);
       return;
     }
-    // 4-5 → 통과
     const data = {
       round: reflectionRound + 1,
       selectedQuestions: selectedCardSets.map(q => q.title),
@@ -968,20 +1360,15 @@ const App = () => {
     try { playSound('chime', soundOn); } catch(e){}
     try { speak("멋진 설명이었어요!", soundOn); } catch(e){}
   };
-
   const continueAfterSticker = () => {
     const nextIdx = qIndex + 1;
     setReflectionRound(r => r+1);
     setBatchStart(nextIdx);
-    if (nextIdx < activeQuestions.length) {
-      setQIndex(nextIdx);
-      setPhase("concept");
-    } else {
-      finishQuiz();
-    }
+    if (nextIdx < activeQuestions.length) { setQIndex(nextIdx); setPhase("concept"); }
+    else { finishQuiz(); }
   };
 
-  /* ─── 종료 / 저장 ─── */
+  /* 종료 / 저장 */
   const finishQuiz = async () => {
     setPhase("submitting");
     const payload = {
@@ -999,123 +1386,90 @@ const App = () => {
     fireConfetti();
   };
 
-  /* ═══════════════════════════════════════════
-     화면 렌더링
-     ═══════════════════════════════════════════ */
+  /* ═══ 화면 렌더링 ═══ */
   const renderContent = () => {
     if (phase === "loading") return (
-      <div style={{
-        display:'flex', alignItems:'center', justifyContent:'center',
-        width:'100%', height:'100%'
-      }}>
-        <div style={{fontSize:'2.5rem', color:'#8b5cf6', fontWeight:'700'}}>불러오는 중...</div>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%'}}>
+        <div style={{fontSize:'2.5rem',color:'#8b5cf6',fontWeight:'700'}}>불러오는 중...</div>
       </div>
     );
 
-    /* ─── 로그인 ─── */
+    /* 로그인 */
     if (phase === "login") return (
-      <div style={{
-        display:'flex', alignItems:'center', justifyContent:'center',
-        width:'100%', height:'100%', padding:'2rem', position:'relative'
-      }}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="glass-card" style={{
-          padding:'4rem 5rem', maxWidth:'720px', width:'100%', textAlign:'center'
-        }}>
-          <div style={{
-            display:'inline-flex',alignItems:'center',gap:'0.5rem',
-            marginBottom:'1.5rem',
-            padding:'0.5rem 1.25rem',
-            background:'rgba(255,255,255,0.7)',
-            borderRadius:'999px',
-            fontSize:'1.125rem', color:'#7c3aed', fontWeight:'700'
-          }}>✨ 사건의 순서를 배워봐요</div>
-          
-          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',marginBottom:'1.5rem'}}>
-            <span style={{fontSize:'4rem'}} className="float-up">📚</span>
-            <h1 className="grad-text" style={{
-              fontSize:'4rem', lineHeight:'1.1', margin:0, fontWeight:'900', whiteSpace:'nowrap'
-            }}>순서대로 말해요!</h1>
+        <div className="glass-card" style={{padding:'2.75rem 4rem',maxWidth:'760px',width:'100%',textAlign:'center'}}>
+          <div style={{display:'inline-flex',alignItems:'center',gap:'0.4rem',marginBottom:'1rem',padding:'0.4rem 1.1rem',
+            background:'rgba(255,255,255,0.7)',borderRadius:'999px',fontSize:'1.0625rem',color:'#7c3aed',fontWeight:'700'}}>
+            <Icon name="ui_sparkle" size={22}/> 사건의 순서를 배워봐요
           </div>
-          
-          <p style={{fontSize:'1.5rem',color:'#475569',marginBottom:'0.5rem',wordBreak:'keep-all',fontWeight:'700'}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.75rem',marginBottom:'1rem'}}>
+            <span className="float-up"><Icon name="book" size={64}/></span>
+            <h1 className="grad-text" style={{fontSize:'3.5rem',lineHeight:'1.1',margin:0,fontWeight:'900',whiteSpace:'nowrap'}}>순서대로 말해요!</h1>
+          </div>
+          <div style={{background:'#fef9c3',border:'4px solid #fbbf24',borderRadius:'1.25rem',padding:'0.9rem 1.4rem',marginBottom:'1.25rem'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',marginBottom:'0.4rem'}}>
+              <Icon name="ui_target" size={26}/>
+              <span style={{fontSize:'1.25rem',fontWeight:'900',color:'#92400e'}}>오늘의 목표</span>
+            </div>
+            <p style={{fontSize:'1.0625rem',fontWeight:'700',color:'#92400e',lineHeight:'1.7',margin:0,wordBreak:'keep-all'}}>
+              이 활동이 끝나면 우리는&nbsp;
+              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>사건의 순서</span>를 알고,&nbsp;
+              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>한살이와 순서</span>를 구별하며,&nbsp;
+              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>내 말로 설명</span>할 수 있어요!
+            </p>
+          </div>
+          <p style={{fontSize:'1.25rem',color:'#475569',marginBottom:'1.25rem',wordBreak:'keep-all',fontWeight:'700'}}>
             그림 카드를 끌어와 이야기를 만들어 보아요!
           </p>
-          <p style={{fontSize:'1.125rem',color:'#94a3b8',marginBottom:'2.5rem',fontWeight:'700'}}>
-            🎯 내 목소리로 친구에게 설명할 수도 있어요
-          </p>
-          
-          <select value={selectedStudent}
-            onChange={e => setSelectedStudent(e.target.value)}
-            style={{
-              width:'100%',maxWidth:'420px',
-              padding:'1rem 1.5rem', fontSize:'1.5rem',
-              background:'rgba(255,255,255,0.9)',
-              border:'3px solid #c4b5fd',
-              borderRadius:'1.25rem', color:'#1e293b',
-              cursor:'pointer', outline:'none',
-              marginBottom:'1.5rem', textAlign:'center', textAlignLast:'center',
-              fontWeight:'700'
-            }}>
+          <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)}
+            style={{width:'100%',maxWidth:'420px',padding:'1rem 1.5rem',fontSize:'1.5rem',background:'rgba(255,255,255,0.9)',
+              border:'3px solid #c4b5fd',borderRadius:'1.25rem',color:'#1e293b',cursor:'pointer',outline:'none',
+              marginBottom:'1.25rem',textAlign:'center',textAlignLast:'center',fontWeight:'700'}}>
             {students.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
           <br/>
-          <button onClick={() => setPhase("mic_request")} className="pill-btn" style={{fontWeight:'700'}}>
-            시작하기 🚀
+          <button onClick={() => setPhase("mic_request")} className="pill-btn"
+            style={{display:'inline-flex',alignItems:'center',gap:'0.5rem',fontWeight:'700'}}>
+            시작하기 <Icon name="ui_rocket" size={30}/>
           </button>
         </div>
       </div>
     );
 
-    /* ─── 마이크 ─── */
+    /* 마이크 */
     if (phase === "mic_request") return (
-      <div style={{
-        display:'flex',alignItems:'center',justifyContent:'center',
-        width:'100%',height:'100%',padding:'2rem',position:'relative'
-      }}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="glass-card" style={{padding:'3rem',maxWidth:'620px',width:'100%',textAlign:'center'}}>
-          <div style={{fontSize:'6rem',marginBottom:'1.5rem'}} className="float-up">🎤</div>
-          <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>마이크를 켜요</h2>
+          <div className="float-up" style={{marginBottom:'1.25rem'}}><Icon name="ui_mic" size={120}/></div>
+          <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.25rem',fontWeight:'900'}}>마이크를 켜요</h2>
           <p style={{fontSize:'1.5rem',color:'#475569',marginBottom:'2rem',wordBreak:'keep-all',fontWeight:'700',lineHeight:'1.5'}}>
             내 목소리로 이야기를 들려주려면<br/>마이크가 필요해요
           </p>
-          <button onClick={requestMicAccess} className="pill-btn" style={{fontWeight:'700'}}>
-            🎙️ 마이크 켜기
+          <button onClick={requestMicAccess} className="pill-btn"
+            style={{display:'inline-flex',alignItems:'center',gap:'0.5rem',fontWeight:'700'}}>
+            <Icon name="ui_mic" size={30}/> 마이크 켜기
           </button>
         </div>
       </div>
     );
 
-    /* ─── 문제 수 선택 ─── */
+    /* 문제 수 선택 */
     if (phase === "count_select") return (
-      <div style={{
-        display:'flex',alignItems:'center',justifyContent:'center',
-        width:'100%',height:'100%',padding:'2rem',position:'relative'
-      }}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="glass-card" style={{padding:'3rem',maxWidth:'820px',width:'100%',textAlign:'center'}}>
           <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'2rem',fontWeight:'900'}}>몇 문제 풀어볼까요?</h2>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3, 1fr)',gap:'1.5rem'}}>
-            {[
-              {n:3, emoji:'🌱', label:'3문제'},
-              {n:5, emoji:'🌿', label:'5문제'},
-              {n:10, emoji:'🌳', label:'10문제'}
-            ].map(o => (
-              <button key={o.n} onClick={() => startGame(o.n)} 
-                style={{
-                  padding:'2.5rem 1rem',
-                  background:'rgba(255,255,255,0.8)',
-                  border:'4px solid #c4b5fd',
-                  borderRadius:'1.5rem',
-                  cursor:'pointer',
-                  display:'flex',flexDirection:'column',alignItems:'center',gap:'0.75rem',
-                  transition:'all 0.2s',
-                  fontWeight:'700'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#8b5cf6'; e.currentTarget.style.transform = 'translateY(-4px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#c4b5fd'; e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <span style={{fontSize:'5rem'}}>{o.emoji}</span>
+            {[{n:3,icon:'sprout',label:'3문제'},{n:5,icon:'ui_plant',label:'5문제'},{n:10,icon:'tree',label:'10문제'}].map(o => (
+              <button key={o.n} onClick={() => startGame(o.n)}
+                style={{padding:'2.25rem 1rem',background:'rgba(255,255,255,0.8)',border:'4px solid #c4b5fd',
+                  borderRadius:'1.5rem',cursor:'pointer',display:'flex',flexDirection:'column',alignItems:'center',gap:'0.75rem',
+                  transition:'all 0.2s',fontWeight:'700'}}
+                onMouseEnter={e => { e.currentTarget.style.borderColor='#8b5cf6'; e.currentTarget.style.transform='translateY(-4px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor='#c4b5fd'; e.currentTarget.style.transform='translateY(0)'; }}>
+                <Icon name={o.icon} size={92}/>
                 <span style={{fontSize:'2rem',color:'#7c3aed',fontWeight:'900'}}>{o.label}</span>
               </button>
             ))}
@@ -1124,41 +1478,31 @@ const App = () => {
       </div>
     );
 
-    /* ─── 개념 ─── */
+    /* 개념 */
     if (phase === "concept") return (
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="glass-card" style={{
-          maxWidth:'1100px',width:'100%',
-          display:'flex',flexDirection:'row',overflow:'hidden',maxHeight:'700px'
-        }}>
+        <div className="glass-card" style={{maxWidth:'1100px',width:'100%',display:'flex',flexDirection:'row',overflow:'hidden',maxHeight:'700px'}}>
           <div style={{flex:1,padding:'2.5rem',display:'flex',flexDirection:'column',justifyContent:'space-between'}}>
             <div>
-              <div style={{display:'inline-block',background:'rgba(139,92,246,0.15)',color:'#7c3aed',padding:'0.4rem 1rem',borderRadius:'999px',marginBottom:'1.25rem',fontSize:'1rem',fontWeight:'700'}}>
+              <div style={{display:'inline-block',background:'rgba(139,92,246,0.15)',color:'#7c3aed',padding:'0.4rem 1rem',
+                borderRadius:'999px',marginBottom:'1.25rem',fontSize:'1rem',fontWeight:'700'}}>
                 문제 {qIndex+1} / {activeQuestions.length}
               </div>
               <h2 className="grad-text" style={{fontSize:'2.75rem',marginBottom:'1.5rem',wordBreak:'keep-all',fontWeight:'900'}}>{currentQ.title}</h2>
-              <div style={{
-                background:'rgba(255,255,255,0.7)',padding:'1.5rem',borderRadius:'1.25rem',
-                borderLeft:'6px solid #8b5cf6',marginBottom:'1.25rem'
-              }}>
-                <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',margin:0,fontWeight:'700'}}>
-                  "{currentQ.concept}"
-                </p>
+              <div style={{background:'rgba(255,255,255,0.7)',padding:'1.5rem',borderRadius:'1.25rem',borderLeft:'6px solid #8b5cf6',marginBottom:'1.25rem'}}>
+                <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',margin:0,fontWeight:'700'}}>"{currentQ.concept}"</p>
               </div>
-              <button onClick={useHelp} style={{
-                background:'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                color:'white',border:'none',
-                padding:'0.75rem 1.5rem',borderRadius:'999px',
-                fontSize:'1.125rem',cursor:'pointer',
-                boxShadow:'0 4px 12px rgba(245,158,11,0.3)',
-                fontWeight:'700'
-              }}>
-                🙋 도움받기 (읽어주기)
+              <button onClick={useHelp} style={{display:'inline-flex',alignItems:'center',gap:'0.4rem',
+                background:'linear-gradient(135deg, #fbbf24, #f59e0b)',color:'white',border:'none',
+                padding:'0.6rem 1.4rem',borderRadius:'999px',fontSize:'1.125rem',cursor:'pointer',
+                boxShadow:'0 4px 12px rgba(245,158,11,0.3)',fontWeight:'700'}}>
+                <Icon name="ui_help" size={24}/> 도움받기 (읽어주기)
               </button>
             </div>
-            <button onClick={goToPractice} className="pill-btn" style={{marginTop:'1.5rem',width:'100%',fontWeight:'700'}}>
-              🌟 연습 문제 풀기
+            <button onClick={goToPractice} className="pill-btn"
+              style={{marginTop:'1.5rem',width:'100%',display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',fontWeight:'700'}}>
+              <Icon name="ui_star" size={28}/> 연습 문제 풀기
             </button>
           </div>
           <div style={{flex:1,background:'rgba(196,181,253,0.15)',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
@@ -1168,160 +1512,150 @@ const App = () => {
       </div>
     );
 
-    /* ─── 퀴즈 ─── */
+    /* 퀴즈 */
     if (phase === "quiz") {
       const isCyclic = currentQ.type === 'cyclic';
       const filled = slots.filter(s => s !== null).length;
       const total = slots.length;
+      const ghostByIndex = {};
+      if (!practiceMode && currentQ.cards[0] && !slots[0]) ghostByIndex[0] = currentQ.cards[0];
       return (
         <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1rem',position:'relative'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          
-          {/* 헤더 */}
-          <div className="glass-card" style={{
-            padding:'0.75rem 1.5rem', marginBottom:'0.75rem',
-            display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0
-          }}>
+          <div className="glass-card" style={{padding:'0.75rem 1.5rem',marginBottom:'0.75rem',
+            display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
             <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-              <span style={{
-                padding:'0.3rem 0.85rem',borderRadius:'999px',
+              <span style={{display:'inline-flex',alignItems:'center',gap:'0.25rem',padding:'0.3rem 0.85rem',borderRadius:'999px',
                 background: practiceMode ? 'rgba(59,130,246,0.15)' : 'rgba(34,197,94,0.15)',
-                color: practiceMode ? '#1d4ed8' : '#15803d',
-                fontSize:'0.95rem',fontWeight:'700'
-              }}>{practiceMode ? '🌟 연습 (힌트)' : '📝 본 문제'}</span>
-              <span style={{
-                padding:'0.3rem 0.7rem',borderRadius:'999px',
+                color: practiceMode ? '#1d4ed8' : '#15803d',fontSize:'0.95rem',fontWeight:'700'}}>
+                <Icon name={practiceMode ? 'ui_star' : 'ui_pencil'} size={18}/>{practiceMode ? '연습 (힌트)' : '본 문제'}
+              </span>
+              <span style={{display:'inline-flex',alignItems:'center',gap:'0.25rem',padding:'0.3rem 0.7rem',borderRadius:'999px',
                 background: isCyclic ? 'rgba(168,85,247,0.15)' : 'rgba(249,115,22,0.15)',
-                color: isCyclic ? '#7c3aed' : '#c2410c',
-                fontSize:'0.85rem',fontWeight:'700'
-              }}>{isCyclic ? '🔄 순환형' : '➡️ 순서형'}</span>
+                color: isCyclic ? '#7c3aed' : '#c2410c',fontSize:'0.85rem',fontWeight:'700'}}>
+                <Icon name={isCyclic ? 'ui_cycle' : 'ui_arrowRight'} size={16}/>{isCyclic ? '순환형' : '순서형'}
+              </span>
               <span style={{color:'#64748b',fontSize:'1rem',fontWeight:'700'}}>{qIndex+1}/{activeQuestions.length}</span>
             </div>
             <h2 style={{fontSize:'1.5rem',color:'#1e293b',margin:0,fontWeight:'900'}}>{currentQ.title}</h2>
-            <button onClick={useHelp} style={{
-              padding:'0.4rem 1rem',
-              background:'linear-gradient(135deg, #fbbf24, #f59e0b)',
-              color:'white',border:'none',borderRadius:'999px',
-              fontSize:'0.95rem',cursor:'pointer',fontWeight:'700'
-            }}>🙋 도움</button>
+            <button onClick={useHelp} style={{display:'inline-flex',alignItems:'center',gap:'0.25rem',padding:'0.4rem 1rem',
+              background:'linear-gradient(135deg, #fbbf24, #f59e0b)',color:'white',border:'none',borderRadius:'999px',
+              fontSize:'0.95rem',cursor:'pointer',fontWeight:'700'}}>
+              <Icon name="ui_help" size={20}/> 도움
+            </button>
           </div>
-          
-          {/* 안내 */}
-          <div style={{
-            background:'rgba(254,243,199,0.7)',
-            border:'3px solid #fcd34d',
-            borderRadius:'1rem',padding:'0.5rem 1rem',
-            marginBottom:'0.75rem',textAlign:'center',flexShrink:0
-          }}>
-            <p style={{fontSize:'1rem',color:'#92400e',margin:0,wordBreak:'keep-all',fontWeight:'700'}}>
-              👆 <strong>카드를 끌어서</strong> 빈칸에 놓아보세요!
-              {practiceMode && <span> 처음과 끝은 미리 채워져 있어요 💡</span>}
-              {isCyclic && !practiceMode && <span> 🔄 어느 위치에서 시작해도 OK!</span>}
+          <div style={{background:'rgba(254,243,199,0.7)',border:'3px solid #fcd34d',borderRadius:'1rem',
+            padding:'0.5rem 1rem',marginBottom:'0.75rem',textAlign:'center',flexShrink:0}}>
+            <p style={{fontSize:'1rem',color:'#92400e',margin:0,wordBreak:'keep-all',fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.35rem',flexWrap:'wrap'}}>
+              <Icon name="ui_hand" size={22}/> <strong>카드를 끌어서</strong> 빈칸에 놓아보세요!
+              {practiceMode && <span>처음과 끝은 예시로 흐리게 보여줘요</span>}
+              {isCyclic && !practiceMode && <span>흐린 1번 자리(시작)부터 순서대로 채워요</span>}
             </p>
           </div>
-          
-          {/* 메인 */}
           <div style={{flex:1,display:'flex',flexDirection:'row',gap:'0.75rem',overflow:'hidden'}}>
             <div className="glass-card" style={{flex:1,padding:'1rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
               <div style={{display:'flex',justifyContent:'space-between',marginBottom:'0.5rem',flexShrink:0}}>
-                <h3 style={{fontSize:'1.125rem',color:'#7c3aed',margin:0,fontWeight:'900'}}>📌 순서대로 채우기</h3>
+                <h3 style={{display:'flex',alignItems:'center',gap:'0.35rem',fontSize:'1.125rem',color:'#7c3aed',margin:0,fontWeight:'900'}}>
+                  <Icon name="ui_pin" size={20}/> 순서대로 채우기
+                </h3>
                 <span style={{fontSize:'0.95rem',color:'#16a34a',fontWeight:'700'}}>{filled}/{total}</span>
               </div>
               {isCyclic ? (
                 <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                  <CyclicSlots
-                    slots={slots}
-                    onTapSlot={tapSlotCard}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleSlotDrop}
-                    onDragStart={handleSlotDragStart}
-                    dragOverIndex={dragOverIndex}
-                    wrongIndices={wrongIndices}
-                    size={420}/>
+                  <CyclicSlots slots={slots} onTapSlot={tapSlotCard} onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave} onDrop={handleSlotDrop} onDragStart={handleSlotDragStart}
+                    dragOverIndex={dragOverIndex} wrongIndices={wrongIndices}
+                    lockedIndices={lockedIndices} ghostByIndex={ghostByIndex} size={420}/>
                 </div>
               ) : (
                 <div style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'space-around',gap:'0.5rem'}}>
-                  {slots.map((card, idx) => (
-                    <div key={idx} 
-                      className={`slot-box ${dragOverIndex===idx?'drag-over':''} ${wrongIndices.includes(idx)?'wrong-slot':''}`}
-                      onDragOver={(e)=>handleDragOver(e,idx)}
-                      onDragLeave={handleDragLeave}
-                      onDrop={(e)=>handleSlotDrop(e,idx)}>
-                      <div style={{
-                        flexShrink:0,width:'42px',height:'42px',
-                        background:'#e9d5ff',borderRadius:'50%',
-                        display:'flex',alignItems:'center',justifyContent:'center',
-                        color:'#7c3aed',marginRight:'1rem',fontSize:'1.25rem',fontWeight:'900'
-                      }}>{idx+1}</div>
-                      {card ? (
-                        <div className="drag-card" style={{flex:1}}
-                          draggable="true"
-                          onDragStart={(e)=>handleSlotDragStart(e,idx)}
-                          onClick={()=>tapSlotCard(card,idx)}>
-                          <div style={{fontSize:'2.5rem',marginRight:'0.75rem',pointerEvents:'none'}}>{card.img}</div>
-                          <div style={{fontSize:'1.25rem',color:'#475569',pointerEvents:'none',fontWeight:'700'}}>{card.text}</div>
-                          {wrongIndices.includes(idx) && <div style={{marginLeft:'auto',fontSize:'1.5rem',pointerEvents:'none'}}>❌</div>}
-                        </div>
-                      ) : (
-                        <div style={{flex:1,fontSize:'1.125rem',color:'#cbd5e1',display:'flex',alignItems:'center',gap:'0.5rem',fontWeight:'700'}}>
-                          <span style={{fontSize:'1.5rem'}}>👉</span> 카드를 여기로 끌어오세요
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                  {slots.map((card, idx) => {
+                    const isLocked = lockedIndices.includes(idx);
+                    const showGhost = !card && ghostByIndex[idx];
+                    return (
+                      <div key={idx}
+                        className={`slot-box ${dragOverIndex===idx&&!isLocked?'drag-over':''} ${wrongIndices.includes(idx)?'wrong-slot':''}`}
+                        onDragOver={(e)=>handleDragOver(e,idx)} onDragLeave={handleDragLeave} onDrop={(e)=>handleSlotDrop(e,idx)}>
+                        <div style={{flexShrink:0,width:'42px',height:'42px',background:'#e9d5ff',borderRadius:'50%',
+                          display:'flex',alignItems:'center',justifyContent:'center',color:'#7c3aed',marginRight:'1rem',
+                          fontSize:'1.25rem',fontWeight:'900'}}>{idx+1}</div>
+                        {card ? (
+                          isLocked ? (
+                            <div style={{flex:1,display:'flex',alignItems:'center',opacity:0.5}}>
+                              <div style={{marginRight:'0.75rem'}}><Icon name={card.icon} size={52}/></div>
+                              <div style={{fontSize:'1.25rem',color:'#475569',fontWeight:'700'}}>{card.text}</div>
+                              <div style={{marginLeft:'auto',background:'#8b5cf6',color:'white',fontSize:'0.75rem',
+                                padding:'2px 10px',borderRadius:'999px',fontWeight:'700'}}>예시</div>
+                            </div>
+                          ) : (
+                            <div className="drag-card" style={{flex:1}} draggable="true"
+                              onDragStart={(e)=>handleSlotDragStart(e,idx)} onClick={()=>tapSlotCard(card,idx)}>
+                              <div style={{marginRight:'0.75rem',pointerEvents:'none'}}><Icon name={card.icon} size={56}/></div>
+                              <div style={{fontSize:'1.25rem',color:'#475569',pointerEvents:'none',fontWeight:'700'}}>{card.text}</div>
+                              {wrongIndices.includes(idx) && <div style={{marginLeft:'auto',pointerEvents:'none'}}><Icon name="ui_x" size={30}/></div>}
+                            </div>
+                          )
+                        ) : showGhost ? (
+                          <div style={{flex:1,display:'flex',alignItems:'center',opacity:0.34}}>
+                            <div style={{marginRight:'0.75rem'}}><Icon name={ghostByIndex[idx].icon} size={50}/></div>
+                            <div style={{fontSize:'1.125rem',color:'#7c3aed',fontWeight:'700'}}>{ghostByIndex[idx].text} (여기부터 시작!)</div>
+                          </div>
+                        ) : (
+                          <div style={{flex:1,fontSize:'1.125rem',color:'#cbd5e1',display:'flex',alignItems:'center',gap:'0.5rem',fontWeight:'700'}}>
+                            <Icon name="ui_hand" size={26}/> 카드를 여기로 끌어오세요
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
               {wrongIndices.length > 0 && (
-                <div style={{marginTop:'0.5rem',padding:'0.5rem',background:'rgba(254,226,226,0.7)',border:'3px solid #fca5a5',borderRadius:'0.75rem',flexShrink:0}}>
-                  <p style={{fontSize:'1rem',color:'#dc2626',margin:0,wordBreak:'keep-all',fontWeight:'700'}}>
-                    🤔 빨간 칸의 카드를 움직여서 순서를 다시 맞춰봐요!
+                <div style={{marginTop:'0.5rem',padding:'0.5rem',background:'rgba(254,226,226,0.7)',
+                  border:'3px solid #fca5a5',borderRadius:'0.75rem',flexShrink:0}}>
+                  <p style={{fontSize:'1rem',color:'#dc2626',margin:0,wordBreak:'keep-all',fontWeight:'700',
+                    display:'flex',alignItems:'center',justifyContent:'center',gap:'0.35rem'}}>
+                    <Icon name="ui_think" size={22}/> 빨간 칸의 카드를 움직여서 순서를 다시 맞춰봐요!
                   </p>
                 </div>
               )}
             </div>
-            
-            {/* 카드풀 */}
             <div style={{display:'flex',flexDirection:'column',gap:'0.5rem',width:'310px',flexShrink:0}}>
-              <div className="glass-card" 
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handlePoolDrop}
+              <div className="glass-card" onDragOver={(e) => e.preventDefault()} onDrop={handlePoolDrop}
                 style={{flex:1,padding:'0.75rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
                 <h3 style={{fontSize:'1.125rem',color:'#7c3aed',margin:'0 0 0.5rem 0',display:'flex',alignItems:'center',gap:'0.4rem',flexShrink:0,fontWeight:'900'}}>
-                  🃏 카드 보관함
-                  <span style={{fontSize:'0.75rem',color:'#94a3b8',marginLeft:'auto',fontWeight:'700'}}>끌어서 놓기 ✋</span>
+                  <Icon name="ui_cards" size={22}/> 카드 보관함
+                  <span style={{fontSize:'0.75rem',color:'#94a3b8',marginLeft:'auto',fontWeight:'700'}}>끌어서 놓기</span>
                 </h3>
                 <div style={{flex:1,display:'flex',flexWrap:'wrap',gap:'0.5rem',alignContent:'flex-start',justifyContent:'center'}}>
                   {pool.length > 0 ? pool.map(card => (
-                    <div key={card.id}
-                      draggable="true"
-                      onDragStart={(e)=>handlePoolDragStart(e,card)}
-                      onClick={()=>tapPoolCard(card)}
+                    <div key={card.id} draggable="true" onDragStart={(e)=>handlePoolDragStart(e,card)} onClick={()=>tapPoolCard(card)}
                       className={`pool-card ${dragSource && dragSource.type==='pool' && dragSource.cardId===card.id ? 'dragging' : ''}`}
                       style={{padding:'0.6rem',width:'130px',display:'flex',flexDirection:'column',alignItems:'center'}}>
-                      <div style={{fontSize:'2.5rem',marginBottom:'0.25rem'}}>{card.img}</div>
-                      <div style={{fontSize:'0.95rem',color:'#475569',textAlign:'center',wordBreak:'keep-all',fontWeight:'700'}}>{card.text}</div>
+                      <Icon name={card.icon} size={56}/>
+                      <div style={{fontSize:'0.95rem',color:'#475569',textAlign:'center',wordBreak:'keep-all',fontWeight:'700',marginTop:'0.25rem'}}>{card.text}</div>
                     </div>
                   )) : (
                     <div style={{fontSize:'1.125rem',color:'#94a3b8',textAlign:'center',padding:'1rem',fontWeight:'700'}}>
-                      모두 옮겼어요! 🎉<br/>
-                      <span style={{fontSize:'0.9rem'}}>정답을 확인해보세요 👇</span>
+                      <div style={{display:'flex',justifyContent:'center',marginBottom:'0.25rem'}}><Icon name="ui_party" size={48}/></div>
+                      모두 옮겼어요!<br/>
+                      <span style={{fontSize:'0.9rem'}}>정답을 확인해보세요</span>
                     </div>
                   )}
                 </div>
               </div>
               <div style={{display:'flex',gap:'0.5rem',flexShrink:0}}>
-                <button onClick={retryQuestion} style={{
-                  flex:1,padding:'0.85rem',
-                  background:'rgba(148,163,184,0.8)',color:'white',border:'none',
-                  borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700'
-                }}>🔄 다시</button>
-                <button onClick={checkAnswer} style={{
-                  flex:2,padding:'0.85rem',
-                  background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',
-                  borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',
-                  boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700'
-                }}>정답 확인 ✅</button>
+                <button onClick={retryQuestion} style={{flex:1,padding:'0.85rem',background:'rgba(148,163,184,0.8)',
+                  color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700',
+                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+                  <Icon name="ui_refresh" size={22}/> 다시
+                </button>
+                <button onClick={checkAnswer} style={{flex:2,padding:'0.85rem',
+                  background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
+                  fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
+                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+                  정답 확인 <Icon name="ui_check" size={22}/>
+                </button>
               </div>
             </div>
           </div>
@@ -1329,35 +1663,32 @@ const App = () => {
       );
     }
 
-    /* ─── 정답 피드백 ─── */
+    /* 정답 피드백 */
     if (phase === "feedback") {
       const nextIdx = qIndex + 1;
       const isLast = nextIdx >= activeQuestions.length;
       const fivePoint = nextIdx > 0 && nextIdx % 5 === 0;
       const willReflect = !practiceMode && (fivePoint || (isLast && (nextIdx - batchStart) > 0));
       let label = '다음 문제 ▶';
-      if (practiceMode) label = '본 문제 풀기 📝';
-      else if (willReflect) label = '배움 정리하기 🎙️';
-      else if (isLast) label = '결과 보기 🏆';
-      
+      if (practiceMode) label = '본 문제 풀기 ▶';
+      else if (willReflect) label = '배움 정리하기 ▶';
+      else if (isLast) label = '결과 보기 ▶';
       return (
         <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
           <div className="glass-card" style={{maxWidth:'900px',width:'100%',padding:'2rem',display:'flex',gap:'2rem',alignItems:'center'}}>
             <div style={{flexShrink:0,textAlign:'center'}}>
-              <div style={{fontSize:'7rem',marginBottom:'0.5rem'}} className="pop-anim">🎉</div>
+              <div className="pop-anim" style={{marginBottom:'0.5rem'}}><Icon name="ui_party" size={120}/></div>
               <h2 className="grad-text" style={{fontSize:'3rem',margin:0,fontWeight:'900'}}>정답!</h2>
-              {practiceMode && <span style={{
-                display:'inline-block',marginTop:'0.5rem',
-                padding:'0.3rem 0.85rem',background:'rgba(59,130,246,0.15)',color:'#1d4ed8',
-                borderRadius:'999px',fontSize:'0.95rem',fontWeight:'700'
-              }}>연습 완료</span>}
+              {practiceMode && <span style={{display:'inline-block',marginTop:'0.5rem',padding:'0.3rem 0.85rem',
+                background:'rgba(59,130,246,0.15)',color:'#1d4ed8',borderRadius:'999px',fontSize:'0.95rem',fontWeight:'700'}}>연습 완료</span>}
             </div>
             <div style={{flex:1,display:'flex',flexDirection:'column',gap:'1rem'}}>
               <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',borderLeft:'6px solid #8b5cf6',paddingLeft:'1rem',margin:0,fontWeight:'700'}}>
                 "{currentQ.concept}"
               </p>
-              <div style={{background:'rgba(196,181,253,0.15)',padding:'1rem',borderRadius:'1rem',display:'flex',alignItems:'center',justifyContent:'center',minHeight:'250px'}}>
+              <div style={{background:'rgba(196,181,253,0.15)',padding:'1rem',borderRadius:'1rem',
+                display:'flex',alignItems:'center',justifyContent:'center',minHeight:'250px'}}>
                 {currentQ.type === 'cyclic' ? <CircularLayout items={currentQ.cards} size={300}/> : <LinearLayout items={currentQ.cards}/>}
               </div>
               <button onClick={nextQuestion} className="pill-btn" style={{width:'100%',fontWeight:'700'}}>{label}</button>
@@ -1367,7 +1698,7 @@ const App = () => {
       );
     }
 
-    /* ─── 녹음 안내 ─── */
+    /* 녹음 안내 */
     if (phase === "reflection_intro") {
       const batchEnd = qIndex + 1;
       const batchSize = batchEnd - batchStart;
@@ -1376,29 +1707,24 @@ const App = () => {
         <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
           <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
-            <div style={{fontSize:'7rem',marginBottom:'1rem'}} className="float-up">🎙️</div>
+            <div className="float-up" style={{marginBottom:'1rem'}}><Icon name="ui_mic" size={120}/></div>
             <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>배움 정리 시간!</h2>
             <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
               방금 푼 <span style={{color:'#f97316',fontWeight:'900'}}>{batchSize}개 문제</span> 중에서<br/>
               {canSelectTwo ? <><span style={{color:'#f97316',fontWeight:'900'}}>2개를 골라</span> 친구에게 설명해 보아요</> : <>그 문제를 친구에게 설명해 보아요</>}
             </p>
-            <div style={{
-              background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',
-              border:'3px solid #c4b5fd',marginBottom:'1.5rem'
-            }}>
-              <p style={{fontSize:'1.25rem',color:'#7c3aed',margin:0,fontWeight:'700'}}>
-                🎯 녹음 단계 {reflectionRound + 1} / {totalReflectionRounds}
+            <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd',marginBottom:'1.5rem'}}>
+              <p style={{fontSize:'1.25rem',color:'#7c3aed',margin:0,fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem'}}>
+                <Icon name="ui_target" size={24}/> 녹음 단계 {reflectionRound + 1} / {totalReflectionRounds}
               </p>
             </div>
-            <button onClick={startReflection} className="pill-btn" style={{fontWeight:'700'}}>
-              카드 고르러 가기 ▶
-            </button>
+            <button onClick={startReflection} className="pill-btn" style={{fontWeight:'700'}}>카드 고르러 가기 ▶</button>
           </div>
         </div>
       );
     }
 
-    /* ─── 카드 선택 ─── */
+    /* 카드 선택 */
     if (phase === "reflection_select") {
       const batchEnd = qIndex + 1;
       const batchQuestions = activeQuestions.slice(batchStart, batchEnd);
@@ -1408,39 +1734,32 @@ const App = () => {
         <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
           <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
           <div style={{textAlign:'center',marginBottom:'1rem',flexShrink:0}}>
-            <h2 className="grad-text" style={{fontSize:'2.5rem',marginBottom:'0.5rem',fontWeight:'900'}}>🎯 설명할 카드 {required}개를 골라요</h2>
+            <h2 className="grad-text" style={{fontSize:'2.5rem',marginBottom:'0.5rem',fontWeight:'900'}}>설명할 카드 {required}개를 골라요</h2>
             <p style={{fontSize:'1.25rem',color:'#7c3aed',fontWeight:'700'}}>선택됨: <span style={{fontSize:'1.5rem',fontWeight:'900'}}>{selectedCardSets.length}</span> / {required}</p>
           </div>
           <div style={{flex:1,display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:'1rem',overflow:'hidden',alignContent:'flex-start'}}>
             {batchQuestions.map(q => {
               const sel = selectedCardSets.find(c => c.id === q.id);
               return (
-                <div key={q.id} 
-                  onClick={() => {
-                    if (sel) {
-                      setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
-                    } else if (selectedCardSets.length < required) {
-                      setSelectedCardSets([...selectedCardSets, q]);
-                      playSound('pop', soundOn);
-                    }
+                <div key={q.id} onClick={() => {
+                    if (sel) setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
+                    else if (selectedCardSets.length < required) { setSelectedCardSets([...selectedCardSets, q]); playSound('pop', soundOn); }
                   }}
                   className="glass-card"
-                  style={{
-                    padding:'1rem',cursor:'pointer',
-                    border: sel ? '6px solid #f472b6' : '6px solid transparent',
-                    background: sel ? 'rgba(252,231,243,0.8)' : 'rgba(255,255,255,0.7)',
-                    transition:'all 0.2s'
-                  }}>
+                  style={{padding:'1rem',cursor:'pointer',border: sel ? '6px solid #f472b6' : '6px solid transparent',
+                    background: sel ? 'rgba(252,231,243,0.8)' : 'rgba(255,255,255,0.7)',transition:'all 0.2s'}}>
                   <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.5rem'}}>
                     <h3 style={{fontSize:'1.5rem',color:'#1e293b',margin:0,fontWeight:'900'}}>{q.title}</h3>
-                    {sel && <div style={{fontSize:'2rem'}}>✅</div>}
+                    {sel && <Icon name="ui_check" size={32}/>}
                   </div>
                   <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',wordBreak:'keep-all',fontWeight:'700'}}>"{q.concept}"</p>
                   <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center'}}>
                     {q.cards.map((c, ci) => (
                       <React.Fragment key={c.id}>
                         <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-                          <div style={{fontSize:'1.75rem',background:'rgba(255,255,255,0.7)',borderRadius:'0.5rem',padding:'0.25rem',border:'2px solid #c4b5fd'}}>{c.img}</div>
+                          <div style={{background:'rgba(255,255,255,0.7)',borderRadius:'0.5rem',padding:'0.15rem',border:'2px solid #c4b5fd'}}>
+                            <Icon name={c.icon} size={36}/>
+                          </div>
                           <span style={{fontSize:'0.7rem',color:'#64748b',fontWeight:'700'}}>{c.text}</span>
                         </div>
                         {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontWeight:'900'}}>→</span>}
@@ -1452,139 +1771,109 @@ const App = () => {
             })}
           </div>
           <div style={{marginTop:'1rem',flexShrink:0}}>
-            <button onClick={goToRecording} disabled={!canProceed}
-              className={canProceed ? 'pill-btn' : ''}
-              style={canProceed ? {width:'100%',fontWeight:'700'} : {
-                width:'100%',padding:'1rem',
-                background:'rgba(203,213,225,0.7)',color:'#94a3b8',border:'none',
-                borderRadius:'999px',fontSize:'1.5rem',cursor:'not-allowed',fontWeight:'700'
-              }}>
-              {canProceed ? '녹음하러 가기 🎙️' : `${required - selectedCardSets.length}개 더 골라주세요`}
+            <button onClick={goToRecording} disabled={!canProceed} className={canProceed ? 'pill-btn' : ''}
+              style={canProceed ? {width:'100%',fontWeight:'700'} : {width:'100%',padding:'1rem',background:'rgba(203,213,225,0.7)',
+                color:'#94a3b8',border:'none',borderRadius:'999px',fontSize:'1.5rem',cursor:'not-allowed',fontWeight:'700'}}>
+              {canProceed ? '녹음하러 가기 ▶' : `${required - selectedCardSets.length}개 더 골라주세요`}
             </button>
           </div>
         </div>
       );
     }
 
-    /* ─── 녹음 ─── */
+    /* 녹음 */
     if (phase === "recording") return (
       <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div style={{flex:1,display:'flex',flexDirection:'row',gap:'1rem',overflow:'hidden'}}>
           <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <h3 style={{fontSize:'1.5rem',margin:'0 0 0.25rem 0',color:'#7c3aed',flexShrink:0,fontWeight:'900'}}>📚 내가 고른 이야기</h3>
+            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.25rem 0',color:'#7c3aed',flexShrink:0,fontWeight:'900'}}>
+              <Icon name="book" size={28}/> 내가 고른 이야기
+            </h3>
             <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',flexShrink:0,wordBreak:'keep-all',fontWeight:'700'}}>
               그림을 보면서 <strong style={{color:'#f97316'}}>내 말로</strong> 설명해요!
             </p>
             <div style={{flex:1,display:'flex',flexDirection:'column',gap:'0.75rem',overflow:'hidden'}}>
               {selectedCardSets.map((q, i) => (
-                <div key={q.id} style={{
-                  background:'rgba(255,255,255,0.7)',
-                  border:'4px solid #c4b5fd',
-                  borderRadius:'1rem',padding:'0.85rem',
-                  display:'flex',flexDirection:'column',gap:'0.5rem'
-                }}>
+                <div key={q.id} style={{background:'rgba(255,255,255,0.7)',border:'4px solid #c4b5fd',borderRadius:'1rem',
+                  padding:'0.85rem',display:'flex',flexDirection:'column',gap:'0.5rem'}}>
                   <h4 style={{fontSize:'1.125rem',margin:0,display:'flex',alignItems:'center',gap:'0.5rem',color:'#1e293b',fontWeight:'900'}}>
-                    <span style={{
-                      background:'#a78bfa',color:'white',
-                      width:'28px',height:'28px',borderRadius:'50%',
-                      display:'flex',alignItems:'center',justifyContent:'center',
-                      fontSize:'0.95rem',flexShrink:0,fontWeight:'900'
-                    }}>{i+1}</span>
+                    <span style={{background:'#a78bfa',color:'white',width:'28px',height:'28px',borderRadius:'50%',
+                      display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.95rem',flexShrink:0,fontWeight:'900'}}>{i+1}</span>
                     {q.title}
                   </h4>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center',justifyContent:'center',background:'rgba(255,255,255,0.7)',padding:'0.5rem',borderRadius:'0.75rem'}}>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center',justifyContent:'center',
+                    background:'rgba(255,255,255,0.7)',padding:'0.5rem',borderRadius:'0.75rem'}}>
                     {q.cards.map((c, ci) => (
                       <React.Fragment key={c.id}>
                         <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-                          <div style={{
-                            background:'rgba(196,181,253,0.2)',borderRadius:'0.6rem',
-                            width:'52px',height:'52px',
-                            display:'flex',alignItems:'center',justifyContent:'center',
-                            fontSize:'2rem',border:'2px solid #c4b5fd'
-                          }}>{c.img}</div>
+                          <div style={{background:'rgba(196,181,253,0.2)',borderRadius:'0.6rem',width:'52px',height:'52px',
+                            display:'flex',alignItems:'center',justifyContent:'center',border:'2px solid #c4b5fd'}}>
+                            <Icon name={c.icon} size={40}/>
+                          </div>
                           <span style={{fontSize:'0.75rem',color:'#475569',marginTop:'2px',fontWeight:'700'}}>{c.text}</span>
                         </div>
                         {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontSize:'1.125rem',fontWeight:'900'}}>→</span>}
                       </React.Fragment>
                     ))}
                   </div>
-                  <div style={{
-                    background:'rgba(254,243,199,0.7)',borderRadius:'0.75rem',
-                    border:'3px solid #fcd34d',padding:'0.5rem',
-                    display:'flex',alignItems:'center',gap:'0.5rem'
-                  }}>
+                  <div style={{background:'rgba(254,243,199,0.7)',borderRadius:'0.75rem',border:'3px solid #fcd34d',
+                    padding:'0.5rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                    <Icon name="ui_bulb" size={24}/>
                     <p style={{fontSize:'0.95rem',color:'#475569',margin:0,flex:1,wordBreak:'keep-all',fontWeight:'700'}}>
-                      💡 예시: <span style={{fontStyle:'italic'}}>"{q.concept}"</span>
+                      예시: <span style={{fontStyle:'italic'}}>"{q.concept}"</span>
                     </p>
-                    <button onClick={() => speakForce(q.concept)} style={{
-                      padding:'0.3rem 0.6rem',background:'#fbbf24',color:'#78350f',
-                      border:'2px solid #d97706',borderRadius:'0.5rem',
-                      cursor:'pointer',fontSize:'0.95rem',flexShrink:0,fontWeight:'700'
-                    }}>🔊</button>
+                    <button onClick={() => speakForce(q.concept)} style={{padding:'0.3rem',background:'#fbbf24',
+                      border:'2px solid #d97706',borderRadius:'0.5rem',cursor:'pointer',flexShrink:0,display:'flex',alignItems:'center'}}>
+                      <Icon name="ui_soundOn" size={22}/>
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          
           <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.75rem',flexShrink:0}}>
-              <h3 style={{fontSize:'1.5rem',margin:0,color:'#7c3aed',fontWeight:'900'}}>🎙️ 내가 설명하기</h3>
-              <button onClick={() => setUseKeyboard(!useKeyboard)} style={{
-                padding:'0.4rem 0.85rem',background:'rgba(196,181,253,0.3)',color:'#7c3aed',
-                border:'3px solid #c4b5fd',borderRadius:'0.75rem',
-                cursor:'pointer',fontSize:'0.95rem',fontWeight:'700'
-              }}>{useKeyboard ? '🎤 음성으로' : '⌨️ 키보드로'}</button>
+              <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:0,color:'#7c3aed',fontWeight:'900'}}>
+                <Icon name="ui_mic" size={28}/> 내가 설명하기
+              </h3>
+              <button onClick={() => setUseKeyboard(!useKeyboard)} style={{display:'inline-flex',alignItems:'center',gap:'0.3rem',
+                padding:'0.4rem 0.85rem',background:'rgba(196,181,253,0.3)',color:'#7c3aed',border:'3px solid #c4b5fd',
+                borderRadius:'0.75rem',cursor:'pointer',fontSize:'0.95rem',fontWeight:'700'}}>
+                <Icon name={useKeyboard ? 'ui_mic' : 'ui_keyboard'} size={20}/>{useKeyboard ? '음성으로' : '키보드로'}
+              </button>
             </div>
-            
             {useKeyboard ? (
-              <textarea
-                value={keyboardText}
-                onChange={(e) => setKeyboardText(e.target.value)}
-                placeholder="여기에 내 생각을 써보세요! 😊"
-                style={{
-                  flex:1,width:'100%',padding:'1rem',fontSize:'1.25rem',color:'#1e293b',
-                  background:'rgba(255,255,255,0.8)',
-                  border:'4px solid #c4b5fd',borderRadius:'1rem',
-                  resize:'none',outline:'none',fontWeight:'700'
-                }}/>
+              <textarea value={keyboardText} onChange={(e) => setKeyboardText(e.target.value)}
+                placeholder="여기에 내 생각을 써보세요!"
+                style={{flex:1,width:'100%',padding:'1rem',fontSize:'1.25rem',color:'#1e293b',background:'rgba(255,255,255,0.8)',
+                  border:'4px solid #c4b5fd',borderRadius:'1rem',resize:'none',outline:'none',fontWeight:'700'}}/>
             ) : (
               <>
                 <div style={{flexShrink:0,marginBottom:'0.75rem'}}>
                   {!isRecording && !audioBlob && (
-                    <button onClick={handleStartRecording} style={{
-                      width:'100%',padding:'1.5rem',
-                      background:'rgba(255,255,255,0.7)',
-                      border:'6px solid #c4b5fd',borderRadius:'1.5rem',
-                      cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',
-                      color:'#7c3aed',transition:'all 0.2s',fontWeight:'900'
-                    }}>
-                      <span style={{fontSize:'4rem'}}>🎤</span>
+                    <button onClick={handleStartRecording} style={{width:'100%',padding:'1.25rem',
+                      background:'rgba(255,255,255,0.7)',border:'6px solid #c4b5fd',borderRadius:'1.5rem',cursor:'pointer',
+                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#7c3aed',fontWeight:'900'}}>
+                      <Icon name="ui_mic" size={64}/>
                       <span style={{fontSize:'2rem'}}>녹음 시작</span>
                     </button>
                   )}
                   {isRecording && (
-                    <button onClick={handleStopRecording} className="pulse-rec" style={{
-                      width:'100%',padding:'1.5rem',
-                      background:'rgba(254,226,226,0.9)',
-                      border:'6px solid #ef4444',borderRadius:'1.5rem',
-                      cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',
-                      color:'#dc2626',fontWeight:'900'
-                    }}>
-                      <span style={{fontSize:'4rem'}}>⏹️</span>
+                    <button onClick={handleStopRecording} className="pulse-rec" style={{width:'100%',padding:'1.25rem',
+                      background:'rgba(254,226,226,0.9)',border:'6px solid #ef4444',borderRadius:'1.5rem',cursor:'pointer',
+                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#dc2626',fontWeight:'900'}}>
+                      <Icon name="ui_stopSquare" size={56}/>
                       <span style={{fontSize:'2rem'}}>녹음 끝</span>
                     </button>
                   )}
                 </div>
-                <div style={{
-                  flex:1,padding:'1rem',
-                  background:'rgba(255,255,255,0.7)',
-                  border:'3px solid #c4b5fd',borderRadius:'1rem',overflow:'auto'
-                }}>
-                  <p style={{fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.5rem 0',fontWeight:'700'}}>📝 받아쓰기</p>
+                <div style={{flex:1,padding:'1rem',background:'rgba(255,255,255,0.7)',border:'3px solid #c4b5fd',borderRadius:'1rem',overflow:'auto'}}>
+                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.5rem 0',fontWeight:'700'}}>
+                    <Icon name="ui_pencil" size={20}/> 받아쓰기
+                  </p>
                   <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>
-                    {recognizedText || <span style={{color:'#cbd5e1'}}>{isRecording ? '말해보세요...' : '🎤 녹음 시작 버튼을 눌러요'}</span>}
+                    {recognizedText || <span style={{color:'#cbd5e1'}}>{isRecording ? '말해보세요...' : '녹음 시작 버튼을 눌러요'}</span>}
                     {interimText && <span style={{color:'#f97316'}}>{interimText}</span>}
                   </p>
                 </div>
@@ -1592,33 +1881,35 @@ const App = () => {
             )}
           </div>
         </div>
-        
         <div style={{marginTop:'0.75rem',display:'flex',gap:'0.75rem',flexShrink:0}}>
-          <button onClick={() => setPhase("reflection_select")} style={{
-            flex:1,padding:'0.85rem',background:'rgba(148,163,184,0.7)',color:'white',
-            border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700'
-          }}>← 카드 다시 고르기</button>
+          <button onClick={() => setPhase("reflection_select")} style={{flex:1,padding:'0.85rem',
+            background:'rgba(148,163,184,0.7)',color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700'}}>
+            ◀ 카드 다시 고르기
+          </button>
           {(audioBlob || (useKeyboard && keyboardText.trim().length > 0)) && (
-            <button onClick={() => setPhase("reflection_listen")} style={{
-              flex:2,padding:'0.85rem',
-              background:'linear-gradient(135deg, #fb7185, #f472b6)',color:'white',
-              border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',
-              boxShadow:'0 4px 12px rgba(244,114,182,0.3)',fontWeight:'700'
-            }}>들어보기 / 자기평가 →</button>
+            <button onClick={() => setPhase("reflection_listen")} style={{flex:2,padding:'0.85rem',
+              background:'linear-gradient(135deg, #fb7185, #f472b6)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(244,114,182,0.3)',fontWeight:'700'}}>
+              들어보기 / 자기평가 ▶
+            </button>
           )}
         </div>
       </div>
     );
 
-    /* ─── 들어보기 / 자기평가 ─── */
+    /* 들어보기 / 자기평가 */
     if (phase === "reflection_listen") return (
       <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div style={{maxWidth:'900px',margin:'0 auto',width:'100%',flex:1,display:'flex',flexDirection:'column',gap:'1rem',overflow:'hidden'}}>
-          <h2 className="grad-text" style={{fontSize:'2.5rem',textAlign:'center',margin:0,flexShrink:0,fontWeight:'900'}}>🎧 내 설명을 들어보고 평가해요</h2>
-          
+          <h2 className="grad-text" style={{fontSize:'2.25rem',textAlign:'center',margin:0,flexShrink:0,fontWeight:'900',
+            display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem'}}>
+            <Icon name="ui_headphone" size={40}/> 내 설명을 들어보고 평가해요
+          </h2>
           <div className="glass-card" style={{padding:'1.25rem',flexShrink:0}}>
-            <h3 style={{fontSize:'1.5rem',margin:'0 0 0.75rem 0',color:'#7c3aed',fontWeight:'900'}}>🎙️ 내 설명</h3>
+            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.75rem 0',color:'#7c3aed',fontWeight:'900'}}>
+              <Icon name="ui_mic" size={26}/> 내 설명
+            </h3>
             {useKeyboard ? (
               <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd'}}>
                 <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{keyboardText || '(입력 내용 없음)'}</p>
@@ -1627,56 +1918,59 @@ const App = () => {
               <>
                 {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls style={{width:'100%',marginBottom:'0.75rem'}}/>}
                 <div style={{background:'rgba(255,255,255,0.7)',padding:'0.75rem',borderRadius:'0.75rem',border:'3px solid #c4b5fd'}}>
-                  <p style={{fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.25rem 0',fontWeight:'700'}}>📝 받아쓰기</p>
+                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.25rem 0',fontWeight:'700'}}>
+                    <Icon name="ui_pencil" size={18}/> 받아쓰기
+                  </p>
                   <p style={{fontSize:'1rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{recognizedText || '(받아쓰기 결과 없음)'}</p>
                 </div>
               </>
             )}
           </div>
-          
           <div className="glass-card" style={{padding:'1.5rem',flex:1,display:'flex',flexDirection:'column',justifyContent:'center'}}>
-            <h3 style={{fontSize:'2rem',textAlign:'center',margin:'0 0 0.5rem 0',color:'#92400e',fontWeight:'900'}}>⭐ 별점으로 평가해요</h3>
+            <h3 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem',fontSize:'1.875rem',
+              textAlign:'center',margin:'0 0 0.5rem 0',color:'#92400e',fontWeight:'900'}}>
+              <Icon name="ui_star" size={34}/> 별점으로 평가해요
+            </h3>
             <p style={{fontSize:'1.125rem',textAlign:'center',color:'#64748b',marginBottom:'1rem',wordBreak:'keep-all',fontWeight:'700'}}>나는 얼마나 잘 설명했나요?</p>
             <StarRating rating={selfRating} setRating={setSelfRating} size={64}/>
             {selfRating > 0 && (
               <p style={{fontSize:'1.5rem',textAlign:'center',marginTop:'0.75rem',color: selfRating <= 3 ? '#ea580c' : '#16a34a',fontWeight:'900'}}>
-                {selfRating === 5 && '✨ 정말 멋지게 설명했어요!'}
-                {selfRating === 4 && '😊 잘 설명했어요!'}
-                {selfRating === 3 && '🌟 좋아요! 한 번 더 해볼까요?'}
-                {selfRating === 2 && '💪 시도한 게 멋져요!'}
-                {selfRating === 1 && '🌱 용기 있게 도전했어요!'}
+                {selfRating === 5 && '정말 멋지게 설명했어요!'}
+                {selfRating === 4 && '잘 설명했어요!'}
+                {selfRating === 3 && '좋아요! 한 번 더 해볼까요?'}
+                {selfRating === 2 && '시도한 게 멋져요!'}
+                {selfRating === 1 && '용기 있게 도전했어요!'}
               </p>
             )}
           </div>
-          
           <div style={{display:'flex',gap:'0.75rem',flexShrink:0}}>
-            <button onClick={() => handleSelfEvaluate('redo')} style={{
-              flex:1,padding:'1rem',
-              background:'linear-gradient(135deg, #a855f7, #9333ea)',color:'white',
-              border:'none',borderRadius:'1rem',fontSize:'1.25rem',cursor:'pointer',
-              boxShadow:'0 4px 12px rgba(147,51,234,0.3)',fontWeight:'700'
-            }}>🔄 다시 녹음</button>
-            <button onClick={() => handleSelfEvaluate('submit')} style={{
-              flex:2,padding:'1rem',
-              background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',
-              border:'none',borderRadius:'1rem',fontSize:'1.25rem',cursor:'pointer',
-              boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700'
-            }}>✅ 만족! 칭찬 받기</button>
+            <button onClick={() => handleSelfEvaluate('redo')} style={{flex:1,padding:'1rem',
+              background:'linear-gradient(135deg, #a855f7, #9333ea)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(147,51,234,0.3)',fontWeight:'700',
+              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+              <Icon name="ui_refresh" size={24}/> 다시 녹음
+            </button>
+            <button onClick={() => handleSelfEvaluate('submit')} style={{flex:2,padding:'1rem',
+              background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
+              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+              <Icon name="ui_check" size={24}/> 만족! 칭찬 받기
+            </button>
           </div>
         </div>
       </div>
     );
 
-    /* ─── 칭찬 스티커 ─── */
+    /* 칭찬 스티커 */
     if (phase === "sticker_reward") return (
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
-          <div style={{fontSize:'8rem',marginBottom:'1rem'}} className="pop-anim">🏆</div>
+          <div className="pop-anim" style={{marginBottom:'1rem'}}><Icon name="ui_trophy" size={130}/></div>
           <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>멋진 설명이었어요!</h2>
           <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
             <span style={{color:'#ec4899',fontWeight:'900'}}>{selectedStudent}</span> 친구가<br/>
-            <span style={{color:'#ec4899',fontWeight:'900'}}>칭찬 스티커</span>를 받았어요! 🎉
+            <span style={{color:'#ec4899',fontWeight:'900'}}>칭찬 스티커</span>를 받았어요!
           </p>
           <div style={{display:'flex',justifyContent:'center',gap:'0.5rem',marginBottom:'1.5rem'}}>
             {[1,2,3,4,5].map(s => (
@@ -1685,40 +1979,34 @@ const App = () => {
               </div>
             ))}
           </div>
-          <div style={{
-            background:'rgba(252,231,243,0.7)',padding:'1rem',borderRadius:'1rem',
-            border:'3px solid #f9a8d4',marginBottom:'1.5rem'
-          }}>
+          <div style={{background:'rgba(252,231,243,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #f9a8d4',marginBottom:'1.5rem'}}>
             <p style={{fontSize:'1.5rem',color:'#475569',margin:0,fontWeight:'700'}}>
               자기평가: <span style={{color:'#ec4899',fontWeight:'900'}}>{selfRating}점</span>
             </p>
           </div>
           <button onClick={continueAfterSticker} className="pill-btn" style={{fontWeight:'700'}}>
-            {qIndex+1 < activeQuestions.length ? '다음 문제 풀기 ▶' : '결과 보러 가기 🏆'}
+            {qIndex+1 < activeQuestions.length ? '다음 문제 풀기 ▶' : '결과 보러 가기 ▶'}
           </button>
         </div>
       </div>
     );
 
-    /* ─── 전송 중 ─── */
+    /* 전송 중 */
     if (phase === "submitting") return (
       <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',textAlign:'center'}}>
-        <div style={{fontSize:'7rem',marginBottom:'1.5rem'}}>⏳</div>
+        <div style={{marginBottom:'1.5rem'}}><Icon name="ui_hourglass" size={120}/></div>
         <div style={{fontSize:'2rem',color:'#7c3aed',fontWeight:'900'}}>저장하는 중이에요...</div>
       </div>
     );
 
-    /* ─── 결과 ─── */
+    /* 결과 */
     if (phase === "report") return (
       <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
         <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
         <div className="glass-card" style={{maxWidth:'1000px',width:'100%',padding:'2.5rem',display:'flex',gap:'2rem'}}>
-          <div style={{
-            flex:1,background:'rgba(254,243,199,0.6)',
-            padding:'2rem',borderRadius:'1.5rem',border:'4px dashed #f59e0b',
-            display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',textAlign:'center'
-          }}>
-            <div style={{fontSize:'6rem',marginBottom:'0.75rem'}}>🏆</div>
+          <div style={{flex:1,background:'rgba(254,243,199,0.6)',padding:'2rem',borderRadius:'1.5rem',border:'4px dashed #f59e0b',
+            display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',textAlign:'center'}}>
+            <div style={{marginBottom:'0.75rem'}}><Icon name="ui_trophy" size={110}/></div>
             <h1 style={{fontSize:'2.5rem',color:'#92400e',marginBottom:'1rem',fontWeight:'900'}}>훌륭한 이야기꾼 상</h1>
             <div style={{fontSize:'2rem',color:'#475569',marginBottom:'1rem',fontWeight:'700'}}>
               <span style={{color:'#7c3aed',fontSize:'2.5rem',textDecoration:'underline',fontWeight:'900'}}>{selectedStudent}</span> 어린이
@@ -1728,29 +2016,29 @@ const App = () => {
             </p>
           </div>
           <div style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'center',gap:'1rem'}}>
-            <div style={{
-              background:'rgba(196,181,253,0.2)',
-              padding:'1.5rem',borderRadius:'1.25rem',border:'3px solid #c4b5fd',
-              display:'flex',flexDirection:'column',alignItems:'center'
-            }}>
+            <div style={{background:'rgba(196,181,253,0.2)',padding:'1.5rem',borderRadius:'1.25rem',border:'3px solid #c4b5fd',
+              display:'flex',flexDirection:'column',alignItems:'center'}}>
               <div style={{fontSize:'1.5rem',color:'#475569',marginBottom:'0.5rem',fontWeight:'700'}}>최종 결과</div>
               <div style={{fontSize:'5rem',color:'#7c3aed',fontWeight:'900'}}>{score}<span style={{fontSize:'2rem',color:'#94a3b8'}}> / {activeQuestions.length}</span></div>
             </div>
-            <div style={{
-              background:'rgba(254,243,199,0.6)',padding:'1rem',borderRadius:'1rem',
-              border:'3px solid #fcd34d',display:'flex',justifyContent:'space-around'
-            }}>
+            <div style={{background:'rgba(254,243,199,0.6)',padding:'1rem',borderRadius:'1rem',border:'3px solid #fcd34d',
+              display:'flex',justifyContent:'space-around'}}>
               <div style={{textAlign:'center'}}>
-                <div style={{fontSize:'1rem',color:'#475569',fontWeight:'700'}}>🙋 도움받기</div>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
+                  <Icon name="ui_help" size={20}/> 도움받기
+                </div>
                 <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{helpUsedTotal}회</div>
               </div>
               <div style={{textAlign:'center'}}>
-                <div style={{fontSize:'1rem',color:'#475569',fontWeight:'700'}}>🎙️ 녹음</div>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
+                  <Icon name="ui_mic" size={20}/> 녹음
+                </div>
                 <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{allReflections.length}회</div>
               </div>
             </div>
-            <button onClick={() => window.location.reload()} className="pill-btn" style={{fontWeight:'700'}}>
-              처음으로 돌아가기 🏠
+            <button onClick={() => window.location.reload()} className="pill-btn"
+              style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',fontWeight:'700'}}>
+              <Icon name="ui_home" size={28}/> 처음으로 돌아가기
             </button>
           </div>
         </div>
@@ -1766,6 +2054,7 @@ const App = () => {
         {renderContent()}
       </div>
       {toast && <div className="toast">{toast}</div>}
+      <Popup type={popup} onClose={() => setPopup(null)}/>
     </>
   );
 };
