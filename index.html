@@ -1060,6 +1060,10 @@ const App = () => {
     }
   }, [phase, qIndex]);
 
+  /* 현재 화면 추적 (지연 팝업 안전장치) */
+  const phaseRef = useRef(phase);
+  useEffect(() => { phaseRef.current = phase; }, [phase]);
+
   /* 마이크 */
   const requestMicAccess = async () => {
     try {
@@ -1259,7 +1263,7 @@ const App = () => {
       speak("정답입니다!", soundOn);
       setPhase("feedback");
       if (currentQ.type === 'cyclic' && !practiceMode) {
-        setTimeout(() => setPopup('cyclic-complete'), 600);
+        setTimeout(() => { if (phaseRef.current === 'feedback') setPopup('cyclic-complete'); }, 600);
       }
     } else {
       setWrongIndices(wrongs);
