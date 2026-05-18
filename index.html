@@ -1821,4 +1821,439 @@ const App = () => {
                   <Icon name="ui_cards" size={22}/> 카드 보관함
                   <span style={{fontSize:'0.75rem',color:'#94a3b8',marginLeft:'auto',fontWeight:'700'}}>끌어서 놓기</span>
                 </h3>
-                <div style={{flex:1,display:'flex',flexWrap:'
+                <div style={{flex:1,display:'flex',flexWrap:'wrap',gap:'0.5rem',alignContent:'flex-start',justifyContent:'center'}}>
+                  {pool.length > 0 ? pool.map(card => (
+                    <div key={card.id} draggable="true" onDragStart={(e)=>handlePoolDragStart(e,card)} onClick={()=>tapPoolCard(card)}
+                      className={`pool-card ${dragSource && dragSource.type==='pool' && dragSource.cardId===card.id ? 'dragging' : ''}`}
+                      style={{padding:'0.6rem',width:'130px',display:'flex',flexDirection:'column',alignItems:'center'}}>
+                      <Icon name={card.icon} size={56}/>
+                      <div style={{fontSize:'0.95rem',color:'#475569',textAlign:'center',wordBreak:'keep-all',fontWeight:'700',marginTop:'0.25rem'}}>{card.text}</div>
+                    </div>
+                  )) : (
+                    <div style={{fontSize:'1.125rem',color:'#94a3b8',textAlign:'center',padding:'1rem',fontWeight:'700'}}>
+                      <div style={{display:'flex',justifyContent:'center',marginBottom:'0.25rem'}}><Icon name="ui_party" size={48}/></div>
+                      모두 옮겼어요!<br/>
+                      <span style={{fontSize:'0.9rem'}}>정답을 확인해보세요</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div style={{display:'flex',gap:'0.5rem',flexShrink:0}}>
+                <button onClick={retryQuestion} style={{flex:1,padding:'0.85rem',background:'rgba(148,163,184,0.8)',
+                  color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700',
+                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+                  <Icon name="ui_refresh" size={22}/> 다시
+                </button>
+                <button onClick={checkAnswer} style={{flex:2,padding:'0.85rem',
+                  background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
+                  fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
+                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+                  정답 확인 <Icon name="ui_check" size={22}/>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* 정답 피드백 */
+    if (phase === "feedback") {
+      const nextIdx = qIndex + 1;
+      const isLast = nextIdx >= activeQuestions.length;
+      const fivePoint = nextIdx > 0 && nextIdx % 5 === 0;
+      const willReflect = !practiceMode && (fivePoint || (isLast && (nextIdx - batchStart) > 0));
+      let label = '다음 문제 ▶';
+      if (practiceMode) label = '본 문제 풀기 ▶';
+      else if (willReflect) label = '배움 정리하기 ▶';
+      else if (isLast) label = '결과 보기 ▶';
+      return (
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
+          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+          <div className="glass-card" style={{maxWidth:'900px',width:'100%',padding:'2rem',display:'flex',gap:'2rem',alignItems:'center'}}>
+            <div style={{flexShrink:0,textAlign:'center'}}>
+              <div className="pop-anim" style={{marginBottom:'0.5rem'}}><Icon name="ui_party" size={120}/></div>
+              <h2 className="grad-text" style={{fontSize:'3rem',margin:0,fontWeight:'900'}}>정답!</h2>
+              {practiceMode && <span style={{display:'inline-block',marginTop:'0.5rem',padding:'0.3rem 0.85rem',
+                background:'rgba(59,130,246,0.15)',color:'#1d4ed8',borderRadius:'999px',fontSize:'0.95rem',fontWeight:'700'}}>연습 완료</span>}
+            </div>
+            <div style={{flex:1,display:'flex',flexDirection:'column',gap:'1rem'}}>
+              <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',borderLeft:'6px solid #8b5cf6',paddingLeft:'1rem',margin:0,fontWeight:'700'}}>
+                "{currentQ.concept}"
+              </p>
+              <div style={{background:'rgba(196,181,253,0.15)',padding:'1rem',borderRadius:'1rem',
+                display:'flex',alignItems:'center',justifyContent:'center',minHeight:'250px'}}>
+                {currentQ.type === 'cyclic' ? <CircularLayout items={currentQ.cards} size={300}/> : <LinearLayout items={currentQ.cards}/>}
+              </div>
+              <button onClick={nextQuestion} className="pill-btn" style={{width:'100%',fontWeight:'700'}}>{label}</button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* 녹음 안내 */
+    if (phase === "reflection_intro") {
+      const batchEnd = qIndex + 1;
+      const batchSize = batchEnd - batchStart;
+      const canSelectTwo = batchSize >= 2;
+      return (
+        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
+          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+          <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
+            <div className="float-up" style={{marginBottom:'1rem'}}><Icon name="ui_mic" size={120}/></div>
+            <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>배움 정리 시간!</h2>
+            <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
+              방금 푼 <span style={{color:'#f97316',fontWeight:'900'}}>{batchSize}개 문제</span> 중에서<br/>
+              {canSelectTwo ? <><span style={{color:'#f97316',fontWeight:'900'}}>2개를 골라</span> 친구에게 설명해 보아요</> : <>그 문제를 친구에게 설명해 보아요</>}
+            </p>
+            <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd',marginBottom:'1.5rem'}}>
+              <p style={{fontSize:'1.25rem',color:'#7c3aed',margin:0,fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem'}}>
+                <Icon name="ui_target" size={24}/> 녹음 단계 {reflectionRound + 1} / {totalReflectionRounds}
+              </p>
+            </div>
+            <button onClick={startReflection} className="pill-btn" style={{fontWeight:'700'}}>카드 고르러 가기 ▶</button>
+          </div>
+        </div>
+      );
+    }
+
+    /* 카드 선택 */
+    if (phase === "reflection_select") {
+      const batchEnd = qIndex + 1;
+      const batchQuestions = activeQuestions.slice(batchStart, batchEnd);
+      const required = Math.min(2, batchQuestions.length);
+      const canProceed = selectedCardSets.length === required;
+      return (
+        <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
+          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+          <div style={{textAlign:'center',marginBottom:'1rem',flexShrink:0}}>
+            <h2 className="grad-text" style={{fontSize:'2.5rem',marginBottom:'0.5rem',fontWeight:'900'}}>설명할 카드 {required}개를 골라요</h2>
+            <p style={{fontSize:'1.25rem',color:'#7c3aed',fontWeight:'700'}}>선택됨: <span style={{fontSize:'1.5rem',fontWeight:'900'}}>{selectedCardSets.length}</span> / {required}</p>
+          </div>
+          <div style={{flex:1,display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:'1rem',overflow:'hidden',alignContent:'flex-start'}}>
+            {batchQuestions.map(q => {
+              const sel = selectedCardSets.find(c => c.id === q.id);
+              return (
+                <div key={q.id} onClick={() => {
+                    if (sel) setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
+                    else if (selectedCardSets.length < required) { setSelectedCardSets([...selectedCardSets, q]); playSound('pop', soundOn); }
+                  }}
+                  className="glass-card"
+                  style={{padding:'1rem',cursor:'pointer',border: sel ? '6px solid #f472b6' : '6px solid transparent',
+                    background: sel ? 'rgba(252,231,243,0.8)' : 'rgba(255,255,255,0.7)',transition:'all 0.2s'}}>
+                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.5rem'}}>
+                    <h3 style={{fontSize:'1.5rem',color:'#1e293b',margin:0,fontWeight:'900'}}>{q.title}</h3>
+                    {sel && <Icon name="ui_check" size={32}/>}
+                  </div>
+                  <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',wordBreak:'keep-all',fontWeight:'700'}}>"{q.concept}"</p>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center'}}>
+                    {q.cards.map((c, ci) => (
+                      <React.Fragment key={c.id}>
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+                          <div style={{background:'rgba(255,255,255,0.7)',borderRadius:'0.5rem',padding:'0.15rem',border:'2px solid #c4b5fd'}}>
+                            <Icon name={c.icon} size={36}/>
+                          </div>
+                          <span style={{fontSize:'0.7rem',color:'#64748b',fontWeight:'700'}}>{c.text}</span>
+                        </div>
+                        {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontWeight:'900'}}>→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{marginTop:'1rem',flexShrink:0}}>
+            <button onClick={goToRecording} disabled={!canProceed} className={canProceed ? 'pill-btn' : ''}
+              style={canProceed ? {width:'100%',fontWeight:'700'} : {width:'100%',padding:'1rem',background:'rgba(203,213,225,0.7)',
+                color:'#94a3b8',border:'none',borderRadius:'999px',fontSize:'1.5rem',cursor:'not-allowed',fontWeight:'700'}}>
+              {canProceed ? '녹음하러 가기 ▶' : `${required - selectedCardSets.length}개 더 골라주세요`}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    /* 녹음 */
+    if (phase === "recording") return (
+      <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1rem',position:'relative'}}>
+        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+        <div style={{flex:1,display:'flex',flexDirection:'row',gap:'1rem',overflow:'hidden'}}>
+          <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.25rem 0',color:'#7c3aed',flexShrink:0,fontWeight:'900'}}>
+              <Icon name="book" size={28}/> 내가 고른 이야기
+            </h3>
+            <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',flexShrink:0,wordBreak:'keep-all',fontWeight:'700'}}>
+              그림을 보면서 <strong style={{color:'#f97316'}}>내 말로</strong> 설명해요!
+            </p>
+            <div style={{flex:1,display:'flex',flexDirection:'column',gap:'0.75rem',overflow:'hidden'}}>
+              {selectedCardSets.map((q, i) => (
+                <div key={q.id} style={{background:'rgba(255,255,255,0.7)',border:'4px solid #c4b5fd',borderRadius:'1rem',
+                  padding:'0.85rem',display:'flex',flexDirection:'column',gap:'0.5rem'}}>
+                  <h4 style={{fontSize:'1.125rem',margin:0,display:'flex',alignItems:'center',gap:'0.5rem',color:'#1e293b',fontWeight:'900'}}>
+                    <span style={{background:'#a78bfa',color:'white',width:'28px',height:'28px',borderRadius:'50%',
+                      display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.95rem',flexShrink:0,fontWeight:'900'}}>{i+1}</span>
+                    {q.title}
+                  </h4>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center',justifyContent:'center',
+                    background:'rgba(255,255,255,0.7)',padding:'0.5rem',borderRadius:'0.75rem'}}>
+                    {q.cards.map((c, ci) => (
+                      <React.Fragment key={c.id}>
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
+                          <div style={{background:'rgba(196,181,253,0.2)',borderRadius:'0.6rem',width:'52px',height:'52px',
+                            display:'flex',alignItems:'center',justifyContent:'center',border:'2px solid #c4b5fd'}}>
+                            <Icon name={c.icon} size={40}/>
+                          </div>
+                          <span style={{fontSize:'0.75rem',color:'#475569',marginTop:'2px',fontWeight:'700'}}>{c.text}</span>
+                        </div>
+                        {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontSize:'1.125rem',fontWeight:'900'}}>→</span>}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div style={{background:'rgba(254,243,199,0.7)',borderRadius:'0.75rem',border:'3px solid #fcd34d',
+                    padding:'0.5rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
+                    <Icon name="ui_bulb" size={24}/>
+                    <p style={{fontSize:'0.95rem',color:'#475569',margin:0,flex:1,wordBreak:'keep-all',fontWeight:'700'}}>
+                      예시: <span style={{fontStyle:'italic'}}>"{q.concept}"</span>
+                    </p>
+                    <button onClick={() => speakForce(q.concept)} style={{padding:'0.3rem',background:'#fbbf24',
+                      border:'2px solid #d97706',borderRadius:'0.5rem',cursor:'pointer',flexShrink:0,display:'flex',alignItems:'center'}}>
+                      <Icon name="ui_soundOn" size={22}/>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.75rem',flexShrink:0}}>
+              <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:0,color:'#7c3aed',fontWeight:'900'}}>
+                <Icon name="ui_mic" size={28}/> 내가 설명하기
+              </h3>
+              <button onClick={() => setUseKeyboard(!useKeyboard)} style={{display:'inline-flex',alignItems:'center',gap:'0.3rem',
+                padding:'0.4rem 0.85rem',background:'rgba(196,181,253,0.3)',color:'#7c3aed',border:'3px solid #c4b5fd',
+                borderRadius:'0.75rem',cursor:'pointer',fontSize:'0.95rem',fontWeight:'700'}}>
+                <Icon name={useKeyboard ? 'ui_mic' : 'ui_keyboard'} size={20}/>{useKeyboard ? '음성으로' : '키보드로'}
+              </button>
+            </div>
+            {useKeyboard ? (
+              <textarea value={keyboardText} onChange={(e) => setKeyboardText(e.target.value)}
+                placeholder="여기에 내 생각을 써보세요!"
+                style={{flex:1,width:'100%',padding:'1rem',fontSize:'1.25rem',color:'#1e293b',background:'rgba(255,255,255,0.8)',
+                  border:'4px solid #c4b5fd',borderRadius:'1rem',resize:'none',outline:'none',fontWeight:'700'}}/>
+            ) : (
+              <>
+                <div style={{flexShrink:0,marginBottom:'0.75rem'}}>
+                  {!isRecording && !audioBlob && (
+                    <button onClick={handleStartRecording} style={{width:'100%',padding:'1.25rem',
+                      background:'rgba(255,255,255,0.7)',border:'6px solid #c4b5fd',borderRadius:'1.5rem',cursor:'pointer',
+                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#7c3aed',fontWeight:'900'}}>
+                      <Icon name="ui_mic" size={64}/>
+                      <span style={{fontSize:'2rem'}}>녹음 시작</span>
+                    </button>
+                  )}
+                  {isRecording && (
+                    <button onClick={handleStopRecording} className="pulse-rec" style={{width:'100%',padding:'1.25rem',
+                      background:'rgba(254,226,226,0.9)',border:'6px solid #ef4444',borderRadius:'1.5rem',cursor:'pointer',
+                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#dc2626',fontWeight:'900'}}>
+                      <Icon name="ui_stopSquare" size={56}/>
+                      <span style={{fontSize:'2rem'}}>녹음 끝</span>
+                    </button>
+                  )}
+                </div>
+                <div style={{flex:1,padding:'1rem',background:'rgba(255,255,255,0.7)',border:'3px solid #c4b5fd',borderRadius:'1rem',overflow:'auto'}}>
+                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.5rem 0',fontWeight:'700'}}>
+                    <Icon name="ui_pencil" size={20}/> 받아쓰기
+                  </p>
+                  <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>
+                    {recognizedText || <span style={{color:'#cbd5e1'}}>{isRecording ? '말해보세요...' : '녹음 시작 버튼을 눌러요'}</span>}
+                    {interimText && <span style={{color:'#f97316'}}>{interimText}</span>}
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        <div style={{marginTop:'0.75rem',display:'flex',gap:'0.75rem',flexShrink:0}}>
+          <button onClick={() => setPhase("reflection_select")} style={{flex:1,padding:'0.85rem',
+            background:'rgba(148,163,184,0.7)',color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700'}}>
+            ◀ 카드 다시 고르기
+          </button>
+          {(audioBlob || (useKeyboard && keyboardText.trim().length > 0)) && (
+            <button onClick={() => setPhase("reflection_listen")} style={{flex:2,padding:'0.85rem',
+              background:'linear-gradient(135deg, #fb7185, #f472b6)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(244,114,182,0.3)',fontWeight:'700'}}>
+              들어보기 / 자기평가 ▶
+            </button>
+          )}
+        </div>
+      </div>
+    );
+
+    /* 들어보기 / 자기평가 */
+    if (phase === "reflection_listen") return (
+      <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
+        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+        <div style={{maxWidth:'900px',margin:'0 auto',width:'100%',flex:1,display:'flex',flexDirection:'column',gap:'1rem',overflow:'hidden'}}>
+          <h2 className="grad-text" style={{fontSize:'2.25rem',textAlign:'center',margin:0,flexShrink:0,fontWeight:'900',
+            display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem'}}>
+            <Icon name="ui_headphone" size={40}/> 내 설명을 들어보고 평가해요
+          </h2>
+          <div className="glass-card" style={{padding:'1.25rem',flexShrink:0}}>
+            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.75rem 0',color:'#7c3aed',fontWeight:'900'}}>
+              <Icon name="ui_mic" size={26}/> 내 설명
+            </h3>
+            {useKeyboard ? (
+              <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd'}}>
+                <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{keyboardText || '(입력 내용 없음)'}</p>
+              </div>
+            ) : (
+              <>
+                {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls style={{width:'100%',marginBottom:'0.75rem'}}/>}
+                <div style={{background:'rgba(255,255,255,0.7)',padding:'0.75rem',borderRadius:'0.75rem',border:'3px solid #c4b5fd'}}>
+                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.25rem 0',fontWeight:'700'}}>
+                    <Icon name="ui_pencil" size={18}/> 받아쓰기
+                  </p>
+                  <p style={{fontSize:'1rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{recognizedText || '(받아쓰기 결과 없음)'}</p>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="glass-card" style={{padding:'1.5rem',flex:1,display:'flex',flexDirection:'column',justifyContent:'center'}}>
+            <h3 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem',fontSize:'1.875rem',
+              textAlign:'center',margin:'0 0 0.5rem 0',color:'#92400e',fontWeight:'900'}}>
+              <Icon name="ui_star" size={34}/> 별점으로 평가해요
+            </h3>
+            <p style={{fontSize:'1.125rem',textAlign:'center',color:'#64748b',marginBottom:'1rem',wordBreak:'keep-all',fontWeight:'700'}}>나는 얼마나 잘 설명했나요?</p>
+            <StarRating rating={selfRating} setRating={setSelfRating} size={64}/>
+            {selfRating > 0 && (
+              <p style={{fontSize:'1.5rem',textAlign:'center',marginTop:'0.75rem',color: selfRating <= 3 ? '#ea580c' : '#16a34a',fontWeight:'900'}}>
+                {selfRating === 5 && '정말 멋지게 설명했어요!'}
+                {selfRating === 4 && '잘 설명했어요!'}
+                {selfRating === 3 && '좋아요! 한 번 더 해볼까요?'}
+                {selfRating === 2 && '시도한 게 멋져요!'}
+                {selfRating === 1 && '용기 있게 도전했어요!'}
+              </p>
+            )}
+          </div>
+          <div style={{display:'flex',gap:'0.75rem',flexShrink:0}}>
+            <button onClick={() => handleSelfEvaluate('redo')} style={{flex:1,padding:'1rem',
+              background:'linear-gradient(135deg, #a855f7, #9333ea)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(147,51,234,0.3)',fontWeight:'700',
+              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+              <Icon name="ui_refresh" size={24}/> 다시 녹음
+            </button>
+            <button onClick={() => handleSelfEvaluate('submit')} style={{flex:2,padding:'1rem',
+              background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
+              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
+              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
+              <Icon name="ui_check" size={24}/> 만족! 칭찬 받기
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    /* 칭찬 스티커 */
+    if (phase === "sticker_reward") return (
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
+        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+        <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
+          <div className="pop-anim" style={{marginBottom:'1rem'}}><Icon name="ui_trophy" size={130}/></div>
+          <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>멋진 설명이었어요!</h2>
+          <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
+            <span style={{color:'#ec4899',fontWeight:'900'}}>{selectedStudent}</span> 친구가<br/>
+            <span style={{color:'#ec4899',fontWeight:'900'}}>칭찬 스티커</span>를 받았어요!
+          </p>
+          <div style={{display:'flex',justifyContent:'center',gap:'0.5rem',marginBottom:'1.5rem'}}>
+            {[1,2,3,4,5].map(s => (
+              <div key={s} className="pop-anim" style={{animationDelay:`${s*0.1}s`}}>
+                <RoundStar filled={s <= selfRating} size={64}/>
+              </div>
+            ))}
+          </div>
+          <div style={{background:'rgba(252,231,243,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #f9a8d4',marginBottom:'1.5rem'}}>
+            <p style={{fontSize:'1.5rem',color:'#475569',margin:0,fontWeight:'700'}}>
+              자기평가: <span style={{color:'#ec4899',fontWeight:'900'}}>{selfRating}점</span>
+            </p>
+          </div>
+          <button onClick={continueAfterSticker} className="pill-btn" style={{fontWeight:'700'}}>
+            {qIndex+1 < activeQuestions.length ? '다음 문제 풀기 ▶' : '결과 보러 가기 ▶'}
+          </button>
+        </div>
+      </div>
+    );
+
+    /* 전송 중 */
+    if (phase === "submitting") return (
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',textAlign:'center'}}>
+        <div style={{marginBottom:'1.5rem'}}><Icon name="ui_hourglass" size={120}/></div>
+        <div style={{fontSize:'2rem',color:'#7c3aed',fontWeight:'900'}}>저장하는 중이에요...</div>
+      </div>
+    );
+
+    /* 결과 */
+    if (phase === "report") return (
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
+        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
+        <div className="glass-card" style={{maxWidth:'1000px',width:'100%',padding:'2.5rem',display:'flex',gap:'2rem'}}>
+          <div style={{flex:1,background:'rgba(254,243,199,0.6)',padding:'2rem',borderRadius:'1.5rem',border:'4px dashed #f59e0b',
+            display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',textAlign:'center'}}>
+            <div style={{marginBottom:'0.75rem'}}><Icon name="ui_trophy" size={110}/></div>
+            <h1 style={{fontSize:'2.5rem',color:'#92400e',marginBottom:'1rem',fontWeight:'900'}}>훌륭한 이야기꾼 상</h1>
+            <div style={{fontSize:'2rem',color:'#475569',marginBottom:'1rem',fontWeight:'700'}}>
+              <span style={{color:'#7c3aed',fontSize:'2.5rem',textDecoration:'underline',fontWeight:'900'}}>{selectedStudent}</span> 어린이
+            </div>
+            <p style={{fontSize:'1.125rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>
+              위 어린이는 사건의 순서를<br/>올바르게 이해하고 설명하였기에<br/>이 상장을 수여합니다.
+            </p>
+          </div>
+          <div style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'center',gap:'1rem'}}>
+            <div style={{background:'rgba(196,181,253,0.2)',padding:'1.5rem',borderRadius:'1.25rem',border:'3px solid #c4b5fd',
+              display:'flex',flexDirection:'column',alignItems:'center'}}>
+              <div style={{fontSize:'1.5rem',color:'#475569',marginBottom:'0.5rem',fontWeight:'700'}}>최종 결과</div>
+              <div style={{fontSize:'5rem',color:'#7c3aed',fontWeight:'900'}}>{score}<span style={{fontSize:'2rem',color:'#94a3b8'}}> / {activeQuestions.length}</span></div>
+            </div>
+            <div style={{background:'rgba(254,243,199,0.6)',padding:'1rem',borderRadius:'1rem',border:'3px solid #fcd34d',
+              display:'flex',justifyContent:'space-around'}}>
+              <div style={{textAlign:'center'}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
+                  <Icon name="ui_help" size={20}/> 도움받기
+                </div>
+                <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{helpUsedTotal}회</div>
+              </div>
+              <div style={{textAlign:'center'}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
+                  <Icon name="ui_mic" size={20}/> 녹음
+                </div>
+                <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{allReflections.length}회</div>
+              </div>
+            </div>
+            <button onClick={() => window.location.reload()} className="pill-btn"
+              style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',fontWeight:'700'}}>
+              <Icon name="ui_home" size={28}/> 처음으로 돌아가기
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    return null;
+  };
+
+  return (
+    <>
+      <div className="scale-stage" style={{transform: `translate(-50%, -50%) scale(${scale})`}}>
+        {renderContent()}
+      </div>
+      {toast && <div className="toast">{toast}</div>}
+      <Popup type={popup} onClose={() => setPopup(null)}/>
+    </>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
