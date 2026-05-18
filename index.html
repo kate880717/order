@@ -12,11 +12,16 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mobile-drag-drop@3.0.0-rc.0/index.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mobile-drag-drop@3.0.0-rc.0/default.css">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nanum+Gothic:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
-  body, html, #root, *, *::before, *::after {
-    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', sans-serif !important;
-    letter-spacing: -0.02em;
+  body, html, #root, button, input, select, textarea, option {
+    font-family: 'Nanum Gothic', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    letter-spacing: -0.01em;
+  }
+  body { font-weight: 700; }
+  h1, h2, .grad-text {
+    font-family: 'Jua', 'Nanum Gothic', 'Malgun Gothic', sans-serif;
   }
   body {
     margin: 0; padding: 0; overflow: hidden;
@@ -164,352 +169,534 @@ const EMOJI_TO_ICON = {
 };
 
 /* ═══════════════════════════════════════════════════════════
-   SVG 아이콘 시스템 (카드 그림 + 인터페이스 그림 모두 직접 그림)
+   SVG 아이콘 — 저학년용 귀여운 그림체
+   (둥근 몸 · 큰 눈 + 반짝임 · 발그레한 볼 · 웃는 표정)
    ═══════════════════════════════════════════════════════════ */
 const ICONS = {
   /* ─── 기본 / 한살이 ─── */
   seed: (<g>
-    <ellipse cx="50" cy="98" rx="22" ry="4" fill="#000" opacity="0.07"/>
-    <g transform="rotate(-20 50 52)">
-      <ellipse cx="50" cy="52" rx="30" ry="21" fill="#9c3a2d"/>
-      <ellipse cx="50" cy="52" rx="30" ry="21" fill="none" stroke="#6b2419" strokeWidth="3"/>
-      <ellipse cx="40" cy="43" rx="11" ry="6" fill="#bf5446" opacity="0.85"/>
-      <path d="M36 70 Q50 76 64 70" stroke="#e8d4a8" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    <ellipse cx="50" cy="92" rx="22" ry="5" fill="#000" opacity="0.07"/>
+    <g transform="rotate(-12 50 52)">
+      <ellipse cx="50" cy="52" rx="29" ry="24" fill="#b5654a"/>
+      <ellipse cx="50" cy="52" rx="29" ry="24" fill="none" stroke="#8a4632" strokeWidth="3"/>
+      <ellipse cx="40" cy="42" rx="10" ry="6" fill="#d68a73" opacity="0.8"/>
+      <path d="M40 50 q3 4 6 0" stroke="#5c2f20" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M56 50 q3 4 6 0" stroke="#5c2f20" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M44 60 q6 6 12 0" stroke="#5c2f20" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <circle cx="34" cy="56" r="4.5" fill="#e8927d" opacity="0.7"/>
+      <circle cx="66" cy="56" r="4.5" fill="#e8927d" opacity="0.7"/>
     </g>
   </g>),
   sprout: (<g>
-    <ellipse cx="50" cy="84" rx="32" ry="9" fill="#9c6b3a"/>
-    <ellipse cx="50" cy="80" rx="32" ry="9" fill="#b07d44"/>
-    <path d="M50 81 Q47 60 50 44" stroke="#16a34a" strokeWidth="6" fill="none" strokeLinecap="round"/>
-    <ellipse cx="34" cy="42" rx="17" ry="10" transform="rotate(-32 34 42)" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
-    <ellipse cx="66" cy="42" rx="17" ry="10" transform="rotate(32 66 42)" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
+    <ellipse cx="50" cy="86" rx="30" ry="8" fill="#b07d44"/>
+    <ellipse cx="50" cy="82" rx="30" ry="8" fill="#c98f50"/>
+    <path d="M50 83 Q48 64 50 50" stroke="#22c55e" strokeWidth="7" fill="none" strokeLinecap="round"/>
+    <ellipse cx="32" cy="46" rx="17" ry="11" transform="rotate(-30 32 46)" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <ellipse cx="68" cy="46" rx="17" ry="11" transform="rotate(30 68 46)" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <circle cx="44" cy="58" r="3" fill="#1f2937"/><circle cx="56" cy="58" r="3" fill="#1f2937"/>
+    <circle cx="45" cy="57" r="1" fill="#fff"/><circle cx="57" cy="57" r="1" fill="#fff"/>
+    <path d="M46 64 q4 4 8 0" stroke="#1f2937" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="62" r="3.5" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="62" cy="62" r="3.5" fill="#fca5a5" opacity="0.7"/>
   </g>),
   flower: (<g>
-    <path d="M50 86 L50 52" stroke="#16a34a" strokeWidth="5" strokeLinecap="round"/>
-    <ellipse cx="36" cy="68" rx="13" ry="7" transform="rotate(-28 36 68)" fill="#22c55e"/>
-    <ellipse cx="64" cy="74" rx="13" ry="7" transform="rotate(28 64 74)" fill="#22c55e"/>
-    <ellipse cx="50" cy="34" rx="22" ry="17" fill="#f0d9f6" stroke="#c9a8e0" strokeWidth="2.5"/>
-    <ellipse cx="37" cy="44" rx="12" ry="9" transform="rotate(-22 37 44)" fill="#dcc0ec"/>
-    <ellipse cx="63" cy="44" rx="12" ry="9" transform="rotate(22 63 44)" fill="#dcc0ec"/>
-    <ellipse cx="50" cy="46" rx="11" ry="7" fill="#c9a4dd"/>
-    <circle cx="50" cy="36" r="6" fill="#f2dd84"/>
+    <path d="M50 88 L50 54" stroke="#22c55e" strokeWidth="6" strokeLinecap="round"/>
+    <ellipse cx="34" cy="70" rx="13" ry="7" transform="rotate(-28 34 70)" fill="#4ade80"/>
+    {[0,72,144,216,288].map(a=>(<ellipse key={a} cx="50" cy="22" rx="11" ry="14" fill="#fbcfe8" stroke="#f472b6" strokeWidth="2.5" transform={`rotate(${a} 50 38)`}/>))}
+    <circle cx="50" cy="38" r="13" fill="#fde047" stroke="#f59e0b" strokeWidth="2.5"/>
+    <circle cx="45" cy="37" r="2.6" fill="#1f2937"/><circle cx="55" cy="37" r="2.6" fill="#1f2937"/>
+    <circle cx="46" cy="36.2" r="1" fill="#fff"/><circle cx="56" cy="36.2" r="1" fill="#fff"/>
+    <path d="M46 42 q4 4 8 0" stroke="#1f2937" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+    <circle cx="40" cy="41" r="3" fill="#f9a8d4"/><circle cx="60" cy="41" r="3" fill="#f9a8d4"/>
   </g>),
   pod: (<g>
-    <ellipse cx="52" cy="88" rx="30" ry="5" fill="#000" opacity="0.07"/>
-    <g transform="rotate(-20 50 52)">
-      <rect x="12" y="38" width="78" height="28" rx="14" fill="#5fa83a"/>
-      <rect x="12" y="38" width="78" height="28" rx="14" fill="none" stroke="#3f7a24" strokeWidth="3"/>
-      <path d="M90 52 Q99 48 103 42" stroke="#3f7a24" strokeWidth="4" fill="none" strokeLinecap="round"/>
-      <line x1="20" y1="52" x2="82" y2="52" stroke="#3f7a24" strokeWidth="2" opacity="0.45"/>
-      <circle cx="37" cy="52" r="11" fill="#74c24e"/>
-      <circle cx="65" cy="52" r="11" fill="#74c24e"/>
-      <ellipse cx="37" cy="52" rx="6" ry="8" fill="#9c3a2d"/>
-      <ellipse cx="65" cy="52" rx="6" ry="8" fill="#9c3a2d"/>
+    <ellipse cx="52" cy="86" rx="30" ry="5" fill="#000" opacity="0.07"/>
+    <g transform="rotate(-14 50 52)">
+      <rect x="14" y="38" width="74" height="30" rx="15" fill="#74c24e"/>
+      <rect x="14" y="38" width="74" height="30" rx="15" fill="none" stroke="#4d8a2f" strokeWidth="3"/>
+      <path d="M88 53 Q97 49 100 43" stroke="#4d8a2f" strokeWidth="4" fill="none" strokeLinecap="round"/>
+      <circle cx="44" cy="48" r="2.6" fill="#1f2937"/><circle cx="58" cy="48" r="2.6" fill="#1f2937"/>
+      <circle cx="45" cy="47.2" r="1" fill="#fff"/><circle cx="59" cy="47.2" r="1" fill="#fff"/>
+      <path d="M47 54 q4 4 8 0" stroke="#1f2937" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+      <circle cx="38" cy="53" r="3.5" fill="#fca5a5" opacity="0.7"/>
+      <circle cx="64" cy="53" r="3.5" fill="#fca5a5" opacity="0.7"/>
     </g>
   </g>),
   tree: (<g>
-    <rect x="44" y="58" width="12" height="28" rx="4" fill="#92400e"/>
-    <circle cx="50" cy="38" r="26" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
-    <circle cx="34" cy="48" r="16" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
-    <circle cx="66" cy="48" r="16" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <rect x="44" y="60" width="12" height="26" rx="6" fill="#a16207"/>
+    <circle cx="50" cy="36" r="25" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="33" cy="48" r="15" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="67" cy="48" r="15" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="44" cy="38" r="3" fill="#1f2937"/><circle cx="56" cy="38" r="3" fill="#1f2937"/>
+    <circle cx="45.2" cy="37" r="1.1" fill="#fff"/><circle cx="57.2" cy="37" r="1.1" fill="#fff"/>
+    <path d="M45 45 q5 5 10 0" stroke="#1f2937" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="44" r="4" fill="#fca5a5" opacity="0.65"/>
+    <circle cx="62" cy="44" r="4" fill="#fca5a5" opacity="0.65"/>
   </g>),
   apple: (<g>
-    <path d="M50 30 Q35 22 28 38 Q22 56 34 74 Q44 86 50 86 Q56 86 66 74 Q78 56 72 38 Q65 22 50 30Z"
-      fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/>
-    <path d="M50 30 L50 18" stroke="#713f12" strokeWidth="4" strokeLinecap="round"/>
-    <path d="M50 22 Q60 14 68 20 Q60 26 50 24Z" fill="#22c55e" stroke="#15803d" strokeWidth="2"/>
-    <ellipse cx="40" cy="46" rx="6" ry="9" fill="#fca5a5" opacity="0.7"/>
+    <path d="M50 32 Q36 24 30 40 Q24 58 36 74 Q45 84 50 84 Q55 84 64 74 Q76 58 70 40 Q64 24 50 32Z"
+      fill="#f87171" stroke="#dc2626" strokeWidth="3"/>
+    <path d="M50 32 L50 20" stroke="#92400e" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M50 24 Q60 16 68 22 Q60 28 50 26Z" fill="#4ade80" stroke="#15803d" strokeWidth="2"/>
+    <circle cx="44" cy="52" r="3.2" fill="#1f2937"/><circle cx="58" cy="52" r="3.2" fill="#1f2937"/>
+    <circle cx="45.3" cy="50.9" r="1.2" fill="#fff"/><circle cx="59.3" cy="50.9" r="1.2" fill="#fff"/>
+    <path d="M45 60 q6 6 12 0" stroke="#1f2937" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="37" cy="58" r="4.5" fill="#fff" opacity="0.5"/>
+    <circle cx="65" cy="58" r="4.5" fill="#fff" opacity="0.5"/>
   </g>),
   egg: (<g>
-    <ellipse cx="50" cy="54" rx="26" ry="33" fill="#fef9c3" stroke="#d97706" strokeWidth="3"/>
-    <ellipse cx="42" cy="42" rx="8" ry="12" fill="#fffbeb" opacity="0.8"/>
+    <ellipse cx="50" cy="55" rx="27" ry="34" fill="#fff7d6" stroke="#e0a93e" strokeWidth="3"/>
+    <ellipse cx="40" cy="40" rx="8" ry="12" fill="#fffdf2" opacity="0.85"/>
+    <path d="M40 56 q3 4 6 0" stroke="#a16207" strokeWidth="3" fill="none" strokeLinecap="round"/>
+    <path d="M54 56 q3 4 6 0" stroke="#a16207" strokeWidth="3" fill="none" strokeLinecap="round"/>
+    <path d="M45 64 q5 3 10 0" stroke="#a16207" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="36" cy="62" r="4.5" fill="#fbbf24" opacity="0.55"/>
+    <circle cx="64" cy="62" r="4.5" fill="#fbbf24" opacity="0.55"/>
   </g>),
   tadpole: (<g>
-    <circle cx="40" cy="50" r="22" fill="#374151" stroke="#1f2937" strokeWidth="3"/>
-    <path d="M58 48 Q78 38 86 50 Q78 56 62 56Z" fill="#374151" stroke="#1f2937" strokeWidth="2.5"/>
-    <circle cx="34" cy="44" r="6" fill="white"/><circle cx="34" cy="44" r="3" fill="#1f2937"/>
+    <path d="M55 50 Q78 38 88 52 Q78 60 60 58Z" fill="#4b5563" stroke="#374151" strokeWidth="2.5"/>
+    <circle cx="40" cy="52" r="24" fill="#4b5563" stroke="#374151" strokeWidth="3"/>
+    <circle cx="33" cy="46" r="8" fill="#fff"/><circle cx="34" cy="47" r="4.5" fill="#1f2937"/>
+    <circle cx="35.6" cy="45.4" r="1.8" fill="#fff"/>
+    <circle cx="49" cy="48" r="6" fill="#fff"/><circle cx="50" cy="49" r="3.5" fill="#1f2937"/>
+    <circle cx="51.2" cy="47.8" r="1.4" fill="#fff"/>
+    <path d="M36 60 q6 5 12 0" stroke="#1f2937" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="28" cy="58" r="4" fill="#f87171" opacity="0.6"/>
   </g>),
   frog: (<g>
-    <ellipse cx="50" cy="58" rx="30" ry="24" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
-    <circle cx="35" cy="32" r="13" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
-    <circle cx="65" cy="32" r="13" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
-    <circle cx="35" cy="30" r="6" fill="white"/><circle cx="35" cy="30" r="3" fill="#1f2937"/>
-    <circle cx="65" cy="30" r="6" fill="white"/><circle cx="65" cy="30" r="3" fill="#1f2937"/>
-    <path d="M38 64 Q50 74 62 64" stroke="#15803d" strokeWidth="3" fill="none" strokeLinecap="round"/>
+    <ellipse cx="50" cy="58" rx="30" ry="24" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="34" cy="32" r="14" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="66" cy="32" r="14" fill="#4ade80" stroke="#15803d" strokeWidth="3"/>
+    <circle cx="34" cy="32" r="7.5" fill="#fff"/><circle cx="35" cy="33" r="4" fill="#1f2937"/>
+    <circle cx="36.4" cy="31.4" r="1.6" fill="#fff"/>
+    <circle cx="66" cy="32" r="7.5" fill="#fff"/><circle cx="67" cy="33" r="4" fill="#1f2937"/>
+    <circle cx="68.4" cy="31.4" r="1.6" fill="#fff"/>
+    <path d="M36 62 Q50 74 64 62" stroke="#15803d" strokeWidth="4" fill="none" strokeLinecap="round"/>
+    <circle cx="32" cy="60" r="5" fill="#f87171" opacity="0.6"/>
+    <circle cx="68" cy="60" r="5" fill="#f87171" opacity="0.6"/>
   </g>),
   caterpillar: (<g>
-    {[28,42,56,70].map((x,i)=>(<circle key={x} cx={x} cy={i%2===0?54:48} r="13" fill="#84cc16" stroke="#4d7c0f" strokeWidth="2.5"/>))}
-    <circle cx="74" cy="40" r="6" fill="white"/><circle cx="74" cy="40" r="3" fill="#1f2937"/>
-    <path d="M78 30 L82 24 M84 32 L90 30" stroke="#4d7c0f" strokeWidth="2.5" strokeLinecap="round"/>
+    {[26,40,54,68].map((x,i)=>(<circle key={x} cx={x} cy={i%2===0?56:50} r="14" fill="#a3e635" stroke="#65a30d" strokeWidth="2.5"/>))}
+    <circle cx="74" cy="40" r="14" fill="#a3e635" stroke="#65a30d" strokeWidth="2.5"/>
+    <circle cx="71" cy="38" r="3.4" fill="#1f2937"/><circle cx="80" cy="40" r="3.4" fill="#1f2937"/>
+    <circle cx="72.2" cy="36.8" r="1.3" fill="#fff"/><circle cx="81.2" cy="38.8" r="1.3" fill="#fff"/>
+    <path d="M72 46 q5 4 9 1" stroke="#1f2937" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="68" cy="45" r="3.6" fill="#f87171" opacity="0.65"/>
+    <path d="M70 28 q2 -6 7 -7 M80 30 q5 -4 10 -3" stroke="#65a30d" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="77" cy="20" r="2.6" fill="#65a30d"/><circle cx="91" cy="26" r="2.6" fill="#65a30d"/>
   </g>),
   chrysalis: (<g>
-    <path d="M50 18 L52 22" stroke="#713f12" strokeWidth="3" strokeLinecap="round"/>
-    <path d="M38 28 Q34 52 42 76 Q50 88 58 76 Q66 52 62 28 Q56 20 50 20 Q44 20 38 28Z" fill="#d97706" stroke="#92400e" strokeWidth="3"/>
-    <path d="M44 36 L56 44 M44 50 L56 58 M44 64 L56 72" stroke="#92400e" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M50 16 L52 22" stroke="#a16207" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M37 28 Q33 54 43 78 Q50 88 57 78 Q67 54 63 28 Q56 20 50 20 Q44 20 37 28Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+    <path d="M43 60 q4 4 8 0" stroke="#92400e" strokeWidth="2.8" fill="none" strokeLinecap="round" opacity="0.9"/>
+    <path d="M49 60 q4 4 8 0" stroke="#92400e" strokeWidth="2.8" fill="none" strokeLinecap="round" opacity="0.9"/>
+    <path d="M46 68 q4 3 8 0" stroke="#92400e" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="40" cy="66" r="4" fill="#f97316" opacity="0.5"/>
+    <circle cx="60" cy="66" r="4" fill="#f97316" opacity="0.5"/>
   </g>),
   butterfly: (<g>
-    <ellipse cx="50" cy="50" rx="4" ry="22" fill="#374151"/>
-    <path d="M48 34 Q22 18 22 40 Q22 56 48 50Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="2.5"/>
-    <path d="M52 34 Q78 18 78 40 Q78 56 52 50Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="2.5"/>
-    <path d="M48 52 Q26 56 30 74 Q44 76 48 58Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
-    <path d="M52 52 Q74 56 70 74 Q56 76 52 58Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
-    <path d="M50 30 L46 22 M50 30 L54 22" stroke="#374151" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M48 36 Q22 20 22 42 Q22 58 48 52Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M52 36 Q78 20 78 42 Q78 58 52 52Z" fill="#c084fc" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M48 54 Q26 58 30 76 Q44 78 48 60Z" fill="#e9d5ff" stroke="#7c3aed" strokeWidth="2.5"/>
+    <path d="M52 54 Q74 58 70 76 Q56 78 52 60Z" fill="#e9d5ff" stroke="#7c3aed" strokeWidth="2.5"/>
+    <rect x="46" y="34" width="8" height="34" rx="4" fill="#4b5563"/>
+    <circle cx="50" cy="32" r="8" fill="#4b5563"/>
+    <circle cx="47" cy="31" r="2.4" fill="#fff"/><circle cx="53" cy="31" r="2.4" fill="#fff"/>
+    <circle cx="47.6" cy="31.6" r="1.1" fill="#1f2937"/><circle cx="53.6" cy="31.6" r="1.1" fill="#1f2937"/>
+    <path d="M46 26 Q42 18 38 18 M54 26 Q58 18 62 18" stroke="#4b5563" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="18" r="2.4" fill="#4b5563"/><circle cx="62" cy="18" r="2.4" fill="#4b5563"/>
   </g>),
   chick: (<g>
-    <circle cx="50" cy="56" r="26" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
-    <circle cx="50" cy="32" r="16" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
-    <circle cx="45" cy="30" r="3.5" fill="#1f2937"/><circle cx="55" cy="30" r="3.5" fill="#1f2937"/>
-    <path d="M50 34 L44 38 L50 40Z" fill="#f97316"/>
+    <ellipse cx="50" cy="60" rx="26" ry="24" fill="#fde047" stroke="#e0a93e" strokeWidth="3"/>
+    <circle cx="50" cy="34" r="18" fill="#fde047" stroke="#e0a93e" strokeWidth="3"/>
+    <circle cx="43" cy="33" r="4.6" fill="#1f2937"/><circle cx="57" cy="33" r="4.6" fill="#1f2937"/>
+    <circle cx="44.6" cy="31.4" r="1.8" fill="#fff"/><circle cx="58.6" cy="31.4" r="1.8" fill="#fff"/>
+    <path d="M46 40 L50 44 L54 40 Z" fill="#f97316"/>
+    <circle cx="37" cy="40" r="4.5" fill="#f97316" opacity="0.55"/>
+    <circle cx="63" cy="40" r="4.5" fill="#f97316" opacity="0.55"/>
+    <path d="M50 18 Q47 12 50 8 Q53 12 50 18" fill="#fbbf24"/>
   </g>),
   hen: (<g>
-    <ellipse cx="50" cy="60" rx="26" ry="22" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <circle cx="62" cy="36" r="15" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <path d="M58 22 Q60 14 64 20 Q68 14 70 22Z" fill="#ef4444"/>
-    <circle cx="65" cy="34" r="3" fill="#1f2937"/>
-    <path d="M74 38 L84 36 L74 42Z" fill="#f97316"/>
-    <path d="M26 56 Q14 50 18 66 Q26 64 30 60Z" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2.5"/>
+    <ellipse cx="48" cy="62" rx="26" ry="22" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="62" cy="38" r="16" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <path d="M56 24 Q58 16 62 22 Q66 16 70 24Z" fill="#f87171"/>
+    <circle cx="58" cy="38" r="4" fill="#1f2937"/><circle cx="68" cy="38" r="4" fill="#1f2937"/>
+    <circle cx="59.3" cy="36.8" r="1.5" fill="#fff"/><circle cx="69.3" cy="36.8" r="1.5" fill="#fff"/>
+    <path d="M72 44 L82 42 L72 48Z" fill="#f97316"/>
+    <path d="M58 50 q -4 6 -10 2" stroke="#94a3b8" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="56" cy="44" r="4" fill="#f87171" opacity="0.55"/>
+    <path d="M24 56 Q12 50 16 66 Q24 64 30 60Z" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="2.5"/>
   </g>),
   morning: (<g>
-    <rect x="14" y="62" width="72" height="24" fill="#fcd34d" opacity="0.4"/>
-    <path d="M14 62 L86 62" stroke="#d97706" strokeWidth="3"/>
-    <path d="M30 62 A20 20 0 0 1 70 62Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
-    {[20,35,50,65,80].map(x=>(<path key={x} d={`M${x} 50 L${x} 40`} stroke="#f59e0b" strokeWidth="3" strokeLinecap="round"/>))}
+    <path d="M14 64 L86 64" stroke="#d97706" strokeWidth="3.5" strokeLinecap="round"/>
+    <rect x="14" y="64" width="72" height="22" fill="#fde68a" opacity="0.4"/>
+    <path d="M30 64 A20 20 0 0 1 70 64Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
+    {[24,38,52,66,78].map(x=>(<path key={x} d={`M${x} 50 L${x} 40`} stroke="#f59e0b" strokeWidth="3.5" strokeLinecap="round"/>))}
+    <circle cx="44" cy="56" r="2.6" fill="#92400e"/><circle cx="56" cy="56" r="2.6" fill="#92400e"/>
+    <path d="M45 61 q5 4 10 0" stroke="#92400e" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="60" r="3.4" fill="#f87171" opacity="0.6"/>
+    <circle cx="62" cy="60" r="3.4" fill="#f87171" opacity="0.6"/>
   </g>),
   noon: (<g>
-    <circle cx="50" cy="50" r="20" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
-    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+26*Math.cos(r)} ${50+26*Math.sin(r)} L${50+36*Math.cos(r)} ${50+36*Math.sin(r)}`} stroke="#f59e0b" strokeWidth="4" strokeLinecap="round"/>;})}
+    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+24*Math.cos(r)} ${50+24*Math.sin(r)} L${50+37*Math.cos(r)} ${50+37*Math.sin(r)}`} stroke="#f59e0b" strokeWidth="4.5" strokeLinecap="round"/>;})}
+    <circle cx="50" cy="50" r="22" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3"/>
+    <circle cx="43" cy="48" r="3.2" fill="#92400e"/><circle cx="57" cy="48" r="3.2" fill="#92400e"/>
+    <circle cx="44.2" cy="47" r="1.2" fill="#fff"/><circle cx="58.2" cy="47" r="1.2" fill="#fff"/>
+    <path d="M44 56 q6 6 12 0" stroke="#92400e" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="36" cy="54" r="4" fill="#f87171" opacity="0.6"/>
+    <circle cx="64" cy="54" r="4" fill="#f87171" opacity="0.6"/>
   </g>),
   evening: (<g>
-    <rect x="14" y="14" width="72" height="48" fill="#fb923c" opacity="0.35"/>
-    <path d="M30 62 A20 20 0 0 1 70 62Z" fill="#f97316" stroke="#ea580c" strokeWidth="3"/>
-    <path d="M14 62 L86 62" stroke="#c2410c" strokeWidth="3"/>
-    <rect x="14" y="62" width="72" height="24" fill="#7c2d12" opacity="0.3"/>
+    <rect x="14" y="14" width="72" height="50" fill="#fdba74" opacity="0.4"/>
+    <path d="M14 64 L86 64" stroke="#c2410c" strokeWidth="3.5" strokeLinecap="round"/>
+    <rect x="14" y="64" width="72" height="22" fill="#9a3412" opacity="0.3"/>
+    <path d="M32 64 A18 18 0 0 1 68 64Z" fill="#fb923c" stroke="#ea580c" strokeWidth="3"/>
+    <circle cx="44" cy="57" r="2.6" fill="#7c2d12"/><circle cx="56" cy="57" r="2.6" fill="#7c2d12"/>
+    <path d="M45 61 q5 4 10 0" stroke="#7c2d12" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="60" r="3.2" fill="#dc2626" opacity="0.5"/>
+    <circle cx="62" cy="60" r="3.2" fill="#dc2626" opacity="0.5"/>
   </g>),
   night: (<g>
-    <rect x="12" y="14" width="76" height="72" rx="14" fill="#1e3a8a"/>
-    <circle cx="62" cy="40" r="18" fill="#fef9c3"/>
-    <circle cx="54" cy="34" r="14" fill="#1e3a8a"/>
+    <rect x="12" y="14" width="76" height="72" rx="16" fill="#312e81"/>
+    <circle cx="64" cy="40" r="17" fill="#fef3c7"/>
+    <circle cx="56" cy="35" r="13" fill="#312e81"/>
     <path d="M28 30 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2Z" fill="#fde047"/>
-    <path d="M34 62 l1.5 4 l4 1.5 l-4 1.5 l-1.5 4 l-1.5 -4 l-4 -1.5 l4 -1.5Z" fill="#fde047"/>
+    <path d="M32 64 l1.5 4 l4 1.5 l-4 1.5 l-1.5 4 l-1.5 -4 l-4 -1.5 l4 -1.5Z" fill="#fde047"/>
+    <circle cx="62" cy="46" r="2.4" fill="#a16207"/><circle cx="72" cy="44" r="2.4" fill="#a16207"/>
+    <path d="M64 51 q4 3 7 -1" stroke="#a16207" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   spring: (<g>
-    {[0,72,144,216,288].map(a=>(<ellipse key={a} cx="50" cy="32" rx="13" ry="17" fill="#fbcfe8" stroke="#f472b6" strokeWidth="2" transform={`rotate(${a} 50 48)`}/>))}
-    <circle cx="50" cy="48" r="10" fill="#fbbf24"/>
+    {[0,72,144,216,288].map(a=>(<ellipse key={a} cx="50" cy="28" rx="13" ry="17" fill="#fbcfe8" stroke="#f472b6" strokeWidth="2" transform={`rotate(${a} 50 46)`}/>))}
+    <circle cx="50" cy="46" r="13" fill="#fde047" stroke="#f59e0b" strokeWidth="2.5"/>
+    <circle cx="45" cy="45" r="2.6" fill="#1f2937"/><circle cx="55" cy="45" r="2.6" fill="#1f2937"/>
+    <path d="M46 51 q4 4 8 0" stroke="#1f2937" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+    <circle cx="40" cy="49" r="3" fill="#f9a8d4"/><circle cx="60" cy="49" r="3" fill="#f9a8d4"/>
   </g>),
   summer: (<g>
-    <circle cx="50" cy="50" r="22" fill="#f97316" stroke="#ea580c" strokeWidth="3"/>
-    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+28*Math.cos(r)} ${50+28*Math.sin(r)} L${50+38*Math.cos(r)} ${50+38*Math.sin(r)}`} stroke="#f97316" strokeWidth="4" strokeLinecap="round"/>;})}
+    {[0,45,90,135,180,225,270,315].map(a=>{const r=a*Math.PI/180;return <path key={a} d={`M${50+24*Math.cos(r)} ${50+24*Math.sin(r)} L${50+38*Math.cos(r)} ${50+38*Math.sin(r)}`} stroke="#f97316" strokeWidth="4.5" strokeLinecap="round"/>;})}
+    <circle cx="50" cy="50" r="22" fill="#fb923c" stroke="#ea580c" strokeWidth="3"/>
+    <circle cx="43" cy="48" r="3.2" fill="#7c2d12"/><circle cx="57" cy="48" r="3.2" fill="#7c2d12"/>
+    <circle cx="44.2" cy="47" r="1.2" fill="#fff"/><circle cx="58.2" cy="47" r="1.2" fill="#fff"/>
+    <path d="M43 55 q7 7 14 0" stroke="#7c2d12" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="36" cy="54" r="4" fill="#dc2626" opacity="0.5"/>
+    <circle cx="64" cy="54" r="4" fill="#dc2626" opacity="0.5"/>
   </g>),
   autumn: (<g>
-    <path d="M50 84 L50 54" stroke="#92400e" strokeWidth="4" strokeLinecap="round"/>
-    <path d="M50 54 Q30 50 20 32 Q24 28 30 30 Q26 20 32 18 Q40 26 44 36 Q44 22 50 16 Q56 22 56 36 Q60 26 68 18 Q74 20 70 30 Q76 28 80 32 Q70 50 50 54Z" fill="#ea580c" stroke="#9a3412" strokeWidth="2.5"/>
+    <path d="M50 84 L50 56" stroke="#a16207" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M50 56 Q30 52 22 34 Q26 30 32 32 Q28 22 34 20 Q42 28 46 38 Q46 24 52 18 Q58 24 58 38 Q62 28 70 20 Q76 22 72 32 Q78 30 82 34 Q72 52 50 56Z" fill="#fb923c" stroke="#c2410c" strokeWidth="2.5"/>
+    <circle cx="44" cy="40" r="2.8" fill="#7c2d12"/><circle cx="56" cy="40" r="2.8" fill="#7c2d12"/>
+    <circle cx="45" cy="39" r="1" fill="#fff"/><circle cx="57" cy="39" r="1" fill="#fff"/>
+    <path d="M45 46 q5 4 10 0" stroke="#7c2d12" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="45" r="3.4" fill="#dc2626" opacity="0.5"/>
+    <circle cx="62" cy="45" r="3.4" fill="#dc2626" opacity="0.5"/>
   </g>),
   winter: (<g>
-    <circle cx="50" cy="62" r="22" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <circle cx="50" cy="32" r="15" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <circle cx="45" cy="30" r="2.5" fill="#1f2937"/><circle cx="55" cy="30" r="2.5" fill="#1f2937"/>
-    <path d="M50 33 L57 35 L50 37Z" fill="#f97316"/>
-    <circle cx="50" cy="56" r="3" fill="#1f2937"/><circle cx="50" cy="66" r="3" fill="#1f2937"/>
+    <circle cx="50" cy="64" r="22" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="50" cy="34" r="15" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="44" cy="33" r="3" fill="#1f2937"/><circle cx="56" cy="33" r="3" fill="#1f2937"/>
+    <circle cx="45" cy="32" r="1.1" fill="#fff"/><circle cx="57" cy="32" r="1.1" fill="#fff"/>
+    <path d="M50 36 L56 38 L50 41Z" fill="#f97316"/>
+    <path d="M44 42 q6 4 12 0" stroke="#1f2937" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="40" r="3.6" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="62" cy="40" r="3.6" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="50" cy="58" r="3" fill="#1f2937"/><circle cx="50" cy="68" r="3" fill="#1f2937"/>
   </g>),
   crescent: (<g>
-    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
-    <path d="M58 22 A28 28 0 1 0 58 78 A20 20 0 1 1 58 22Z" fill="#fde047"/>
+    <rect x="14" y="14" width="72" height="72" rx="16" fill="#312e81"/>
+    <circle cx="48" cy="52" r="28" fill="#fde047"/>
+    <circle cx="62" cy="46" r="26" fill="#312e81"/>
+    <circle cx="38" cy="50" r="3" fill="#a16207"/><circle cx="48" cy="52" r="3" fill="#a16207"/>
+    <path d="M40 60 q5 4 9 -1" stroke="#a16207" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="33" cy="58" r="3.8" fill="#f59e0b" opacity="0.6"/>
   </g>),
   halfmoon: (<g>
-    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
+    <rect x="14" y="14" width="72" height="72" rx="16" fill="#312e81"/>
     <path d="M50 22 A28 28 0 0 1 50 78Z" fill="#fde047"/>
+    <circle cx="40" cy="46" r="3" fill="#a16207"/><circle cx="40" cy="46" r="3" fill="#a16207"/>
+    <circle cx="40" cy="46" r="2.8" fill="#a16207"/>
+    <path d="M37 56 q5 4 9 0" stroke="#a16207" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="34" cy="54" r="3.6" fill="#f59e0b" opacity="0.6"/>
   </g>),
   fullmoon: (<g>
-    <rect x="14" y="14" width="72" height="72" rx="14" fill="#1e3a8a"/>
+    <rect x="14" y="14" width="72" height="72" rx="16" fill="#312e81"/>
     <circle cx="50" cy="50" r="28" fill="#fde047"/>
-    <circle cx="40" cy="42" r="6" fill="#facc15" opacity="0.7"/>
-    <circle cx="58" cy="56" r="8" fill="#facc15" opacity="0.7"/>
-    <circle cx="56" cy="38" r="4" fill="#facc15" opacity="0.7"/>
+    <circle cx="44" cy="48" r="3.4" fill="#a16207"/><circle cx="56" cy="48" r="3.4" fill="#a16207"/>
+    <circle cx="45.3" cy="46.8" r="1.3" fill="#fff"/><circle cx="57.3" cy="46.8" r="1.3" fill="#fff"/>
+    <path d="M44 57 q6 6 12 0" stroke="#a16207" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="37" cy="55" r="4.2" fill="#f59e0b" opacity="0.55"/>
+    <circle cx="63" cy="55" r="4.2" fill="#f59e0b" opacity="0.55"/>
   </g>),
   /* ─── 생활 순서 ─── */
   toothpaste: (<g>
-    <rect x="24" y="44" width="44" height="18" rx="9" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
-    <rect x="66" y="48" width="10" height="10" rx="2" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2"/>
-    <path d="M76 53 Q84 50 88 54" stroke="#34d399" strokeWidth="6" fill="none" strokeLinecap="round"/>
+    <rect x="22" y="44" width="46" height="20" rx="10" fill="#7dd3fc" stroke="#0284c7" strokeWidth="3"/>
+    <rect x="66" y="48" width="11" height="12" rx="3" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="2"/>
+    <path d="M77 54 Q86 50 90 56" stroke="#34d399" strokeWidth="7" fill="none" strokeLinecap="round"/>
+    <circle cx="36" cy="54" r="2.6" fill="#0c4a6e"/><circle cx="48" cy="54" r="2.6" fill="#0c4a6e"/>
+    <path d="M37 59 q5 4 10 0" stroke="#0c4a6e" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   tooth: (<g>
-    <path d="M32 32 Q50 22 68 32 Q74 48 66 70 Q60 78 56 64 Q52 56 50 56 Q48 56 44 64 Q40 78 34 70 Q26 48 32 32Z" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <rect x="40" y="20" width="34" height="9" rx="4" fill="#60a5fa" stroke="#2563eb" strokeWidth="2" transform="rotate(25 57 24)"/>
+    <path d="M30 32 Q50 22 70 32 Q76 50 66 72 Q60 80 56 64 Q52 56 50 56 Q48 56 44 64 Q40 80 34 72 Q24 50 30 32Z" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <circle cx="43" cy="46" r="3" fill="#1f2937"/><circle cx="57" cy="46" r="3" fill="#1f2937"/>
+    <circle cx="44" cy="45" r="1.1" fill="#fff"/><circle cx="58" cy="45" r="1.1" fill="#fff"/>
+    <path d="M44 53 q6 5 12 0" stroke="#1f2937" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="37" cy="51" r="3.6" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="63" cy="51" r="3.6" fill="#fca5a5" opacity="0.7"/>
+    <path d="M58 32 l3 3 l7 -7" stroke="#fbbf24" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
   </g>),
   rinse: (<g>
-    <path d="M30 30 L70 30 L64 80 L36 80Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
-    <path d="M33 50 L67 50 L64 80 L36 80Z" fill="#60a5fa"/>
-    <ellipse cx="50" cy="30" rx="20" ry="5" fill="#93c5fd" stroke="#2563eb" strokeWidth="2.5"/>
+    <path d="M30 30 L70 30 L64 80 L36 80Z" fill="#bae6fd" stroke="#0284c7" strokeWidth="3"/>
+    <path d="M33 52 L67 52 L64 80 L36 80Z" fill="#7dd3fc"/>
+    <ellipse cx="50" cy="30" rx="20" ry="5" fill="#7dd3fc" stroke="#0284c7" strokeWidth="2.5"/>
+    <circle cx="44" cy="62" r="3" fill="#0c4a6e"/><circle cx="56" cy="62" r="3" fill="#0c4a6e"/>
+    <circle cx="45" cy="61" r="1.1" fill="#fff"/><circle cx="57" cy="61" r="1.1" fill="#fff"/>
+    <path d="M45 69 q5 4 10 0" stroke="#0c4a6e" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   stop: (<g>
-    <path d="M36 18 L64 18 L82 36 L82 64 L64 82 L36 82 L18 64 L18 36Z" fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/>
+    <path d="M36 18 L64 18 L82 36 L82 64 L64 82 L36 82 L18 64 L18 36Z" fill="#f87171" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round"/>
     <path d="M34 50 L66 50" stroke="white" strokeWidth="8" strokeLinecap="round"/>
+    <circle cx="42" cy="40" r="2.4" fill="#fff" opacity="0.85"/>
+    <circle cx="58" cy="40" r="2.4" fill="#fff" opacity="0.85"/>
   </g>),
   look: (<g>
-    <path d="M16 50 Q50 22 84 50 Q50 78 16 50Z" fill="white" stroke="#1f2937" strokeWidth="3"/>
-    <circle cx="50" cy="50" r="15" fill="#60a5fa" stroke="#1e40af" strokeWidth="2.5"/>
-    <circle cx="50" cy="50" r="7" fill="#1f2937"/><circle cx="54" cy="46" r="3" fill="white"/>
+    <path d="M14 50 Q50 24 86 50 Q50 76 14 50Z" fill="#fff" stroke="#1f2937" strokeWidth="3"/>
+    <circle cx="50" cy="50" r="16" fill="#7dd3fc" stroke="#0284c7" strokeWidth="2.5"/>
+    <circle cx="50" cy="50" r="8" fill="#1f2937"/>
+    <circle cx="53.5" cy="46.5" r="3.2" fill="#fff"/>
+    <circle cx="47" cy="53" r="1.6" fill="#fff" opacity="0.8"/>
   </g>),
   cross: (<g>
-    <circle cx="50" cy="24" r="10" fill="#1f2937"/>
-    <path d="M50 34 L50 60" stroke="#1f2937" strokeWidth="7" strokeLinecap="round"/>
-    <path d="M50 42 L36 52 M50 42 L64 50" stroke="#1f2937" strokeWidth="6" strokeLinecap="round"/>
-    <path d="M50 60 L38 80 M50 60 L62 80" stroke="#1f2937" strokeWidth="6" strokeLinecap="round"/>
+    <circle cx="50" cy="22" r="11" fill="#fcd34d" stroke="#d97706" strokeWidth="2.5"/>
+    <circle cx="46" cy="21" r="2.2" fill="#1f2937"/><circle cx="54" cy="21" r="2.2" fill="#1f2937"/>
+    <path d="M47 26 q3 3 6 0" stroke="#1f2937" strokeWidth="2" fill="none" strokeLinecap="round"/>
+    <path d="M50 33 L50 60" stroke="#60a5fa" strokeWidth="8" strokeLinecap="round"/>
+    <path d="M50 40 L36 50 M50 40 L64 48" stroke="#60a5fa" strokeWidth="7" strokeLinecap="round"/>
+    <path d="M50 60 L38 80 M50 60 L62 80" stroke="#60a5fa" strokeWidth="7" strokeLinecap="round"/>
   </g>),
   soap: (<g>
-    <rect x="30" y="46" width="40" height="26" rx="10" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
-    <circle cx="34" cy="34" r="9" fill="white" stroke="#94a3b8" strokeWidth="2"/>
-    <circle cx="52" cy="26" r="7" fill="white" stroke="#94a3b8" strokeWidth="2"/>
-    <circle cx="66" cy="34" r="8" fill="white" stroke="#94a3b8" strokeWidth="2"/>
+    <rect x="30" y="48" width="40" height="26" rx="12" fill="#f9a8d4" stroke="#db2777" strokeWidth="3"/>
+    <circle cx="34" cy="34" r="9" fill="#fff" stroke="#bae6fd" strokeWidth="2.5"/>
+    <circle cx="52" cy="26" r="7" fill="#fff" stroke="#bae6fd" strokeWidth="2.5"/>
+    <circle cx="66" cy="34" r="8" fill="#fff" stroke="#bae6fd" strokeWidth="2.5"/>
+    <circle cx="44" cy="60" r="2.8" fill="#831843"/><circle cx="56" cy="60" r="2.8" fill="#831843"/>
+    <path d="M45 66 q5 4 10 0" stroke="#831843" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   rubhands: (<g>
-    <path d="M30 40 Q26 56 34 70 Q42 76 48 68 L48 44 Q44 36 38 36 Q32 36 30 40Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
-    <path d="M70 40 Q74 56 66 70 Q58 76 52 68 L52 44 Q56 36 62 36 Q68 36 70 40Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+    <path d="M30 38 Q25 56 34 72 Q43 78 49 68 L49 42 Q45 34 39 34 Q32 34 30 38Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <path d="M70 38 Q75 56 66 72 Q57 78 51 68 L51 42 Q55 34 61 34 Q68 34 70 38Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="34" cy="22" r="3" fill="#fff" stroke="#bae6fd" strokeWidth="1.6"/>
+    <circle cx="50" cy="16" r="3.4" fill="#fff" stroke="#bae6fd" strokeWidth="1.6"/>
+    <circle cx="66" cy="22" r="3" fill="#fff" stroke="#bae6fd" strokeWidth="1.6"/>
   </g>),
   trash: (<g>
-    <path d="M30 36 L70 36 L66 82 L34 82Z" fill="#94a3b8" stroke="#475569" strokeWidth="3"/>
-    <rect x="24" y="26" width="52" height="10" rx="5" fill="#64748b" stroke="#475569" strokeWidth="2.5"/>
-    <path d="M42 46 L44 72 M50 46 L50 72 M58 46 L56 72" stroke="#475569" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M30 36 L70 36 L66 82 L34 82Z" fill="#a3b8cc" stroke="#475569" strokeWidth="3"/>
+    <rect x="24" y="26" width="52" height="11" rx="5.5" fill="#7c8ea3" stroke="#475569" strokeWidth="2.5"/>
+    <path d="M42 47 L44 72 M50 47 L50 72 M58 47 L56 72" stroke="#475569" strokeWidth="3" strokeLinecap="round"/>
+    <circle cx="44" cy="56" r="2.6" fill="#1f2937"/><circle cx="56" cy="56" r="2.6" fill="#1f2937"/>
+    <path d="M45 62 q5 4 10 0" stroke="#1f2937" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   broom: (<g>
-    <path d="M64 18 L40 58" stroke="#92400e" strokeWidth="6" strokeLinecap="round"/>
-    <path d="M40 58 Q24 62 22 82 L52 82 Q54 64 40 58Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
-    <path d="M30 66 L28 82 M38 64 L38 82 M46 66 L48 82" stroke="#d97706" strokeWidth="2.5"/>
+    <path d="M66 16 L40 58" stroke="#a16207" strokeWidth="6.5" strokeLinecap="round"/>
+    <path d="M40 58 Q22 62 20 84 L52 84 Q54 64 40 58Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <path d="M28 66 L26 84 M36 64 L36 84 M44 66 L46 84" stroke="#d97706" strokeWidth="2.6"/>
+    <circle cx="32" cy="70" r="2.4" fill="#92400e"/><circle cx="42" cy="70" r="2.4" fill="#92400e"/>
+    <path d="M33 75 q4 3 8 0" stroke="#92400e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   wipe: (<g>
-    <ellipse cx="50" cy="64" rx="34" ry="14" fill="#67e8f9" stroke="#0891b2" strokeWidth="3"/>
-    <path d="M22 58 Q50 48 78 58" stroke="#0891b2" strokeWidth="2.5" fill="none"/>
     <circle cx="32" cy="36" r="7" fill="#bae6fd"/><circle cx="50" cy="28" r="6" fill="#bae6fd"/><circle cx="66" cy="36" r="7" fill="#bae6fd"/>
+    <ellipse cx="50" cy="62" rx="34" ry="15" fill="#67e8f9" stroke="#0891b2" strokeWidth="3"/>
+    <circle cx="43" cy="60" r="3" fill="#0c4a6e"/><circle cx="57" cy="60" r="3" fill="#0c4a6e"/>
+    <circle cx="44" cy="59" r="1.1" fill="#fff"/><circle cx="58" cy="59" r="1.1" fill="#fff"/>
+    <path d="M44 67 q6 4 12 0" stroke="#0c4a6e" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
   </g>),
   wash: (<g>
-    <circle cx="50" cy="52" r="26" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
-    <circle cx="42" cy="48" r="3.5" fill="#1f2937"/><circle cx="58" cy="48" r="3.5" fill="#1f2937"/>
-    <path d="M42 62 Q50 68 58 62" stroke="#1f2937" strokeWidth="3" fill="none" strokeLinecap="round"/>
-    <path d="M30 24 Q34 32 30 36 Q24 32 30 24Z" fill="#60a5fa"/>
-    <path d="M70 24 Q74 32 70 36 Q64 32 70 24Z" fill="#60a5fa"/>
+    <circle cx="50" cy="54" r="26" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="42" cy="50" r="3.6" fill="#1f2937"/><circle cx="58" cy="50" r="3.6" fill="#1f2937"/>
+    <circle cx="43.3" cy="48.7" r="1.4" fill="#fff"/><circle cx="59.3" cy="48.7" r="1.4" fill="#fff"/>
+    <path d="M42 60 q8 7 16 0" stroke="#1f2937" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="34" cy="58" r="4.5" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="66" cy="58" r="4.5" fill="#fca5a5" opacity="0.7"/>
+    <path d="M28 24 Q32 32 28 36 Q22 32 28 24Z" fill="#7dd3fc"/>
+    <path d="M72 24 Q76 32 72 36 Q66 32 72 24Z" fill="#7dd3fc"/>
   </g>),
   shirt: (<g>
-    <path d="M34 26 L42 22 Q50 30 58 22 L66 26 L80 38 L70 50 L66 46 L66 82 L34 82 L34 46 L30 50 L20 38Z" fill="#22c55e" stroke="#15803d" strokeWidth="3"/>
+    <path d="M34 26 L42 22 Q50 30 58 22 L66 26 L80 38 L70 50 L66 46 L66 82 L34 82 L34 46 L30 50 L20 38Z" fill="#4ade80" stroke="#15803d" strokeWidth="3" strokeLinejoin="round"/>
+    <circle cx="50" cy="56" r="3.6" fill="#bbf7d0"/><circle cx="50" cy="68" r="3.6" fill="#bbf7d0"/>
   </g>),
   shoes: (<g>
-    <path d="M20 56 Q22 42 38 42 L52 42 Q58 50 70 54 Q82 58 82 68 L82 74 L20 74Z" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
-    <path d="M38 48 L44 56 M48 46 L54 54" stroke="#be185d" strokeWidth="2.5" strokeLinecap="round"/>
-    <path d="M20 68 L82 68" stroke="#be185d" strokeWidth="2.5"/>
+    <path d="M20 56 Q22 42 38 42 L52 42 Q58 50 70 54 Q82 58 82 68 L82 74 L20 74Z" fill="#f9a8d4" stroke="#be185d" strokeWidth="3"/>
+    <path d="M38 48 L44 56 M48 46 L54 54" stroke="#be185d" strokeWidth="2.6" strokeLinecap="round"/>
+    <path d="M20 68 L82 68" stroke="#be185d" strokeWidth="2.6"/>
+    <circle cx="62" cy="62" r="2.6" fill="#831843"/><circle cx="73" cy="63" r="2.6" fill="#831843"/>
+    <path d="M63 67 q5 3 9 0" stroke="#831843" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   bread: (<g>
     <path d="M24 50 Q24 30 50 30 Q76 30 76 50 L76 76 L24 76Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
     <path d="M30 48 Q30 38 50 38 Q70 38 70 48" stroke="#d97706" strokeWidth="2.5" fill="none"/>
+    <circle cx="43" cy="60" r="3" fill="#92400e"/><circle cx="57" cy="60" r="3" fill="#92400e"/>
+    <path d="M44 66 q6 5 12 0" stroke="#92400e" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
+    <circle cx="36" cy="64" r="3.6" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="64" cy="64" r="3.6" fill="#fca5a5" opacity="0.7"/>
   </g>),
   jam: (<g>
-    <rect x="32" y="38" width="36" height="40" rx="6" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
-    <rect x="36" y="28" width="28" height="12" rx="4" fill="#be185d"/>
-    <path d="M40 52 Q50 48 60 52 Q58 64 50 66 Q42 64 40 52Z" fill="#fce7f3" opacity="0.6"/>
+    <rect x="32" y="38" width="36" height="42" rx="8" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
+    <rect x="36" y="28" width="28" height="12" rx="5" fill="#be185d"/>
+    <path d="M40 54 Q50 50 60 54 Q58 66 50 68 Q42 66 40 54Z" fill="#fce7f3" opacity="0.65"/>
+    <circle cx="44" cy="62" r="2.6" fill="#831843"/><circle cx="56" cy="62" r="2.6" fill="#831843"/>
+    <path d="M45 68 q5 3 10 0" stroke="#831843" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   ham: (<g>
     <ellipse cx="50" cy="52" rx="30" ry="22" fill="#fca5a5" stroke="#dc2626" strokeWidth="3"/>
-    <ellipse cx="50" cy="52" rx="18" ry="12" fill="#fecaca" stroke="#dc2626" strokeWidth="2"/>
-    <circle cx="44" cy="48" r="3" fill="#fef2f2"/><circle cx="56" cy="56" r="3" fill="#fef2f2"/>
+    <ellipse cx="50" cy="52" rx="17" ry="11" fill="#fecdd3" stroke="#dc2626" strokeWidth="2"/>
+    <circle cx="44" cy="50" r="2.6" fill="#7f1d1d"/><circle cx="56" cy="50" r="2.6" fill="#7f1d1d"/>
+    <circle cx="45" cy="49" r="1" fill="#fff"/><circle cx="57" cy="49" r="1" fill="#fff"/>
+    <path d="M45 56 q5 4 10 0" stroke="#7f1d1d" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   sandwich: (<g>
     <path d="M22 40 Q22 28 50 28 Q78 28 78 40 L78 44 L22 44Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
     <rect x="22" y="44" width="56" height="8" fill="#4ade80"/>
     <rect x="22" y="52" width="56" height="8" fill="#fca5a5"/>
     <path d="M22 60 L78 60 L78 64 Q78 76 50 76 Q22 76 22 64Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="44" cy="68" r="2.6" fill="#92400e"/><circle cx="56" cy="68" r="2.6" fill="#92400e"/>
+    <path d="M45 72 q5 3 10 0" stroke="#92400e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   book: (<g>
     <path d="M26 26 L50 32 L50 80 L26 74Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
     <path d="M74 26 L50 32 L50 80 L74 74Z" fill="#f472b6" stroke="#be185d" strokeWidth="3"/>
     <path d="M50 32 L50 80" stroke="#1e293b" strokeWidth="2.5"/>
+    <circle cx="38" cy="50" r="2.6" fill="#fff"/><circle cx="62" cy="50" r="2.6" fill="#fff"/>
+    <path d="M34 56 q4 4 8 0" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+    <path d="M58 56 q4 4 8 0" stroke="#fff" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   teacher: (<g>
-    <circle cx="50" cy="32" r="14" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
-    <circle cx="45" cy="30" r="3" fill="#1f2937"/><circle cx="55" cy="30" r="3" fill="#1f2937"/>
-    <path d="M28 80 Q28 52 50 52 Q72 52 72 80Z" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
+    <circle cx="50" cy="32" r="15" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="44" cy="31" r="3" fill="#1f2937"/><circle cx="56" cy="31" r="3" fill="#1f2937"/>
+    <circle cx="45" cy="30" r="1.1" fill="#fff"/><circle cx="57" cy="30" r="1.1" fill="#fff"/>
+    <path d="M45 38 q5 4 10 0" stroke="#1f2937" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="37" r="3.4" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="62" cy="37" r="3.4" fill="#fca5a5" opacity="0.7"/>
+    <path d="M28 82 Q28 52 50 52 Q72 52 72 82Z" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
   </g>),
   pot: (<g>
-    <path d="M30 44 L70 44 L64 80 L36 80Z" fill="#ea580c" stroke="#9a3412" strokeWidth="3"/>
-    <rect x="26" y="36" width="48" height="10" rx="3" fill="#c2410c" stroke="#9a3412" strokeWidth="2.5"/>
+    <path d="M30 44 L70 44 L64 80 L36 80Z" fill="#fb923c" stroke="#c2410c" strokeWidth="3"/>
+    <rect x="26" y="36" width="48" height="11" rx="4" fill="#ea580c" stroke="#c2410c" strokeWidth="2.5"/>
     <ellipse cx="50" cy="46" rx="20" ry="5" fill="#78350f"/>
+    <circle cx="44" cy="60" r="2.8" fill="#7c2d12"/><circle cx="56" cy="60" r="2.8" fill="#7c2d12"/>
+    <path d="M45 66 q5 4 10 0" stroke="#7c2d12" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   water: (<g>
-    <path d="M30 44 L58 44 L54 74 L34 74Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
-    <path d="M58 50 L74 38" stroke="#2563eb" strokeWidth="5" strokeLinecap="round"/>
-    <path d="M30 44 Q24 38 28 32" stroke="#2563eb" strokeWidth="5" fill="none" strokeLinecap="round"/>
-    <path d="M74 42 L72 54 M78 42 L78 54 M70 44 L66 54" stroke="#60a5fa" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M30 44 L58 44 L54 74 L34 74Z" fill="#7dd3fc" stroke="#0284c7" strokeWidth="3"/>
+    <path d="M58 50 L74 38" stroke="#0284c7" strokeWidth="5" strokeLinecap="round"/>
+    <path d="M30 44 Q24 38 28 32" stroke="#0284c7" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    <path d="M74 42 L72 54 M78 42 L78 54 M70 44 L66 54" stroke="#7dd3fc" strokeWidth="3.4" strokeLinecap="round"/>
+    <circle cx="40" cy="58" r="2.6" fill="#0c4a6e"/><circle cx="48" cy="58" r="2.6" fill="#0c4a6e"/>
+    <path d="M41 63 q4 3 8 0" stroke="#0c4a6e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   cover: (<g>
-    <ellipse cx="50" cy="68" rx="30" ry="12" fill="#78350f"/>
-    <path d="M30 56 Q34 40 42 44 Q44 32 50 36 Q56 32 58 44 Q66 40 70 56 Q60 64 50 64 Q40 64 30 56Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <ellipse cx="50" cy="70" rx="30" ry="12" fill="#78350f"/>
+    <path d="M30 58 Q34 42 42 46 Q44 34 50 38 Q56 34 58 46 Q66 42 70 58 Q60 66 50 66 Q40 66 30 58Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
+    <circle cx="45" cy="54" r="2.6" fill="#92400e"/><circle cx="55" cy="54" r="2.6" fill="#92400e"/>
+    <path d="M46 59 q4 3 8 0" stroke="#92400e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   candle: (<g>
-    <rect x="40" y="40" width="20" height="40" rx="4" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
-    <path d="M50 40 Q44 30 50 20 Q56 30 50 40Z" fill="#f97316" stroke="#ea580c" strokeWidth="2"/>
-    <path d="M50 34 Q47 28 50 24 Q53 28 50 34Z" fill="#fef08a"/>
+    <rect x="40" y="42" width="20" height="40" rx="6" fill="#f9a8d4" stroke="#db2777" strokeWidth="3"/>
+    <path d="M50 42 Q44 32 50 22 Q56 32 50 42Z" fill="#fb923c" stroke="#ea580c" strokeWidth="2"/>
+    <path d="M50 36 Q47 30 50 26 Q53 30 50 36Z" fill="#fef08a"/>
+    <circle cx="46" cy="58" r="2.4" fill="#831843"/><circle cx="54" cy="58" r="2.4" fill="#831843"/>
+    <path d="M46 63 q4 3 8 0" stroke="#831843" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   music: (<g>
-    <circle cx="36" cy="68" r="11" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
-    <circle cx="68" cy="60" r="11" fill="#a855f7" stroke="#7c3aed" strokeWidth="3"/>
+    <circle cx="36" cy="68" r="11" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+    <circle cx="68" cy="60" r="11" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
     <path d="M47 68 L47 28 L79 22 L79 60" stroke="#7c3aed" strokeWidth="5" fill="none" strokeLinecap="round"/>
+    <circle cx="33" cy="65" r="2.6" fill="#fff"/><circle cx="40" cy="66" r="2.6" fill="#fff"/>
+    <path d="M16 30 l1.5 4 l4 1.5 l-4 1.5 l-1.5 4 l-1.5 -4 l-4 -1.5 l4 -1.5Z" fill="#fde047"/>
   </g>),
   cake: (<g>
-    <path d="M26 56 L74 56 L74 80 L26 80Z" fill="#fbcfe8" stroke="#db2777" strokeWidth="3"/>
+    <path d="M26 56 L74 56 L74 80 L26 80Z" fill="#f9a8d4" stroke="#db2777" strokeWidth="3"/>
     <path d="M26 56 Q38 48 50 56 Q62 64 74 56" stroke="#db2777" strokeWidth="3" fill="none"/>
     <rect x="47" y="32" width="6" height="20" fill="#60a5fa"/>
-    <path d="M50 32 Q47 26 50 22 Q53 26 50 32Z" fill="#94a3b8"/>
+    <path d="M50 32 Q47 26 50 22 Q53 26 50 22" fill="#94a3b8"/>
+    <circle cx="44" cy="68" r="2.8" fill="#831843"/><circle cx="56" cy="68" r="2.8" fill="#831843"/>
+    <path d="M45 73 q5 4 10 0" stroke="#831843" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="70" r="3" fill="#fca5a5"/><circle cx="62" cy="70" r="3" fill="#fca5a5"/>
   </g>),
   milk: (<g>
-    <path d="M36 36 L64 36 L64 42 L68 50 L68 80 L32 80 L32 50 L36 42Z" fill="white" stroke="#94a3b8" strokeWidth="3"/>
-    <rect x="36" y="56" width="28" height="24" fill="#bfdbfe"/>
-    <path d="M40 64 L60 64" stroke="#60a5fa" strokeWidth="3" strokeLinecap="round"/>
+    <path d="M36 36 L64 36 L64 42 L68 50 L68 80 L32 80 L32 50 L36 42Z" fill="#fff" stroke="#94a3b8" strokeWidth="3"/>
+    <rect x="36" y="56" width="28" height="24" fill="#bae6fd"/>
+    <circle cx="44" cy="48" r="2.6" fill="#1f2937"/><circle cx="56" cy="48" r="2.6" fill="#1f2937"/>
+    <path d="M45 52 q5 3 10 0" stroke="#1f2937" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+    <circle cx="38" cy="51" r="3" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="62" cy="51" r="3" fill="#fca5a5" opacity="0.7"/>
   </g>),
   pour: (<g>
-    <path d="M28 40 L58 40 Q62 40 61 45 L56 72 Q55 76 50 76 L34 76 Q29 76 28 72Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
-    <path d="M58 46 Q72 46 72 60" fill="none" stroke="#2563eb" strokeWidth="4"/>
-    <path d="M60 24 L64 38 M70 26 L72 40" stroke="#60a5fa" strokeWidth="4" strokeLinecap="round"/>
+    <path d="M28 40 L58 40 Q62 40 61 45 L56 72 Q55 76 50 76 L34 76 Q29 76 28 72Z" fill="#bae6fd" stroke="#0284c7" strokeWidth="3"/>
+    <path d="M58 46 Q72 46 72 60" fill="none" stroke="#0284c7" strokeWidth="4"/>
+    <path d="M60 22 L64 38 M70 24 L72 40" stroke="#7dd3fc" strokeWidth="4.2" strokeLinecap="round"/>
+    <circle cx="40" cy="58" r="2.6" fill="#0c4a6e"/><circle cx="48" cy="58" r="2.6" fill="#0c4a6e"/>
+    <path d="M41 63 q4 3 8 0" stroke="#0c4a6e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   yum: (<g>
     <circle cx="50" cy="50" r="30" fill="#fcd34d" stroke="#d97706" strokeWidth="3"/>
     <path d="M34 42 Q40 36 46 42" fill="none" stroke="#1f2937" strokeWidth="3" strokeLinecap="round"/>
     <path d="M54 42 Q60 36 66 42" fill="none" stroke="#1f2937" strokeWidth="3" strokeLinecap="round"/>
-    <path d="M38 58 Q50 72 62 58Z" fill="#dc2626"/>
+    <path d="M38 58 Q50 74 62 58Z" fill="#f87171"/>
     <path d="M38 58 Q50 64 62 58" fill="none" stroke="#1f2937" strokeWidth="2.5"/>
+    <ellipse cx="50" cy="68" rx="6" ry="4" fill="#fb7185"/>
+    <circle cx="34" cy="56" r="4.5" fill="#fca5a5" opacity="0.7"/>
+    <circle cx="66" cy="56" r="4.5" fill="#fca5a5" opacity="0.7"/>
   </g>),
   rice: (<g>
-    <path d="M22 50 Q50 36 78 50 Q74 76 50 78 Q26 76 22 50Z" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="3"/>
+    <path d="M22 50 Q50 36 78 50 Q74 76 50 78 Q26 76 22 50Z" fill="#f8fafc" stroke="#94a3b8" strokeWidth="3"/>
     <path d="M28 50 Q50 42 72 50" fill="none" stroke="#cbd5e1" strokeWidth="2.5"/>
     <ellipse cx="40" cy="44" rx="5" ry="3" fill="#fff"/><ellipse cx="54" cy="42" rx="5" ry="3" fill="#fff"/><ellipse cx="62" cy="46" rx="5" ry="3" fill="#fff"/>
+    <circle cx="44" cy="60" r="2.8" fill="#475569"/><circle cx="56" cy="60" r="2.8" fill="#475569"/>
+    <path d="M45 65 q5 4 10 0" stroke="#475569" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   sidedish: (<g>
-    <ellipse cx="50" cy="58" rx="32" ry="18" fill="#a7f3d0" stroke="#059669" strokeWidth="3"/>
-    <circle cx="40" cy="52" r="6" fill="#ef4444"/><circle cx="56" cy="50" r="6" fill="#f97316"/>
-    <circle cx="50" cy="60" r="6" fill="#22c55e"/><circle cx="62" cy="58" r="5" fill="#facc15"/>
+    <ellipse cx="50" cy="58" rx="32" ry="18" fill="#bbf7d0" stroke="#059669" strokeWidth="3"/>
+    <circle cx="40" cy="52" r="6" fill="#f87171"/><circle cx="56" cy="50" r="6" fill="#fb923c"/>
+    <circle cx="50" cy="60" r="6" fill="#4ade80"/><circle cx="62" cy="58" r="5" fill="#fde047"/>
+    <circle cx="38" cy="50" r="1.6" fill="#fff" opacity="0.8"/>
+    <circle cx="54" cy="48" r="1.6" fill="#fff" opacity="0.8"/>
   </g>),
   lunchbox: (<g>
     <path d="M28 44 L72 44 L66 78 L34 78Z" fill="#fca5a5" stroke="#dc2626" strokeWidth="3"/>
-    <rect x="24" y="34" width="52" height="12" rx="3" fill="#ef4444" stroke="#b91c1c" strokeWidth="2.5"/>
+    <rect x="24" y="34" width="52" height="12" rx="4" fill="#f87171" stroke="#b91c1c" strokeWidth="2.5"/>
     <path d="M44 34 L44 24 L56 24 L56 34" fill="none" stroke="#b91c1c" strokeWidth="3"/>
+    <circle cx="44" cy="58" r="2.8" fill="#7f1d1d"/><circle cx="56" cy="58" r="2.8" fill="#7f1d1d"/>
+    <path d="M45 63 q5 4 10 0" stroke="#7f1d1d" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   bag: (<g>
     <path d="M28 38 Q28 24 50 24 Q72 24 72 38 L72 80 L28 80Z" fill="#60a5fa" stroke="#2563eb" strokeWidth="3"/>
-    <rect x="38" y="48" width="24" height="22" rx="4" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2.5"/>
+    <rect x="38" y="50" width="24" height="22" rx="5" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2.5"/>
     <path d="M40 38 Q40 30 50 30 Q60 30 60 38" fill="none" stroke="#2563eb" strokeWidth="3"/>
+    <circle cx="44" cy="44" r="2.4" fill="#fff"/><circle cx="56" cy="44" r="2.4" fill="#fff"/>
   </g>),
   slide: (<g>
     <path d="M24 82 L24 30 Q24 26 28 26 Q32 26 32 30 L32 58 L74 82Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
     <path d="M68 82 L80 82 L58 64" fill="none" stroke="#d97706" strokeWidth="3" strokeLinecap="round"/>
+    <circle cx="44" cy="58" r="2.6" fill="#92400e"/><circle cx="52" cy="62" r="2.6" fill="#92400e"/>
+    <path d="M45 64 q4 3 8 1" stroke="#92400e" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
   </g>),
   swing: (<g>
-    <path d="M18 22 L82 22" stroke="#92400e" strokeWidth="5" strokeLinecap="round"/>
+    <path d="M18 22 L82 22" stroke="#a16207" strokeWidth="5" strokeLinecap="round"/>
     <path d="M38 24 L42 62 M62 24 L58 62" stroke="#64748b" strokeWidth="3.5"/>
-    <rect x="36" y="62" width="28" height="10" rx="3" fill="#f87171" stroke="#dc2626" strokeWidth="2.5"/>
+    <rect x="36" y="62" width="28" height="10" rx="4" fill="#f87171" stroke="#dc2626" strokeWidth="2.5"/>
+    <circle cx="44" cy="66" r="2.2" fill="#fff"/><circle cx="56" cy="66" r="2.2" fill="#fff"/>
   </g>),
   house: (<g>
     <path d="M50 18 L84 46 L76 46 L76 80 L24 80 L24 46 L16 46Z" fill="#f87171" stroke="#dc2626" strokeWidth="3" strokeLinejoin="round"/>
-    <rect x="42" y="56" width="16" height="24" fill="white" stroke="#dc2626" strokeWidth="2.5"/>
+    <rect x="42" y="58" width="16" height="22" rx="3" fill="#fff" stroke="#dc2626" strokeWidth="2.5"/>
+    <circle cx="36" cy="54" r="5" fill="#fde047" stroke="#d97706" strokeWidth="2"/>
+    <circle cx="64" cy="54" r="5" fill="#fde047" stroke="#d97706" strokeWidth="2"/>
   </g>),
   default: (<g>
     <circle cx="50" cy="50" r="30" fill="#e9d5ff" stroke="#a78bfa" strokeWidth="3"/>
-    <path d="M50 28 Q54 48 70 50 Q54 52 50 72 Q46 52 30 50 Q46 48 50 28Z" fill="#a78bfa"/>
+    <circle cx="43" cy="47" r="3.2" fill="#7c3aed"/><circle cx="57" cy="47" r="3.2" fill="#7c3aed"/>
+    <circle cx="44.2" cy="46" r="1.1" fill="#fff"/><circle cx="58.2" cy="46" r="1.1" fill="#fff"/>
+    <path d="M44 56 q6 5 12 0" stroke="#7c3aed" strokeWidth="2.8" fill="none" strokeLinecap="round"/>
+    <circle cx="37" cy="54" r="4" fill="#f9a8d4" opacity="0.8"/>
+    <circle cx="63" cy="54" r="4" fill="#f9a8d4" opacity="0.8"/>
   </g>),
   /* ─── 인터페이스 아이콘 ─── */
   ui_soundOn: (<g>
@@ -523,7 +710,7 @@ const ICONS = {
   </g>),
   ui_rocket: (<g>
     <path d="M50 12 C64 24 68 44 62 64 L38 64 C32 44 36 24 50 12Z" fill="#f87171" stroke="#dc2626" strokeWidth="3"/>
-    <circle cx="50" cy="38" r="9" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <circle cx="50" cy="38" r="9" fill="#bae6fd" stroke="#2563eb" strokeWidth="3"/>
     <path d="M38 58 L26 72 L40 66Z" fill="#fb923c" stroke="#ea580c" strokeWidth="2.5"/>
     <path d="M62 58 L74 72 L60 66Z" fill="#fb923c" stroke="#ea580c" strokeWidth="2.5"/>
     <path d="M44 66 Q50 86 56 66" fill="#fbbf24" stroke="#f59e0b" strokeWidth="2.5"/>
@@ -532,6 +719,7 @@ const ICONS = {
     <rect x="38" y="14" width="24" height="44" rx="12" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
     <path d="M28 50 Q28 72 50 72 Q72 72 72 50" stroke="#7c3aed" strokeWidth="4" fill="none" strokeLinecap="round"/>
     <path d="M50 72 L50 86 M38 86 L62 86" stroke="#7c3aed" strokeWidth="4" strokeLinecap="round"/>
+    <circle cx="46" cy="30" r="2.6" fill="#fff"/><circle cx="54" cy="30" r="2.6" fill="#fff"/>
   </g>),
   ui_target: (<g>
     <circle cx="50" cy="50" r="34" fill="none" stroke="#ef4444" strokeWidth="6"/>
@@ -555,15 +743,17 @@ const ICONS = {
   </g>),
   ui_star: (<g>
     <path d="M50 14 L61 38 L86 41 L68 59 L73 84 L50 72 L27 84 L32 59 L14 41 L39 38Z" fill="#fbbf24" stroke="#f59e0b" strokeWidth="3" strokeLinejoin="round"/>
+    <circle cx="44" cy="48" r="2.8" fill="#92400e"/><circle cx="56" cy="48" r="2.8" fill="#92400e"/>
+    <path d="M45 54 q5 4 10 0" stroke="#92400e" strokeWidth="2.4" fill="none" strokeLinecap="round"/>
   </g>),
   ui_pin: (<g>
     <circle cx="50" cy="38" r="22" fill="#f87171" stroke="#dc2626" strokeWidth="3"/>
-    <circle cx="50" cy="38" r="9" fill="#fecaca"/>
+    <circle cx="50" cy="38" r="9" fill="#fecdd3"/>
     <path d="M50 60 L50 88" stroke="#dc2626" strokeWidth="6" strokeLinecap="round"/>
   </g>),
   ui_cards: (<g>
-    <rect x="20" y="32" width="34" height="48" rx="6" fill="#fff" stroke="#94a3b8" strokeWidth="3" transform="rotate(-12 37 56)"/>
-    <rect x="44" y="26" width="34" height="48" rx="6" fill="#fff" stroke="#7c3aed" strokeWidth="3" transform="rotate(10 61 50)"/>
+    <rect x="20" y="32" width="34" height="48" rx="8" fill="#fff" stroke="#94a3b8" strokeWidth="3" transform="rotate(-12 37 56)"/>
+    <rect x="44" y="26" width="34" height="48" rx="8" fill="#fff" stroke="#7c3aed" strokeWidth="3" transform="rotate(10 61 50)"/>
     <circle cx="61" cy="50" r="9" fill="#c4b5fd"/>
   </g>),
   ui_hand: (<g>
@@ -590,23 +780,23 @@ const ICONS = {
     <circle cx="70" cy="24" r="5" fill="#f87171"/><circle cx="84" cy="44" r="5" fill="#34d399"/><circle cx="56" cy="18" r="5" fill="#60a5fa"/>
     <path d="M76 60 l5 0 M82 70 l0 5" stroke="#a855f7" strokeWidth="3" strokeLinecap="round"/>
   </g>),
-  ui_stopSquare: (<g><rect x="28" y="28" width="44" height="44" rx="8" fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/></g>),
+  ui_stopSquare: (<g><rect x="28" y="28" width="44" height="44" rx="10" fill="#ef4444" stroke="#b91c1c" strokeWidth="3"/></g>),
   ui_pencil: (<g>
-    <rect x="24" y="64" width="50" height="13" rx="3" fill="#bfdbfe" stroke="#2563eb" strokeWidth="2.5"/>
+    <rect x="24" y="64" width="50" height="13" rx="5" fill="#bae6fd" stroke="#0284c7" strokeWidth="2.5"/>
     <path d="M58 20 L76 38 L44 70 L26 74 L30 56Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
     <path d="M58 20 L76 38" stroke="#d97706" strokeWidth="2.5"/>
     <path d="M26 74 L36 64" stroke="#92400e" strokeWidth="3"/>
   </g>),
   ui_keyboard: (<g>
-    <rect x="14" y="34" width="72" height="40" rx="6" fill="#e2e8f0" stroke="#64748b" strokeWidth="3"/>
-    <rect x="22" y="42" width="10" height="9" rx="2" fill="#94a3b8"/><rect x="36" y="42" width="10" height="9" rx="2" fill="#94a3b8"/>
-    <rect x="50" y="42" width="10" height="9" rx="2" fill="#94a3b8"/><rect x="64" y="42" width="10" height="9" rx="2" fill="#94a3b8"/>
-    <rect x="30" y="56" width="40" height="9" rx="2" fill="#94a3b8"/>
+    <rect x="14" y="34" width="72" height="40" rx="8" fill="#e2e8f0" stroke="#64748b" strokeWidth="3"/>
+    <rect x="22" y="42" width="10" height="9" rx="2.5" fill="#94a3b8"/><rect x="36" y="42" width="10" height="9" rx="2.5" fill="#94a3b8"/>
+    <rect x="50" y="42" width="10" height="9" rx="2.5" fill="#94a3b8"/><rect x="64" y="42" width="10" height="9" rx="2.5" fill="#94a3b8"/>
+    <rect x="30" y="56" width="40" height="9" rx="2.5" fill="#94a3b8"/>
   </g>),
   ui_bulb: (<g>
     <path d="M50 16 Q72 16 72 38 Q72 52 58 60 L58 68 L42 68 L42 60 Q28 52 28 38 Q28 16 50 16Z" fill="#fde047" stroke="#ca8a04" strokeWidth="3"/>
-    <rect x="42" y="70" width="16" height="8" rx="2" fill="#94a3b8"/>
-    <rect x="44" y="80" width="12" height="6" rx="2" fill="#94a3b8"/>
+    <rect x="42" y="70" width="16" height="8" rx="3" fill="#94a3b8"/>
+    <rect x="44" y="80" width="12" height="6" rx="3" fill="#94a3b8"/>
   </g>),
   ui_trophy: (<g>
     <path d="M32 20 L68 20 L66 44 Q66 58 50 58 Q34 58 34 44Z" fill="#fbbf24" stroke="#d97706" strokeWidth="3"/>
@@ -614,19 +804,20 @@ const ICONS = {
     <path d="M68 24 Q82 24 80 36 Q78 44 66 42" fill="none" stroke="#d97706" strokeWidth="3.5"/>
     <rect x="44" y="58" width="12" height="14" fill="#d97706"/>
     <rect x="32" y="72" width="36" height="10" rx="3" fill="#b45309"/>
-    <path d="M44 32 L48 40 L56 30" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="44" cy="36" r="2.8" fill="#92400e"/><circle cx="56" cy="36" r="2.8" fill="#92400e"/>
+    <path d="M45 42 q5 4 10 0" stroke="#92400e" strokeWidth="2.6" fill="none" strokeLinecap="round"/>
   </g>),
   ui_headphone: (<g>
     <path d="M22 56 Q22 22 50 22 Q78 22 78 56" fill="none" stroke="#7c3aed" strokeWidth="6" strokeLinecap="round"/>
-    <rect x="16" y="52" width="16" height="26" rx="7" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
-    <rect x="68" y="52" width="16" height="26" rx="7" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+    <rect x="16" y="52" width="16" height="26" rx="8" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
+    <rect x="68" y="52" width="16" height="26" rx="8" fill="#a78bfa" stroke="#7c3aed" strokeWidth="3"/>
   </g>),
   ui_muscle: (<g>
     <path d="M22 46 Q22 32 38 34 L58 38 Q76 40 76 58 Q76 78 52 78 L34 78 Q22 78 24 62Z" fill="#fcd34d" stroke="#d97706" strokeWidth="3" strokeLinejoin="round"/>
     <path d="M44 46 Q56 52 54 66" fill="none" stroke="#d97706" strokeWidth="3"/>
   </g>),
   ui_hourglass: (<g>
-    <path d="M28 18 L72 18 L72 28 Q72 44 50 50 Q28 44 28 28Z" fill="#bfdbfe" stroke="#2563eb" strokeWidth="3"/>
+    <path d="M28 18 L72 18 L72 28 Q72 44 50 50 Q28 44 28 28Z" fill="#bae6fd" stroke="#2563eb" strokeWidth="3"/>
     <path d="M28 82 L72 82 L72 72 Q72 56 50 50 Q28 56 28 72Z" fill="#fcd34d" stroke="#2563eb" strokeWidth="3"/>
     <rect x="22" y="14" width="56" height="6" rx="3" fill="#1e40af"/>
     <rect x="22" y="80" width="56" height="6" rx="3" fill="#1e40af"/>
@@ -641,10 +832,10 @@ const ICONS = {
   </g>),
   ui_plant: (<g>
     <path d="M50 86 L50 40" stroke="#16a34a" strokeWidth="6" strokeLinecap="round"/>
-    <path d="M50 56 Q30 52 24 34 Q44 36 50 56Z" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
-    <path d="M50 56 Q70 52 76 34 Q56 36 50 56Z" fill="#22c55e" stroke="#15803d" strokeWidth="2.5"/>
-    <path d="M50 44 Q34 40 30 24 Q46 28 50 44Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
-    <path d="M50 44 Q66 40 70 24 Q54 28 50 44Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 56 Q30 52 24 34 Q44 36 50 56Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 56 Q70 52 76 34 Q56 36 50 56Z" fill="#4ade80" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 44 Q34 40 30 24 Q46 28 50 44Z" fill="#86efac" stroke="#15803d" strokeWidth="2.5"/>
+    <path d="M50 44 Q66 40 70 24 Q54 28 50 44Z" fill="#86efac" stroke="#15803d" strokeWidth="2.5"/>
   </g>),
 };
 
@@ -810,8 +1001,8 @@ const Popup = ({type, onClose}) => {
         <div style={{margin:'0 auto 1rem'}}><Icon name="ui_cycle" size={88}/></div>
         <h2 style={{fontSize:'2.25rem',color:'#7c3aed',fontWeight:'900',marginBottom:'1rem'}}>빙글빙글 도는 문제예요!</h2>
         <p style={{fontSize:'1.375rem',color:'#475569',lineHeight:'1.6',wordBreak:'keep-all',fontWeight:'700',marginBottom:'1.5rem'}}>
-          이 문제는 <span style={{color:'#7c3aed',fontWeight:'900'}}>순환</span> 문제예요.<br/>
-          마지막 다음에 끝나지 않고<br/><span style={{color:'#7c3aed',fontWeight:'900'}}>다시 처음으로</span> 돌아온답니다!
+          이건 <span style={{color:'#7c3aed',fontWeight:'900'}}>빙글빙글</span> 도는 이야기예요.<br/>
+          끝까지 가면 <span style={{color:'#7c3aed',fontWeight:'900'}}>다시 처음</span>이 와요!
         </p>
       </>
     );
@@ -1068,10 +1259,15 @@ const App = () => {
   const requestMicAccess = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      let mime = '';
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported) {
+        if (MediaRecorder.isTypeSupported('audio/webm')) mime = 'audio/webm';
+        else if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+      }
+      const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
       recorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data); };
       recorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(audioChunksRef.current, { type: recorder.mimeType || mime || 'audio/webm' });
         setAudioBlob(blob);
         const reader = new FileReader();
         reader.readAsDataURL(blob);
@@ -1262,9 +1458,6 @@ const App = () => {
       fireConfetti();
       speak("정답입니다!", soundOn);
       setPhase("feedback");
-      if (currentQ.type === 'cyclic' && !practiceMode) {
-        setTimeout(() => { if (phaseRef.current === 'feedback') setPopup('cyclic-complete'); }, 600);
-      }
     } else {
       setWrongIndices(wrongs);
       playSound('wrong', soundOn);
@@ -1416,11 +1609,8 @@ const App = () => {
               <Icon name="ui_target" size={26}/>
               <span style={{fontSize:'1.25rem',fontWeight:'900',color:'#92400e'}}>오늘의 목표</span>
             </div>
-            <p style={{fontSize:'1.0625rem',fontWeight:'700',color:'#92400e',lineHeight:'1.7',margin:0,wordBreak:'keep-all'}}>
-              이 활동이 끝나면 우리는&nbsp;
-              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>사건의 순서</span>를 알고,&nbsp;
-              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>한살이와 순서</span>를 구별하며,&nbsp;
-              <span style={{background:'white',padding:'2px 8px',borderRadius:'6px'}}>내 말로 설명</span>할 수 있어요!
+            <p style={{fontSize:'1.3125rem',fontWeight:'700',color:'#92400e',lineHeight:'1.6',margin:0,wordBreak:'keep-all'}}>
+              그림을 보고 <span style={{background:'white',padding:'2px 10px',borderRadius:'6px'}}>일이 일어난 순서</span>를 말할 수 있어요!
             </p>
           </div>
           <p style={{fontSize:'1.25rem',color:'#475569',marginBottom:'1.25rem',wordBreak:'keep-all',fontWeight:'700'}}>
@@ -1631,439 +1821,4 @@ const App = () => {
                   <Icon name="ui_cards" size={22}/> 카드 보관함
                   <span style={{fontSize:'0.75rem',color:'#94a3b8',marginLeft:'auto',fontWeight:'700'}}>끌어서 놓기</span>
                 </h3>
-                <div style={{flex:1,display:'flex',flexWrap:'wrap',gap:'0.5rem',alignContent:'flex-start',justifyContent:'center'}}>
-                  {pool.length > 0 ? pool.map(card => (
-                    <div key={card.id} draggable="true" onDragStart={(e)=>handlePoolDragStart(e,card)} onClick={()=>tapPoolCard(card)}
-                      className={`pool-card ${dragSource && dragSource.type==='pool' && dragSource.cardId===card.id ? 'dragging' : ''}`}
-                      style={{padding:'0.6rem',width:'130px',display:'flex',flexDirection:'column',alignItems:'center'}}>
-                      <Icon name={card.icon} size={56}/>
-                      <div style={{fontSize:'0.95rem',color:'#475569',textAlign:'center',wordBreak:'keep-all',fontWeight:'700',marginTop:'0.25rem'}}>{card.text}</div>
-                    </div>
-                  )) : (
-                    <div style={{fontSize:'1.125rem',color:'#94a3b8',textAlign:'center',padding:'1rem',fontWeight:'700'}}>
-                      <div style={{display:'flex',justifyContent:'center',marginBottom:'0.25rem'}}><Icon name="ui_party" size={48}/></div>
-                      모두 옮겼어요!<br/>
-                      <span style={{fontSize:'0.9rem'}}>정답을 확인해보세요</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div style={{display:'flex',gap:'0.5rem',flexShrink:0}}>
-                <button onClick={retryQuestion} style={{flex:1,padding:'0.85rem',background:'rgba(148,163,184,0.8)',
-                  color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700',
-                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
-                  <Icon name="ui_refresh" size={22}/> 다시
-                </button>
-                <button onClick={checkAnswer} style={{flex:2,padding:'0.85rem',
-                  background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
-                  fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
-                  display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
-                  정답 확인 <Icon name="ui_check" size={22}/>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    /* 정답 피드백 */
-    if (phase === "feedback") {
-      const nextIdx = qIndex + 1;
-      const isLast = nextIdx >= activeQuestions.length;
-      const fivePoint = nextIdx > 0 && nextIdx % 5 === 0;
-      const willReflect = !practiceMode && (fivePoint || (isLast && (nextIdx - batchStart) > 0));
-      let label = '다음 문제 ▶';
-      if (practiceMode) label = '본 문제 풀기 ▶';
-      else if (willReflect) label = '배움 정리하기 ▶';
-      else if (isLast) label = '결과 보기 ▶';
-      return (
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
-          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div className="glass-card" style={{maxWidth:'900px',width:'100%',padding:'2rem',display:'flex',gap:'2rem',alignItems:'center'}}>
-            <div style={{flexShrink:0,textAlign:'center'}}>
-              <div className="pop-anim" style={{marginBottom:'0.5rem'}}><Icon name="ui_party" size={120}/></div>
-              <h2 className="grad-text" style={{fontSize:'3rem',margin:0,fontWeight:'900'}}>정답!</h2>
-              {practiceMode && <span style={{display:'inline-block',marginTop:'0.5rem',padding:'0.3rem 0.85rem',
-                background:'rgba(59,130,246,0.15)',color:'#1d4ed8',borderRadius:'999px',fontSize:'0.95rem',fontWeight:'700'}}>연습 완료</span>}
-            </div>
-            <div style={{flex:1,display:'flex',flexDirection:'column',gap:'1rem'}}>
-              <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',borderLeft:'6px solid #8b5cf6',paddingLeft:'1rem',margin:0,fontWeight:'700'}}>
-                "{currentQ.concept}"
-              </p>
-              <div style={{background:'rgba(196,181,253,0.15)',padding:'1rem',borderRadius:'1rem',
-                display:'flex',alignItems:'center',justifyContent:'center',minHeight:'250px'}}>
-                {currentQ.type === 'cyclic' ? <CircularLayout items={currentQ.cards} size={300}/> : <LinearLayout items={currentQ.cards}/>}
-              </div>
-              <button onClick={nextQuestion} className="pill-btn" style={{width:'100%',fontWeight:'700'}}>{label}</button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    /* 녹음 안내 */
-    if (phase === "reflection_intro") {
-      const batchEnd = qIndex + 1;
-      const batchSize = batchEnd - batchStart;
-      const canSelectTwo = batchSize >= 2;
-      return (
-        <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
-          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
-            <div className="float-up" style={{marginBottom:'1rem'}}><Icon name="ui_mic" size={120}/></div>
-            <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>배움 정리 시간!</h2>
-            <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
-              방금 푼 <span style={{color:'#f97316',fontWeight:'900'}}>{batchSize}개 문제</span> 중에서<br/>
-              {canSelectTwo ? <><span style={{color:'#f97316',fontWeight:'900'}}>2개를 골라</span> 친구에게 설명해 보아요</> : <>그 문제를 친구에게 설명해 보아요</>}
-            </p>
-            <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd',marginBottom:'1.5rem'}}>
-              <p style={{fontSize:'1.25rem',color:'#7c3aed',margin:0,fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem'}}>
-                <Icon name="ui_target" size={24}/> 녹음 단계 {reflectionRound + 1} / {totalReflectionRounds}
-              </p>
-            </div>
-            <button onClick={startReflection} className="pill-btn" style={{fontWeight:'700'}}>카드 고르러 가기 ▶</button>
-          </div>
-        </div>
-      );
-    }
-
-    /* 카드 선택 */
-    if (phase === "reflection_select") {
-      const batchEnd = qIndex + 1;
-      const batchQuestions = activeQuestions.slice(batchStart, batchEnd);
-      const required = Math.min(2, batchQuestions.length);
-      const canProceed = selectedCardSets.length === required;
-      return (
-        <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
-          <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-          <div style={{textAlign:'center',marginBottom:'1rem',flexShrink:0}}>
-            <h2 className="grad-text" style={{fontSize:'2.5rem',marginBottom:'0.5rem',fontWeight:'900'}}>설명할 카드 {required}개를 골라요</h2>
-            <p style={{fontSize:'1.25rem',color:'#7c3aed',fontWeight:'700'}}>선택됨: <span style={{fontSize:'1.5rem',fontWeight:'900'}}>{selectedCardSets.length}</span> / {required}</p>
-          </div>
-          <div style={{flex:1,display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:'1rem',overflow:'hidden',alignContent:'flex-start'}}>
-            {batchQuestions.map(q => {
-              const sel = selectedCardSets.find(c => c.id === q.id);
-              return (
-                <div key={q.id} onClick={() => {
-                    if (sel) setSelectedCardSets(selectedCardSets.filter(c => c.id !== q.id));
-                    else if (selectedCardSets.length < required) { setSelectedCardSets([...selectedCardSets, q]); playSound('pop', soundOn); }
-                  }}
-                  className="glass-card"
-                  style={{padding:'1rem',cursor:'pointer',border: sel ? '6px solid #f472b6' : '6px solid transparent',
-                    background: sel ? 'rgba(252,231,243,0.8)' : 'rgba(255,255,255,0.7)',transition:'all 0.2s'}}>
-                  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.5rem'}}>
-                    <h3 style={{fontSize:'1.5rem',color:'#1e293b',margin:0,fontWeight:'900'}}>{q.title}</h3>
-                    {sel && <Icon name="ui_check" size={32}/>}
-                  </div>
-                  <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',wordBreak:'keep-all',fontWeight:'700'}}>"{q.concept}"</p>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center'}}>
-                    {q.cards.map((c, ci) => (
-                      <React.Fragment key={c.id}>
-                        <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-                          <div style={{background:'rgba(255,255,255,0.7)',borderRadius:'0.5rem',padding:'0.15rem',border:'2px solid #c4b5fd'}}>
-                            <Icon name={c.icon} size={36}/>
-                          </div>
-                          <span style={{fontSize:'0.7rem',color:'#64748b',fontWeight:'700'}}>{c.text}</span>
-                        </div>
-                        {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontWeight:'900'}}>→</span>}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{marginTop:'1rem',flexShrink:0}}>
-            <button onClick={goToRecording} disabled={!canProceed} className={canProceed ? 'pill-btn' : ''}
-              style={canProceed ? {width:'100%',fontWeight:'700'} : {width:'100%',padding:'1rem',background:'rgba(203,213,225,0.7)',
-                color:'#94a3b8',border:'none',borderRadius:'999px',fontSize:'1.5rem',cursor:'not-allowed',fontWeight:'700'}}>
-              {canProceed ? '녹음하러 가기 ▶' : `${required - selectedCardSets.length}개 더 골라주세요`}
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    /* 녹음 */
-    if (phase === "recording") return (
-      <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1rem',position:'relative'}}>
-        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div style={{flex:1,display:'flex',flexDirection:'row',gap:'1rem',overflow:'hidden'}}>
-          <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.25rem 0',color:'#7c3aed',flexShrink:0,fontWeight:'900'}}>
-              <Icon name="book" size={28}/> 내가 고른 이야기
-            </h3>
-            <p style={{fontSize:'0.95rem',color:'#64748b',marginBottom:'0.75rem',flexShrink:0,wordBreak:'keep-all',fontWeight:'700'}}>
-              그림을 보면서 <strong style={{color:'#f97316'}}>내 말로</strong> 설명해요!
-            </p>
-            <div style={{flex:1,display:'flex',flexDirection:'column',gap:'0.75rem',overflow:'hidden'}}>
-              {selectedCardSets.map((q, i) => (
-                <div key={q.id} style={{background:'rgba(255,255,255,0.7)',border:'4px solid #c4b5fd',borderRadius:'1rem',
-                  padding:'0.85rem',display:'flex',flexDirection:'column',gap:'0.5rem'}}>
-                  <h4 style={{fontSize:'1.125rem',margin:0,display:'flex',alignItems:'center',gap:'0.5rem',color:'#1e293b',fontWeight:'900'}}>
-                    <span style={{background:'#a78bfa',color:'white',width:'28px',height:'28px',borderRadius:'50%',
-                      display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.95rem',flexShrink:0,fontWeight:'900'}}>{i+1}</span>
-                    {q.title}
-                  </h4>
-                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.4rem',alignItems:'center',justifyContent:'center',
-                    background:'rgba(255,255,255,0.7)',padding:'0.5rem',borderRadius:'0.75rem'}}>
-                    {q.cards.map((c, ci) => (
-                      <React.Fragment key={c.id}>
-                        <div style={{display:'flex',flexDirection:'column',alignItems:'center'}}>
-                          <div style={{background:'rgba(196,181,253,0.2)',borderRadius:'0.6rem',width:'52px',height:'52px',
-                            display:'flex',alignItems:'center',justifyContent:'center',border:'2px solid #c4b5fd'}}>
-                            <Icon name={c.icon} size={40}/>
-                          </div>
-                          <span style={{fontSize:'0.75rem',color:'#475569',marginTop:'2px',fontWeight:'700'}}>{c.text}</span>
-                        </div>
-                        {ci < q.cards.length-1 && <span style={{color:'#a78bfa',fontSize:'1.125rem',fontWeight:'900'}}>→</span>}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                  <div style={{background:'rgba(254,243,199,0.7)',borderRadius:'0.75rem',border:'3px solid #fcd34d',
-                    padding:'0.5rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                    <Icon name="ui_bulb" size={24}/>
-                    <p style={{fontSize:'0.95rem',color:'#475569',margin:0,flex:1,wordBreak:'keep-all',fontWeight:'700'}}>
-                      예시: <span style={{fontStyle:'italic'}}>"{q.concept}"</span>
-                    </p>
-                    <button onClick={() => speakForce(q.concept)} style={{padding:'0.3rem',background:'#fbbf24',
-                      border:'2px solid #d97706',borderRadius:'0.5rem',cursor:'pointer',flexShrink:0,display:'flex',alignItems:'center'}}>
-                      <Icon name="ui_soundOn" size={22}/>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="glass-card" style={{flex:1,padding:'1.25rem',display:'flex',flexDirection:'column',overflow:'hidden'}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.75rem',flexShrink:0}}>
-              <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:0,color:'#7c3aed',fontWeight:'900'}}>
-                <Icon name="ui_mic" size={28}/> 내가 설명하기
-              </h3>
-              <button onClick={() => setUseKeyboard(!useKeyboard)} style={{display:'inline-flex',alignItems:'center',gap:'0.3rem',
-                padding:'0.4rem 0.85rem',background:'rgba(196,181,253,0.3)',color:'#7c3aed',border:'3px solid #c4b5fd',
-                borderRadius:'0.75rem',cursor:'pointer',fontSize:'0.95rem',fontWeight:'700'}}>
-                <Icon name={useKeyboard ? 'ui_mic' : 'ui_keyboard'} size={20}/>{useKeyboard ? '음성으로' : '키보드로'}
-              </button>
-            </div>
-            {useKeyboard ? (
-              <textarea value={keyboardText} onChange={(e) => setKeyboardText(e.target.value)}
-                placeholder="여기에 내 생각을 써보세요!"
-                style={{flex:1,width:'100%',padding:'1rem',fontSize:'1.25rem',color:'#1e293b',background:'rgba(255,255,255,0.8)',
-                  border:'4px solid #c4b5fd',borderRadius:'1rem',resize:'none',outline:'none',fontWeight:'700'}}/>
-            ) : (
-              <>
-                <div style={{flexShrink:0,marginBottom:'0.75rem'}}>
-                  {!isRecording && !audioBlob && (
-                    <button onClick={handleStartRecording} style={{width:'100%',padding:'1.25rem',
-                      background:'rgba(255,255,255,0.7)',border:'6px solid #c4b5fd',borderRadius:'1.5rem',cursor:'pointer',
-                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#7c3aed',fontWeight:'900'}}>
-                      <Icon name="ui_mic" size={64}/>
-                      <span style={{fontSize:'2rem'}}>녹음 시작</span>
-                    </button>
-                  )}
-                  {isRecording && (
-                    <button onClick={handleStopRecording} className="pulse-rec" style={{width:'100%',padding:'1.25rem',
-                      background:'rgba(254,226,226,0.9)',border:'6px solid #ef4444',borderRadius:'1.5rem',cursor:'pointer',
-                      display:'flex',alignItems:'center',justifyContent:'center',gap:'1rem',color:'#dc2626',fontWeight:'900'}}>
-                      <Icon name="ui_stopSquare" size={56}/>
-                      <span style={{fontSize:'2rem'}}>녹음 끝</span>
-                    </button>
-                  )}
-                </div>
-                <div style={{flex:1,padding:'1rem',background:'rgba(255,255,255,0.7)',border:'3px solid #c4b5fd',borderRadius:'1rem',overflow:'auto'}}>
-                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.5rem 0',fontWeight:'700'}}>
-                    <Icon name="ui_pencil" size={20}/> 받아쓰기
-                  </p>
-                  <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>
-                    {recognizedText || <span style={{color:'#cbd5e1'}}>{isRecording ? '말해보세요...' : '녹음 시작 버튼을 눌러요'}</span>}
-                    {interimText && <span style={{color:'#f97316'}}>{interimText}</span>}
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-        <div style={{marginTop:'0.75rem',display:'flex',gap:'0.75rem',flexShrink:0}}>
-          <button onClick={() => setPhase("reflection_select")} style={{flex:1,padding:'0.85rem',
-            background:'rgba(148,163,184,0.7)',color:'white',border:'none',borderRadius:'1rem',fontSize:'1.125rem',cursor:'pointer',fontWeight:'700'}}>
-            ◀ 카드 다시 고르기
-          </button>
-          {(audioBlob || (useKeyboard && keyboardText.trim().length > 0)) && (
-            <button onClick={() => setPhase("reflection_listen")} style={{flex:2,padding:'0.85rem',
-              background:'linear-gradient(135deg, #fb7185, #f472b6)',color:'white',border:'none',borderRadius:'1rem',
-              fontSize:'1.125rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(244,114,182,0.3)',fontWeight:'700'}}>
-              들어보기 / 자기평가 ▶
-            </button>
-          )}
-        </div>
-      </div>
-    );
-
-    /* 들어보기 / 자기평가 */
-    if (phase === "reflection_listen") return (
-      <div style={{display:'flex',flexDirection:'column',width:'100%',height:'100%',padding:'1.5rem',position:'relative'}}>
-        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div style={{maxWidth:'900px',margin:'0 auto',width:'100%',flex:1,display:'flex',flexDirection:'column',gap:'1rem',overflow:'hidden'}}>
-          <h2 className="grad-text" style={{fontSize:'2.25rem',textAlign:'center',margin:0,flexShrink:0,fontWeight:'900',
-            display:'flex',alignItems:'center',justifyContent:'center',gap:'0.5rem'}}>
-            <Icon name="ui_headphone" size={40}/> 내 설명을 들어보고 평가해요
-          </h2>
-          <div className="glass-card" style={{padding:'1.25rem',flexShrink:0}}>
-            <h3 style={{display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'1.5rem',margin:'0 0 0.75rem 0',color:'#7c3aed',fontWeight:'900'}}>
-              <Icon name="ui_mic" size={26}/> 내 설명
-            </h3>
-            {useKeyboard ? (
-              <div style={{background:'rgba(255,255,255,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #c4b5fd'}}>
-                <p style={{fontSize:'1.125rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{keyboardText || '(입력 내용 없음)'}</p>
-              </div>
-            ) : (
-              <>
-                {audioBlob && <audio src={URL.createObjectURL(audioBlob)} controls style={{width:'100%',marginBottom:'0.75rem'}}/>}
-                <div style={{background:'rgba(255,255,255,0.7)',padding:'0.75rem',borderRadius:'0.75rem',border:'3px solid #c4b5fd'}}>
-                  <p style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.95rem',color:'#7c3aed',margin:'0 0 0.25rem 0',fontWeight:'700'}}>
-                    <Icon name="ui_pencil" size={18}/> 받아쓰기
-                  </p>
-                  <p style={{fontSize:'1rem',color:'#475569',margin:0,wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>{recognizedText || '(받아쓰기 결과 없음)'}</p>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="glass-card" style={{padding:'1.5rem',flex:1,display:'flex',flexDirection:'column',justifyContent:'center'}}>
-            <h3 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.4rem',fontSize:'1.875rem',
-              textAlign:'center',margin:'0 0 0.5rem 0',color:'#92400e',fontWeight:'900'}}>
-              <Icon name="ui_star" size={34}/> 별점으로 평가해요
-            </h3>
-            <p style={{fontSize:'1.125rem',textAlign:'center',color:'#64748b',marginBottom:'1rem',wordBreak:'keep-all',fontWeight:'700'}}>나는 얼마나 잘 설명했나요?</p>
-            <StarRating rating={selfRating} setRating={setSelfRating} size={64}/>
-            {selfRating > 0 && (
-              <p style={{fontSize:'1.5rem',textAlign:'center',marginTop:'0.75rem',color: selfRating <= 3 ? '#ea580c' : '#16a34a',fontWeight:'900'}}>
-                {selfRating === 5 && '정말 멋지게 설명했어요!'}
-                {selfRating === 4 && '잘 설명했어요!'}
-                {selfRating === 3 && '좋아요! 한 번 더 해볼까요?'}
-                {selfRating === 2 && '시도한 게 멋져요!'}
-                {selfRating === 1 && '용기 있게 도전했어요!'}
-              </p>
-            )}
-          </div>
-          <div style={{display:'flex',gap:'0.75rem',flexShrink:0}}>
-            <button onClick={() => handleSelfEvaluate('redo')} style={{flex:1,padding:'1rem',
-              background:'linear-gradient(135deg, #a855f7, #9333ea)',color:'white',border:'none',borderRadius:'1rem',
-              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(147,51,234,0.3)',fontWeight:'700',
-              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
-              <Icon name="ui_refresh" size={24}/> 다시 녹음
-            </button>
-            <button onClick={() => handleSelfEvaluate('submit')} style={{flex:2,padding:'1rem',
-              background:'linear-gradient(135deg, #34d399, #10b981)',color:'white',border:'none',borderRadius:'1rem',
-              fontSize:'1.25rem',cursor:'pointer',boxShadow:'0 4px 12px rgba(16,185,129,0.3)',fontWeight:'700',
-              display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.3rem'}}>
-              <Icon name="ui_check" size={24}/> 만족! 칭찬 받기
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-
-    /* 칭찬 스티커 */
-    if (phase === "sticker_reward") return (
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
-        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="glass-card" style={{maxWidth:'700px',width:'100%',padding:'3rem',textAlign:'center'}}>
-          <div className="pop-anim" style={{marginBottom:'1rem'}}><Icon name="ui_trophy" size={130}/></div>
-          <h2 className="grad-text" style={{fontSize:'3rem',marginBottom:'1.5rem',fontWeight:'900'}}>멋진 설명이었어요!</h2>
-          <p style={{fontSize:'1.5rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',marginBottom:'1.5rem',fontWeight:'700'}}>
-            <span style={{color:'#ec4899',fontWeight:'900'}}>{selectedStudent}</span> 친구가<br/>
-            <span style={{color:'#ec4899',fontWeight:'900'}}>칭찬 스티커</span>를 받았어요!
-          </p>
-          <div style={{display:'flex',justifyContent:'center',gap:'0.5rem',marginBottom:'1.5rem'}}>
-            {[1,2,3,4,5].map(s => (
-              <div key={s} className="pop-anim" style={{animationDelay:`${s*0.1}s`}}>
-                <RoundStar filled={s <= selfRating} size={64}/>
-              </div>
-            ))}
-          </div>
-          <div style={{background:'rgba(252,231,243,0.7)',padding:'1rem',borderRadius:'1rem',border:'3px solid #f9a8d4',marginBottom:'1.5rem'}}>
-            <p style={{fontSize:'1.5rem',color:'#475569',margin:0,fontWeight:'700'}}>
-              자기평가: <span style={{color:'#ec4899',fontWeight:'900'}}>{selfRating}점</span>
-            </p>
-          </div>
-          <button onClick={continueAfterSticker} className="pill-btn" style={{fontWeight:'700'}}>
-            {qIndex+1 < activeQuestions.length ? '다음 문제 풀기 ▶' : '결과 보러 가기 ▶'}
-          </button>
-        </div>
-      </div>
-    );
-
-    /* 전송 중 */
-    if (phase === "submitting") return (
-      <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',textAlign:'center'}}>
-        <div style={{marginBottom:'1.5rem'}}><Icon name="ui_hourglass" size={120}/></div>
-        <div style={{fontSize:'2rem',color:'#7c3aed',fontWeight:'900'}}>저장하는 중이에요...</div>
-      </div>
-    );
-
-    /* 결과 */
-    if (phase === "report") return (
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%',height:'100%',padding:'2rem',position:'relative'}}>
-        <SoundToggle soundOn={soundOn} setSoundOn={setSoundOn}/>
-        <div className="glass-card" style={{maxWidth:'1000px',width:'100%',padding:'2.5rem',display:'flex',gap:'2rem'}}>
-          <div style={{flex:1,background:'rgba(254,243,199,0.6)',padding:'2rem',borderRadius:'1.5rem',border:'4px dashed #f59e0b',
-            display:'flex',flexDirection:'column',justifyContent:'center',alignItems:'center',textAlign:'center'}}>
-            <div style={{marginBottom:'0.75rem'}}><Icon name="ui_trophy" size={110}/></div>
-            <h1 style={{fontSize:'2.5rem',color:'#92400e',marginBottom:'1rem',fontWeight:'900'}}>훌륭한 이야기꾼 상</h1>
-            <div style={{fontSize:'2rem',color:'#475569',marginBottom:'1rem',fontWeight:'700'}}>
-              <span style={{color:'#7c3aed',fontSize:'2.5rem',textDecoration:'underline',fontWeight:'900'}}>{selectedStudent}</span> 어린이
-            </div>
-            <p style={{fontSize:'1.125rem',color:'#475569',wordBreak:'keep-all',lineHeight:'1.5',fontWeight:'700'}}>
-              위 어린이는 사건의 순서를<br/>올바르게 이해하고 설명하였기에<br/>이 상장을 수여합니다.
-            </p>
-          </div>
-          <div style={{flex:1,display:'flex',flexDirection:'column',justifyContent:'center',gap:'1rem'}}>
-            <div style={{background:'rgba(196,181,253,0.2)',padding:'1.5rem',borderRadius:'1.25rem',border:'3px solid #c4b5fd',
-              display:'flex',flexDirection:'column',alignItems:'center'}}>
-              <div style={{fontSize:'1.5rem',color:'#475569',marginBottom:'0.5rem',fontWeight:'700'}}>최종 결과</div>
-              <div style={{fontSize:'5rem',color:'#7c3aed',fontWeight:'900'}}>{score}<span style={{fontSize:'2rem',color:'#94a3b8'}}> / {activeQuestions.length}</span></div>
-            </div>
-            <div style={{background:'rgba(254,243,199,0.6)',padding:'1rem',borderRadius:'1rem',border:'3px solid #fcd34d',
-              display:'flex',justifyContent:'space-around'}}>
-              <div style={{textAlign:'center'}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
-                  <Icon name="ui_help" size={20}/> 도움받기
-                </div>
-                <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{helpUsedTotal}회</div>
-              </div>
-              <div style={{textAlign:'center'}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'0.25rem',fontSize:'1rem',color:'#475569',fontWeight:'700'}}>
-                  <Icon name="ui_mic" size={20}/> 녹음
-                </div>
-                <div style={{fontSize:'1.875rem',color:'#92400e',fontWeight:'900'}}>{allReflections.length}회</div>
-              </div>
-            </div>
-            <button onClick={() => window.location.reload()} className="pill-btn"
-              style={{display:'inline-flex',alignItems:'center',justifyContent:'center',gap:'0.5rem',fontWeight:'700'}}>
-              <Icon name="ui_home" size={28}/> 처음으로 돌아가기
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-
-    return null;
-  };
-
-  return (
-    <>
-      <div className="scale-stage" style={{transform: `translate(-50%, -50%) scale(${scale})`}}>
-        {renderContent()}
-      </div>
-      {toast && <div className="toast">{toast}</div>}
-      <Popup type={popup} onClose={() => setPopup(null)}/>
-    </>
-  );
-};
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
-</script>
-</body>
-</html>
+                <div style={{flex:1,display:'flex',flexWrap:'
